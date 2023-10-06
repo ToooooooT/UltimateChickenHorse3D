@@ -20,11 +20,11 @@ public class LinBenScript : MonoBehaviour
         {
             anim.SetBool("pointing", !anim.GetBool("pointing"));
         }
-        if(Input.GetKeyDown(KeyCode.W))
+        /*if(Input.GetKeyDown(KeyCode.W))
         {
             Debug.Log("press w");
             Debug.Log(pos.position.x);
             pos.position = pos.position + new Vector3((float) 0.1, 0, 0);
-        }
+        }*/
     }
 }
