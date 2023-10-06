@@ -1,1 +1,10 @@
 .DS_store
+.vs/
+.vscode/
+.vsconfig
+Library/
+Logs/
+Temp/
+*.sln
+*.csproj
+*.dwlt
