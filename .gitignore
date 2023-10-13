@@ -8,3 +8,4 @@ Temp/
 *.sln
 *.csproj
 *.dwlt
+obj/
