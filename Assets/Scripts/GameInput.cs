@@ -21,12 +21,10 @@ public class GameInput : MonoBehaviour {
     }
 
 
-    public Vector2 GetMovementVectorNormalized() {
-        Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
-        
-        inputVector = inputVector.normalized;
-
-        return inputVector;
+    public Vector3 GetMovementVectorNormalized() {
+        Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>().normalized;
+        Vector3 moveDir = new(inputVector.x, 0f, inputVector.y);
+        return moveDir;
     }
 
 }
