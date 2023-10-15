@@ -1,6 +1,6 @@
 # 3DSuperChick
 
-* keycode:
+* keycode:\
     'C' : change code camera
     * playing mode:
       * 'W','A','S','D' : move
