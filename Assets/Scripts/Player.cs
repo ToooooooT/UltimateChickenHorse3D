@@ -8,11 +8,11 @@ using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour {
    
-    [SerializeField] private float moveSpeed = 7f;
-    [SerializeField] private float rotateSpeed = 10f;
-    [SerializeField] private float jumpSpeed = 30f;
-    [SerializeField] private float gravitySpeed = 20f;
-    [SerializeField] private float buttonPressedWindow = .3f;
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private float rotateSpeed;
+    [SerializeField] private float jumpSpeed;
+    [SerializeField] private float gravityMaxSpeed;
+    [SerializeField] private float buttonPressedWindow;
     [SerializeField] private GameInput gameInput;
 
     private bool isWalking = false;
@@ -23,8 +23,13 @@ public class Player : MonoBehaviour {
     private Rigidbody rigidbody_;
 
     public void Start() {
+        moveSpeed = 7f;
+        rotateSpeed = 10f;
+        jumpSpeed = 25f;
+        gravityMaxSpeed = 20f;
+        buttonPressedWindow = .3f;
         rigidbody_ = GetComponent<Rigidbody>();
-        rigidbody_.useGravity = false;
+        rigidbody_.useGravity = true;
         // capsuleCollider = GetComponent<CapsuleCollider>();
     }
 
@@ -41,18 +46,18 @@ public class Player : MonoBehaviour {
         Vector3 moveDir = gameInput.GetMovementVectorNormalized();
         transform.position += moveSpeed * Time.deltaTime * moveDir;
 
-        rigidbody_.velocity = gravitySpeed * Vector3.down;
         if (Input.GetKeyDown(KeyCode.Space) && canJump) {
             isJumping = true;
             buttonPressedTime = 0;
         }
-
         if (isJumping) {
             buttonPressedTime += Time.deltaTime;
             rigidbody_.velocity = jumpSpeed * Vector3.up;
             if (buttonPressedTime > buttonPressedWindow || Input.GetKeyUp(KeyCode.Space)) {
                 isJumping = false;
             }
+        } else if (rigidbody_.velocity.y < -gravityMaxSpeed) {
+            rigidbody_.velocity = gravityMaxSpeed * Vector3.down;
         }
 
         isWalking = moveDir != Vector3.zero;
@@ -61,20 +66,20 @@ public class Player : MonoBehaviour {
     void OnCollisionEnter(Collision collision) {
         if (collision.gameObject.GetComponent<Collider>() != null) {
             canJump = true;
-            gravitySpeed = 5;
+            gravityMaxSpeed = 5;
         }
     }
 
     void OnCollisionStay(Collision collision) {
         if (collision.gameObject.GetComponent<Collider>() != null) {
             canJump = true;
-            gravitySpeed = 5;
+            gravityMaxSpeed = 5;
         }
     }
 
     void OnCollisionExit(Collision collision) {
         canJump = false;
-        gravitySpeed = 20;
+        gravityMaxSpeed = 20;
     }
 
     private void HandleFacement() {
