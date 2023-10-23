@@ -11,6 +11,7 @@ public class Player : MonoBehaviour {
     [SerializeField] private float moveSpeed;
     [SerializeField] private float rotateSpeed;
     [SerializeField] private float jumpSpeed;
+    [SerializeField] private float gravityMaxSpeedWithFriction;
     [SerializeField] private float gravityMaxSpeed;
     [SerializeField] private float buttonPressedWindow;
     [SerializeField] private GameInput gameInput;
@@ -27,6 +28,7 @@ public class Player : MonoBehaviour {
         rotateSpeed = 10f;
         jumpSpeed = 25f;
         gravityMaxSpeed = 20f;
+        gravityMaxSpeedWithFriction = 5f;
         buttonPressedWindow = .3f;
         rigidbody_ = GetComponent<Rigidbody>();
         rigidbody_.useGravity = true;
@@ -66,14 +68,14 @@ public class Player : MonoBehaviour {
     void OnCollisionEnter(Collision collision) {
         if (collision.gameObject.GetComponent<Collider>() != null) {
             canJump = true;
-            gravityMaxSpeed = 5;
+            gravityMaxSpeed = gravityMaxSpeedWithFriction;
         }
     }
 
     void OnCollisionStay(Collision collision) {
         if (collision.gameObject.GetComponent<Collider>() != null) {
             canJump = true;
-            gravityMaxSpeed = 5;
+            gravityMaxSpeed = gravityMaxSpeedWithFriction;
         }
     }
 
