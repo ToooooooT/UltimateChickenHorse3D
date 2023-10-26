@@ -337,6 +337,7 @@ GameObject:
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
   - component: {fileID: 330585548}
+  - component: {fileID: 330585549}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -411,7 +412,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.38268346, y: 0.000000022481224, z: -0.0000000093120285, w: 0.92387956}
+  m_LocalRotation: {x: 0.38268346, y: -0.000000022481213, z: 0.000000009312023, w: 0.92387956}
   m_LocalPosition: {x: -1.55, y: 19.95, z: -20}
   m_LocalScale: {x: 0.93813, y: 0.93813, z: 0.93813}
   m_ConstrainProportionsScale: 0
@@ -496,6 +497,19 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &330585549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fadfd211f3c0c90478df44af1eb08e54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1181833048}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1024,7 +1038,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 986495946}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.38268346, y: 0.000000022481224, z: -0.0000000093120285, w: 0.92387956}
+  m_LocalRotation: {x: 0.38268346, y: -0.000000022481213, z: 0.000000009312023, w: 0.92387956}
   m_LocalPosition: {x: -1.55, y: 19.95, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1044,7 +1058,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52c7ed10551229b4e92e9261f6f8a6be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 986495947}
+  virtualCamera: {fileID: 0}
 --- !u!1 &1018552740 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3294758251327466535, guid: 1c5dda3c7cd3cf742afcade5419faeab,
@@ -1070,6 +1084,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1181833049}
+--- !u!1 &1131522150
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1131522152}
+  - component: {fileID: 1131522151}
+  m_Layer: 0
+  m_Name: Cursor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1131522151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1131522150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9acb51c7bbfab494a9f321f5e3001f91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1131522152
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1131522150}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.572215, y: 3.7622888, z: 2.3681235}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1181833048
 GameObject:
   m_ObjectHideFlags: 0
@@ -1101,6 +1159,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 7
   rotateSpeed: 10
+  jumpSpeed: 30
+  gravitySpeed: 20
+  buttonPressedWindow: 0.3
   gameInput: {fileID: 1765336319}
 --- !u!4 &1181833050
 Transform:
@@ -1400,7 +1461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52c7ed10551229b4e92e9261f6f8a6be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 1989632402}
+  virtualCamera: {fileID: 0}
 --- !u!114 &1989632405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1414,6 +1475,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transparentObject: {fileID: 0}
+  invalidColor: {r: 1, g: 0, b: 0, a: 0.05}
+  validColor: {r: 0, g: 1, b: 0, a: 0.05}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1428,3 +1491,4 @@ SceneRoots:
   - {fileID: 1765336320}
   - {fileID: 258816768}
   - {fileID: 34656005}
+  - {fileID: 1131522152}

@@ -6,6 +6,8 @@ using System;
 public class CameraMovement : MonoBehaviour
 {
     public GameObject transparentObject;
+    public Color invalidColor = new Color(1.0f, 0.0f, 0.0f, 0.05f);
+    public Color validColor = new Color(0.0f, 1.0f, 0.0f, 0.05f);
     private float rotationX = 0;
     private float rotationY = 0;
     //private float objectRotationX = 0;
@@ -14,7 +16,7 @@ public class CameraMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -28,7 +30,7 @@ public class CameraMovement : MonoBehaviour
         {
             rotationX -= mouseY * sensitive * 5;
             rotationY += mouseX * sensitive * 5;
-            rotationY = Mathf.Clamp(rotationY, -90, 90);
+            rotationX = Mathf.Clamp(rotationX, -90, 90);
 
             transform.rotation = Quaternion.Euler(rotationX, rotationY, 0.0f);
         }
@@ -58,14 +60,38 @@ public class CameraMovement : MonoBehaviour
         {
             transform.position += new Vector3(0, -sensitive, 0);
         }
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (transform.position.x < -20)
+        {
+            transform.position = new Vector3(-20, transform.position.y, transform.position.z);
+        }
+        if (transform.position.x > 20)
+        {
+            transform.position = new Vector3(20, transform.position.y, transform.position.z);
+        }
+        if (transform.position.z < -20)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, -20);
+        }
+        if (transform.position.z > 20)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, 20);
+        }
+        if (transform.position.y < 5)
+        {
+            transform.position = new Vector3(transform.position.x, 5, transform.position.z);
+        }
+        if (transform.position.y > 45)
+        {
+            transform.position = new Vector3(transform.position.x, 45, transform.position.z);
+        }
+        if (Input.GetKeyDown(KeyCode.Z) && !isAddingObject)
         {
             isAddingObject = true;
             TransparentObject(PrimitiveType.Cube);
         }
         else if (Input.GetKeyDown(KeyCode.E))
         {
-            if (isAddingObject)
+            if (isAddingObject && placingIsValid())
             {
                 CreateObject(PrimitiveType.Cube); 
                 isAddingObject = false;
@@ -76,12 +102,14 @@ public class CameraMovement : MonoBehaviour
             AddingObject(mouseX, mouseY, 5.0f);
         }
     }
+
     private void TransparentObject(PrimitiveType type)
     {
         transparentObject = GameObject.CreatePrimitive(type);
         transparentObject.name = "transparent cube";
         
     }
+    
     private void CreateObject(PrimitiveType type)
     {
         var newObject = GameObject.CreatePrimitive(type);
@@ -90,10 +118,40 @@ public class CameraMovement : MonoBehaviour
         newObject.transform.rotation = transparentObject.transform.rotation;
         Destroy(transparentObject);
     }
+    private bool placingIsValid()
+    {
+        // not finished
+        if (transparentObject.transform.position.x > 0)
+            return false;
+        return true;
+    }
     private void AddingObject(float mouseX, float mouseY, float sensitive)
     {
-        transparentObject.transform.position = transform.position + 25.0f * transform.forward;
-
+        transparentObject.transform.position = transform.position + 25.0f* transform.forward;
+        if (transparentObject.transform.position.x < -25)
+        {
+            transparentObject.transform.position = transparentObject.transform.position - Math.Abs((-25f - transparentObject.transform.position.x) / transform.forward.x) * transform.forward;
+        }
+        if (transparentObject.transform.position.x > 25)
+        {
+            transparentObject.transform.position = transparentObject.transform.position - Math.Abs((25f - transparentObject.transform.position.x) / transform.forward.x) * transform.forward;
+        }
+        if (transparentObject.transform.position.y < 0)
+        {
+            transparentObject.transform.position = transparentObject.transform.position - Math.Abs((0f - transparentObject.transform.position.y) / transform.forward.y) * transform.forward;
+        }
+        if (transparentObject.transform.position.y > 50)
+        {
+            transparentObject.transform.position = transparentObject.transform.position - Math.Abs((50f - transparentObject.transform.position.y) / transform.forward.y) * transform.forward;
+        }
+        if (transparentObject.transform.position.z < -25)
+        {
+            transparentObject.transform.position = transparentObject.transform.position - Math.Abs((-25f - transparentObject.transform.position.z) / transform.forward.z) * transform.forward;
+        }
+        if (transparentObject.transform.position.z > 25)
+        {
+            transparentObject.transform.position = transparentObject.transform.position - Math.Abs((23f - transparentObject.transform.position.z) / transform.forward.z) * transform.forward;
+        }
 
         if (Input.GetMouseButton(0))
         {
@@ -140,21 +198,29 @@ public class CameraMovement : MonoBehaviour
             transparentObject.transform.rotation = Quaternion.LookRotation(finalForward, cameraForward);
 
         }
-            /*
-                objectRotationX -= mouseY;
-                objectRotationY += mouseX;
-                objectRotationY = Mathf.Clamp(objectRotationY, -90, 90);
-
-                transparentObject.transform.rotation = Quaternion.Euler(objectRotationX, objectRotationY, 0.0f);
-                */
-        
         else
         {
             rotationX -= mouseY ;
             rotationY += mouseX ;
-            rotationY = Mathf.Clamp(rotationY, -90, 90);
+            rotationX = Mathf.Clamp(rotationX, -90, 90);
 
             transform.rotation = Quaternion.Euler(rotationX, rotationY, 0.0f);
+        }
+        if (placingIsValid())
+        {
+            Renderer renderer = transparentObject.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = validColor;
+            }
+        }
+        else
+        {
+            Renderer renderer = transparentObject.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = invalidColor;
+            }
         }
     }
 
