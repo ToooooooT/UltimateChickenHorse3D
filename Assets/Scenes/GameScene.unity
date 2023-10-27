@@ -1048,7 +1048,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52c7ed10551229b4e92e9261f6f8a6be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 986495947}
+  virtualCamera: {fileID: 0}
 --- !u!1 &1018552740 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3294758251327466535, guid: 1c5dda3c7cd3cf742afcade5419faeab,
@@ -1084,12 +1084,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1181833050}
   - component: {fileID: 1181833049}
-  - component: {fileID: 1181833051}
   - component: {fileID: 1181833052}
   - component: {fileID: 1181833053}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1108,6 +1107,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 7
   rotateSpeed: 10
+  jumpSpeed: 30
+  gravitySpeed: 20
+  buttonPressedWindow: 0.3
   gameInput: {fileID: 1765336319}
 --- !u!4 &1181833050
 Transform:
@@ -1125,33 +1127,6 @@ Transform:
   - {fileID: 1018552741}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1181833051
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1181833048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dcd52f42bb8f3145ab5bbb08fe70c28, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myEvents:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1554859280}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: touchFlag
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!136 &1181833052
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1333,6 +1308,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 827b13dd3a0f0604cb9d315dab8f91c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myEvents:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1554859280}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: touchFlag
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!95 &1554859280
 Animator:
   serializedVersion: 5
@@ -1507,7 +1497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52c7ed10551229b4e92e9261f6f8a6be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 1989632402}
+  virtualCamera: {fileID: 0}
 --- !u!114 &1989632405
 MonoBehaviour:
   m_ObjectHideFlags: 0

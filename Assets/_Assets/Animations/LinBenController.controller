@@ -81,6 +81,12 @@ AnimatorController:
   m_Name: LinBenController
   serializedVersion: 5
   m_AnimatorParameters:
+  - m_Name: 87
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 1
+    m_Controller: {fileID: 0}
   - m_Name: touchFlag
     m_Type: 9
     m_DefaultFloat: 0

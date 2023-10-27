@@ -9,3 +9,4 @@ Temp/
 *.csproj
 *.dwlt
 obj/
+UserSettings/
