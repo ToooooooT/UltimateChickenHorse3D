@@ -10,8 +10,6 @@ public class CameraMovement : MonoBehaviour
     public Color validColor = new Color(0.0f, 1.0f, 0.0f, 0.05f);
     private float rotationX = 0;
     private float rotationY = 0;
-    //private float objectRotationX = 0;
-    //private float objectRotationY = 0;
     bool isAddingObject = false;
     // Start is called before the first frame update
     void Start()
@@ -156,45 +154,35 @@ public class CameraMovement : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             //mouseY = 0;
-            // ?取?像机的前向向量
             Vector3 cameraForward = -transform.right;
 
-            // ?算物体?垂直?旋?的角度
             float verticalRotationAngle = -mouseY * sensitive;
 
-            // ?算物体?水平?旋?的角度，?其限制在-90度到90度之?
             float horizontalRotationAngle = mouseX * sensitive;
             horizontalRotationAngle = Mathf.Clamp(horizontalRotationAngle, -90f, 90f);
 
-            // ?算旋?后的前向方向
             Vector3 transparentObjectForward = transparentObject.transform.forward;
             transparentObjectForward.y = 0.0f;
             Vector3 rotatedForward = Quaternion.AngleAxis(horizontalRotationAngle, Vector3.up) * transparentObjectForward;
             Vector3 finalForward = Quaternion.AngleAxis(verticalRotationAngle, cameraForward) * rotatedForward;
 
-            // 使用LookRotation函??置物体的旋?
             transparentObject.transform.rotation = Quaternion.LookRotation(finalForward, cameraForward);
         }
         else if (Input.GetMouseButton(1))
         {
             mouseX = 0;
-            // ?取?像机的前向向量
             Vector3 cameraForward = -transform.right;
 
-            // ?算物体?垂直?旋?的角度
             float verticalRotationAngle = -mouseY * sensitive;
 
-            // ?算物体?水平?旋?的角度，?其限制在-90度到90度之?
             float horizontalRotationAngle = mouseX * sensitive;
             horizontalRotationAngle = Mathf.Clamp(horizontalRotationAngle, -90f, 90f);
 
-            // ?算旋?后的前向方向
             Vector3 transparentObjectForward = transparentObject.transform.forward;
             //transparentObjectForward.y = 0.0f;
             Vector3 rotatedForward = Quaternion.AngleAxis(horizontalRotationAngle, Vector3.up) * transparentObjectForward;
             Vector3 finalForward = Quaternion.AngleAxis(verticalRotationAngle, cameraForward) * rotatedForward;
 
-            // 使用LookRotation函??置物体的旋?
             transparentObject.transform.rotation = Quaternion.LookRotation(finalForward, cameraForward);
 
         }
