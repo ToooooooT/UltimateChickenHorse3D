@@ -5,20 +5,17 @@ using UnityEngine;
 public class TriggerSelectItem : MonoBehaviour
 {
     // Start is called before the first frame update
-    private GameObject self;
-    void Start()
-    {
+    public GameObject self;
+    void Start() {
         self = gameObject;
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
+    private void OnCollisionEnter(Collision collision) {
         if (collision.gameObject.CompareTag("Player")) {
             // save player's next item
             PlayerPrefs.SetString("Item", self.name);

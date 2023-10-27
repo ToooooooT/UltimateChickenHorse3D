@@ -7,18 +7,16 @@ public class CursorControl : MonoBehaviour
 {
 
     void Start() {
+
     }
 
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(1))
-        {
+    void Update() {
+        if (Input.GetMouseButtonDown(1)) {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }

@@ -6,24 +6,22 @@ using UnityEngine.SceneManagement;
 
 public class WinVideoPlayerScript : MonoBehaviour
 {
-    public VideoPlayer videoPlayer;
-    public bool readyBeGhost = false;
+    private VideoPlayer videoPlayer;
+    private bool readyBeGhost = false;
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         videoPlayer = GetComponent<VideoPlayer>();
         videoPlayer.loopPointReached += VideoFinished;
     }
-    private void VideoFinished(VideoPlayer vp)
-    {
-        if (vp == videoPlayer)
-        {
+    
+    // Update is called once per frame
+    void Update() {
+
+    }
+
+    private void VideoFinished(VideoPlayer vp) {
+        if (vp == videoPlayer) {
             SceneManager.LoadScene("StartUI");
         }
-    }
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }
