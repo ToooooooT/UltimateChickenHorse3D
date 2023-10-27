@@ -6,16 +6,13 @@ public class enable : MonoBehaviour
 {
     public CinemachineVirtualCamera virtualCamera;
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.C)) {
             virtualCamera.enabled = !virtualCamera.enabled;
         }
     }

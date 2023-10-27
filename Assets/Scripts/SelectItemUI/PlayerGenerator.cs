@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class PlayerGenerator : MonoBehaviour
 {
-    public Vector2 spawnArea;
-    public Vector2 size;
-    public GameObject[] playersToGenerate;
-    public int numberOfPlayersToGenerate;
+    private Vector2 spawnArea;
+    private Vector2 size;
+    private GameObject[] playersToGenerate;
+    private int numberOfPlayersToGenerate;
 
-    void Start()
-    {
+    void Start() {
         for (int i = 0; i < numberOfPlayersToGenerate; i++) {
             float randomX = Random.Range(spawnArea.x - size.x / 2, spawnArea.x + size.x / 2);
             float randomZ = Random.Range(spawnArea.y - size.y / 2, spawnArea.y + size.y / 2);

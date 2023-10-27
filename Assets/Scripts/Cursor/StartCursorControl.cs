@@ -5,17 +5,16 @@ using UnityEngine;
 public class StartCursorControl : MonoBehaviour
 {
     void Start() {
+
     }
 
     void Update() {
-        if (Input.GetMouseButtonDown(1))
-        {
+        if (Input.GetMouseButtonDown(1)) {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }

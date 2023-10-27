@@ -4,15 +4,13 @@ using UnityEngine;
 
 public class ObjectGenerator : MonoBehaviour
 {
-    public GameObject[] objectsToGenerate;
-    public Vector3 spawnArea;
-    public Vector3 size;
-    public int numberOfObjectsToGenerate;
+    private GameObject[] objectsToGenerate;
+    private Vector3 spawnArea;
+    private Vector3 size;
+    private int numberOfObjectsToGenerate;
 
-    void Start()
-    {
-        for (int i = 0; i < numberOfObjectsToGenerate; i++)
-        {
+    void Start() {
+        for (int i = 0; i < numberOfObjectsToGenerate; i++) {
             int randomIndex = Random.Range(0, objectsToGenerate.Length);
             GameObject objectToGenerate = objectsToGenerate[randomIndex];
 
