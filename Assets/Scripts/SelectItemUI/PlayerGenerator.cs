@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class PlayerGenerator : MonoBehaviour
 {
-    private Vector2 spawnArea;
-    private Vector2 size;
-    private GameObject[] playersToGenerate;
-    private int numberOfPlayersToGenerate;
+    public GameObject[] playersToGenerate;
+    [SerializeField] private Vector2 spawnArea;
+    [SerializeField] private Vector2 size;
+    [SerializeField] private int numberOfPlayersToGenerate;
 
     void Start() {
         for (int i = 0; i < numberOfPlayersToGenerate; i++) {

@@ -5,7 +5,7 @@ using UnityEngine;
 public class TriggerSelectItem : MonoBehaviour
 {
     // Start is called before the first frame update
-    private GameObject self;
+    public GameObject self;
     void Start() {
         self = gameObject;
     }

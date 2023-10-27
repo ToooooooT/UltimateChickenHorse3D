@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class StartButtonEvent : MonoBehaviour
 {
-    private Image image;
+    public Image image;
     private float alpha = 0.3f;
     // Start is called before the first frame update
     void Start() {

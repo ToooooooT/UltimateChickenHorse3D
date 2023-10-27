@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PartyModeBottonEvent : MonoBehaviour
 {
-    private Image image;
+    public Image image;
     private float alpha = 0.0f;
     // Start is called before the first frame update
     void Start() {
