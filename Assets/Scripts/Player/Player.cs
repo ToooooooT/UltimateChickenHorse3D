@@ -20,7 +20,6 @@ public class Player : MonoBehaviour {
     private bool isJumping = false;
     private bool canJump = false;
     private float buttonPressedTime;
-    // private CapsuleCollider capsuleCollider;
     private Rigidbody rigidbody_;
 
     public void Start() {
@@ -32,7 +31,6 @@ public class Player : MonoBehaviour {
         buttonPressedWindow = .3f;
         rigidbody_ = GetComponent<Rigidbody>();
         rigidbody_.useGravity = true;
-        // capsuleCollider = GetComponent<CapsuleCollider>();
     }
 
     private void Update() {

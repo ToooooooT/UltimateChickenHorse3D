@@ -7,29 +7,16 @@ public class LinBenScript : MonoBehaviour
 {
     [Header("Custom Event")]
     public UnityEvent myEvents;
-    private Animator anim;
-    private Transform pos;
     // Start is called before the first frame update
-    void Start()
-    {
-        anim = GetComponent<Animator>();
-        pos = GetComponent<Transform>();
+    void Start() {
+
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            anim.SetBool("pointing", !anim.GetBool("pointing"));
-        }
-        /*if(Input.GetKeyDown(KeyCode.W))
-        {
-            Debug.Log("press w");
-            Debug.Log(pos.position.x);
-            pos.position = pos.position + new Vector3((float) 0.1, 0, 0);
-        }*/
+    void Update() {
+
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
