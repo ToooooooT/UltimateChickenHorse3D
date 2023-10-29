@@ -5,15 +5,15 @@ using UnityEngine;
 public class PlayerGenerator : MonoBehaviour
 {
     public GameObject[] playersToGenerate;
-    [SerializeField] private Vector2 spawnArea;
-    [SerializeField] private Vector2 size;
-    [SerializeField] private int numberOfPlayersToGenerate;
+    [SerializeField] private Vector3 spawnArea;
+    [SerializeField] private Vector3 size;
+    [SerializeField] private int numberOfPlayersToGenerate = 1;
 
     void Start() {
         for (int i = 0; i < numberOfPlayersToGenerate; i++) {
             float randomX = Random.Range(spawnArea.x - size.x / 2, spawnArea.x + size.x / 2);
-            float randomZ = Random.Range(spawnArea.y - size.y / 2, spawnArea.y + size.y / 2);
-            Vector3 randomPosition = new Vector3(randomX, 0.1f, randomZ);
+            float randomZ = Random.Range(spawnArea.z - size.z / 2, spawnArea.z + size.z / 2);
+            Vector3 randomPosition = new Vector3(randomX, spawnArea.y, randomZ);
 
             Instantiate(playersToGenerate[i], randomPosition, Quaternion.identity);
         }

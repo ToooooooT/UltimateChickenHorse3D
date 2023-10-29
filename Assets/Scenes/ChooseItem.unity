@@ -272,7 +272,7 @@ Transform:
   m_GameObject: {fileID: 680701243}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 3000, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -390,7 +390,7 @@ Transform:
   m_GameObject: {fileID: 692797988}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 3003, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -640,7 +640,7 @@ Transform:
   m_GameObject: {fileID: 926572419}
   serializedVersion: 2
   m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 25, z: -25}
+  m_LocalPosition: {x: 0, y: 3025, z: -25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -675,10 +675,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05ce6ef454f2d6e4c944bfbabac67cf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnArea: {x: 0, y: 0}
-  size: {x: 20, y: 20}
   playersToGenerate:
   - {fileID: 3111376107606958957, guid: 6529ee6f68cef624a9ec9fd842f3aedd, type: 3}
+  spawnArea: {x: 0, y: 3000, z: 0}
+  size: {x: 20, y: 20, z: 0}
   numberOfPlayersToGenerate: 1
 --- !u!4 &1003940809
 Transform:
@@ -689,7 +689,7 @@ Transform:
   m_GameObject: {fileID: 1003940807}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.8830001, y: 21.69362, z: -4.5052834}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -724,10 +724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 829ab43ef26ac0e4ebceac3fe1f0683d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectsToGenerate:
-  - {fileID: 5056332989640058412, guid: c6c29fe58fa9549489045851c0b81bc9, type: 3}
-  - {fileID: 3569240716298096555, guid: 43944d6dda321524e8786a499b90610e, type: 3}
-  spawnArea: {x: 0, y: 20, z: 0}
+  spawnArea: {x: 0, y: 3020, z: 0}
   size: {x: 20, y: 0, z: 20}
   numberOfObjectsToGenerate: 10
 --- !u!4 &1394475194
@@ -739,7 +736,7 @@ Transform:
   m_GameObject: {fileID: 1394475192}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.3933612, y: 1.220459, z: 0}
+  m_LocalPosition: {x: 0, y: 3000, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -776,7 +773,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ded7f65e8861d24992b78c6bcc30a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transparentObject: {fileID: 0}
 --- !u!114 &2093204767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -850,9 +846,9 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 2093204769}
-  - {fileID: 648380366}
-  - {fileID: 680701247}
-  - {fileID: 692797991}
   - {fileID: 926572424}
+  - {fileID: 648380366}
+  - {fileID: 692797991}
+  - {fileID: 680701247}
   - {fileID: 1394475194}
   - {fileID: 1003940809}

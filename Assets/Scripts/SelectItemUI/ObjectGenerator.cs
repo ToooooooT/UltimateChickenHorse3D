@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class ObjectGenerator : MonoBehaviour
 {
-    public GameObject[] objectsToGenerate;
     [SerializeField] private Vector3 spawnArea;
     [SerializeField] private Vector3 size;
     [SerializeField] private int numberOfObjectsToGenerate;
+    private const string folderPath = "Item";
 
     void Start() {
+        GameObject[] objectsToGenerate = LoadAllPrefabsInFolder(folderPath);
+
         for (int i = 0; i < numberOfObjectsToGenerate; i++) {
             int randomIndex = Random.Range(0, objectsToGenerate.Length);
             GameObject objectToGenerate = objectsToGenerate[randomIndex];
@@ -28,5 +30,19 @@ public class ObjectGenerator : MonoBehaviour
                 rb = generatedObject.AddComponent<Rigidbody>();
             }
         }
+    }
+
+    GameObject[] LoadAllPrefabsInFolder(string folderPath)
+    {
+        List<GameObject> prefabs = new List<GameObject>();
+        Object[] loadedObjects = Resources.LoadAll(folderPath);
+
+        foreach (Object obj in loadedObjects) {
+            if (obj is GameObject) {
+                prefabs.Add(obj as GameObject);
+            }
+        }
+
+        return prefabs.ToArray();
     }
 }
