@@ -1,21 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerGenerator : MonoBehaviour
 {
-    public GameObject[] playersToGenerate;
-    [SerializeField] private Vector3 spawnArea;
-    [SerializeField] private Vector3 size;
     [SerializeField] private int numberOfPlayersToGenerate = 1;
+    private const string FOLDERPATH = "Player";
+    public State state;
+
+    void Awake() {
+        GeneratePlayers();
+    }
 
     void Start() {
-        for (int i = 0; i < numberOfPlayersToGenerate; i++) {
-            float randomX = Random.Range(spawnArea.x - size.x / 2, spawnArea.x + size.x / 2);
-            float randomZ = Random.Range(spawnArea.z - size.z / 2, spawnArea.z + size.z / 2);
-            Vector3 randomPosition = new Vector3(randomX, spawnArea.y, randomZ);
 
-            Instantiate(playersToGenerate[i], randomPosition, Quaternion.identity);
+    }
+
+    void Update() {
+    }
+
+    public void GeneratePlayers() {
+        GameObject[] playersToGenerate = LoadPlayerPrefabsInFolder(FOLDERPATH);
+        float far = 3500;
+        for (int i = 0; i < numberOfPlayersToGenerate; i++) {
+            Vector3 farPosition = new(far, far, far);
+            Instantiate(playersToGenerate[0], farPosition, Quaternion.identity);
         }
+    }
+
+    GameObject[] LoadPlayerPrefabsInFolder(string folderPath) {
+        List<GameObject> prefabs = new();
+        Object[] loadedObjects = Resources.LoadAll(folderPath);
+
+        foreach (Object obj in loadedObjects) {
+            if (obj is GameObject) {
+                prefabs.Add(obj as GameObject);
+            }
+        }
+
+        return prefabs.ToArray();
     }
 }
