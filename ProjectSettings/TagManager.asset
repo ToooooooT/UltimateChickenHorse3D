@@ -11,6 +11,7 @@ TagManager:
   - ItemGenerator
   - ObjectGenerator
   - Camera
+  - ChoosingItem
   layers:
   - Default
   - TransparentFX
