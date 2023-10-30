@@ -31,8 +31,7 @@ public class ItemGenerator : MonoBehaviour
             Vector3 randomPosition = new(randomX, randomY, randomZ);
 
             GameObject generatedItem = Instantiate(objectToGenerate, randomPosition, Quaternion.identity);
-            generatedItem.tag = "Item";
-            // generatedObject.AddComponent<TriggerSelectItem>();
+            generatedItem.tag = "ChoosingItem";
             if (!generatedItem.TryGetComponent<Rigidbody>(out _)) {
                 // if no rigidbody, then add
                 generatedItem.AddComponent<Rigidbody>();
