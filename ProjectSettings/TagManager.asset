@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Wall
+  - PlayerGenerator
+  - GameInput
+  - Item
+  - ItemGenerator
+  - ObjectGenerator
+  - Camera
   layers:
   - Default
   - TransparentFX

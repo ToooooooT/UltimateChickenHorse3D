@@ -23,14 +23,10 @@ public class LinBenScript : MonoBehaviour
             targetPosition.y = transform.position.y; // Maintain the same Y level
             transform.LookAt(targetPosition);
 
-            if (myEvents == null) {
-                print("myEventTriggerOnEnter was triggered but myEvents was null");
-            }
-            else {
-                print("myEventTriggerOnEnter Activated. Triggering" + myEvents);
+            if (myEvents != null) {
                 myEvents.Invoke();
             }
-            other.GetComponent<Player>().enabled = false;
+            other.GetComponent<Player>().state = Player.State.WIN;
         }
     }
 }

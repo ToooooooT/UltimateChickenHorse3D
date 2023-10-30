@@ -6,17 +6,17 @@ using System;
 public class CameraMovement : MonoBehaviour
 {
     private GameObject transparentObject;
+    private GameObject[] playerObjects;
     private Color invalidColor = new(1.0f, 0.0f, 0.0f, 0.05f);
     private Color validColor = new(0.0f, 1.0f, 0.0f, 0.05f);
     private float rotationX = 0;
     private float rotationY = 0;
     public bool isAddingObject = false;
-    // Start is called before the first frame update
-    void Start() {
 
+    void Start() {
+        playerObjects = GameObject.FindGameObjectsWithTag("Player");
     }
 
-    // Update is called once per frame
     void Update() {
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
@@ -67,31 +67,49 @@ public class CameraMovement : MonoBehaviour
         if (transform.position.y > y2) {
             transform.position = new Vector3(transform.position.x, y2, transform.position.z);
         }
-        if (Input.GetKeyDown(KeyCode.Z) && !isAddingObject) {
+        string name = playerObjects[0].GetComponent<Player>().GetItemName();
+        if (name != null && !isAddingObject) {
             isAddingObject = true;
-            TransparentObject(PrimitiveType.Cube);
+            TransparentObject();
         } else if (Input.GetKeyDown(KeyCode.E)) {
             if (isAddingObject && PlacingIsValid()) {
-                CreateObject(PrimitiveType.Cube); 
+                CreateObject(); 
                 isAddingObject = false;
             }
         }
-        if (isAddingObject) {
+        if (name != null && isAddingObject) {
             AddingObject(mouseX, mouseY, 5.0f);
         }
     }
 
-    private void TransparentObject(PrimitiveType type) {
-        transparentObject = GameObject.CreatePrimitive(type);
-        transparentObject.name = "transparent cube";
-        
+    private void TransparentObject() {
+        string name = playerObjects[0].GetComponent<Player>().GetItemName();
+        if (name == "Cube") {
+            transparentObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            transparentObject.name = "transparent cube";
+        } else if (name == "Sphere") {
+            transparentObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            transparentObject.name = "transparent sphere";
+        } else {
+            Debug.Log(name);
+        }
     }
     
-    private void CreateObject(PrimitiveType type) {
-        var newObject = GameObject.CreatePrimitive(type);
-        newObject.name = "new";
-        newObject.transform.SetPositionAndRotation(transparentObject.transform.position, transparentObject.transform.rotation);
+    private void CreateObject() {
+        string name = playerObjects[0].GetComponent<Player>().GetItemName();
+        if (name == "Cube") {
+            var newObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            newObject.name = "new";
+            newObject.transform.SetPositionAndRotation(transparentObject.transform.position, transparentObject.transform.rotation);
+            newObject.tag = "Wall";
+        } else if (name == "Sphere") {
+            var newObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            newObject.name = "new";
+            newObject.transform.SetPositionAndRotation(transparentObject.transform.position, transparentObject.transform.rotation);
+            newObject.tag = "Wall";
+        }
         Destroy(transparentObject);
+        playerObjects[0].GetComponent<Player>().RemoveItem();
     }
 
     private bool PlacingIsValid() {
