@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour {
    
-    public enum State { GAME, SELECT_ITEM, STOP };
+    public enum State { GAME, SELECT_ITEM, STOP, WIN, LOSE };
 
     [SerializeField] private float moveSpeed;
     [SerializeField] private float accelerateMoveSpeed;
@@ -146,7 +146,7 @@ public class Player : MonoBehaviour {
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit) {
-        if (state == State.SELECT_ITEM && hit.gameObject.CompareTag("Item")) {
+        if (state == State.SELECT_ITEM && hit.gameObject.CompareTag("ChoosingItem")) {
             item = hit.gameObject.name;
             // Remove the odd name ending
             item = item.Replace("(Clone)", "");
