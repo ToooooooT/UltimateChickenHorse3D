@@ -6,13 +6,14 @@ using UnityEngine.SceneManagement;
 
 public class StageController : MonoBehaviour
 {
-    private enum Stage {BEFORE_SELECT_ITEM, SELECT_ITEM, PLACE_ITEM, PLAY};
+    private enum Stage {BEFORE_SELECT_ITEM, SELECT_ITEM, PLACE_ITEM, PLAY, SCOREBOARD};
 
     private string gameMode;
     private Stage stage;
     private GameObject[] playerObjects;
     private GameObject itemGenerator;
     private GameObject[] cameraObjects;
+    private GameObject scoreBoardObject;
 
     void Start() {
         gameMode = PlayerPrefs.GetString("GameMode", "Party");
@@ -24,6 +25,7 @@ public class StageController : MonoBehaviour
         playerObjects = GameObject.FindGameObjectsWithTag("Player");
         itemGenerator = GameObject.FindGameObjectWithTag("ItemGenerator");
         cameraObjects = GameObject.FindGameObjectsWithTag("Camera");
+        scoreBoardObject = GameObject.FindGameObjectWithTag("ScoreBoard");
     }
 
     void Update() {
@@ -54,6 +56,9 @@ public class StageController : MonoBehaviour
             CheckPlayersState();
             CheckAllLose();
             CheckWin();
+            break;
+        case Stage.SCOREBOARD:
+            moveWinner();
             break;
         }
     }
@@ -151,8 +156,7 @@ public class StageController : MonoBehaviour
         for (int i = 0; i < playerObjects.Length; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.state == Player.State.WIN) {
-                SceneManager.LoadScene("WIN", LoadSceneMode.Additive);
-                stage = Stage.BEFORE_SELECT_ITEM;
+                stage = Stage.SCOREBOARD;
             }
         }
     }
@@ -167,4 +171,22 @@ public class StageController : MonoBehaviour
         stage = Stage.BEFORE_SELECT_ITEM;
     }
 
+    private void moveWinner() {
+        WinnerMoving winnerMoving = scoreBoardObject.GetComponent<WinnerMoving>();
+        for (int i = 0; i < playerObjects.Length; i++) {
+            Player player = playerObjects[i].GetComponent<Player>();
+            if (player.state == Player.State.WIN) {
+                Vector3 position = winnerMoving.GetPlayerCubePosition(i);
+                position.y += 1;
+                player.ModifyPosition(position);
+                player.state = Player.State.GAME;
+                winnerMoving.winner = i;
+            }
+        }
+        // TODO: load video when really win
+        // SceneManager.LoadScene("WIN", LoadSceneMode.Additive);
+        if (winnerMoving.IsFinishMoving()) {
+            stage = Stage.BEFORE_SELECT_ITEM;
+        }
+    }
 }

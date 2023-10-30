@@ -12,6 +12,7 @@ TagManager:
   - ObjectGenerator
   - Camera
   - ChoosingItem
+  - ScoreBoard
   layers:
   - Default
   - TransparentFX

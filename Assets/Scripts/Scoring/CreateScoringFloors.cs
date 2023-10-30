@@ -6,12 +6,11 @@ public class CreateScoringFloors : MonoBehaviour
 {
     // Start is called before the first frame update
     public int WinScore;
-    void Start()
-    {
+    void Start() {
         CreateFloors(WinScore);
     }
-    public void CreateFloors(int WinScore)
-    {
+
+    private void CreateFloors(int WinScore) {
         WinScore++;
         for (int i = 0; i < WinScore; i++) {
 
