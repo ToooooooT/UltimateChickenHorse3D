@@ -129,7 +129,8 @@ public class StageController : MonoBehaviour
                 virtualCameraEnable.Disable();
             } 
             if (cameraObjects[i].name == "VirtualCamera") {
-                cameraObjects[i].transform.position = Vector3.zero;
+                Vector3 position = new(0, 10, 0);
+                cameraObjects[i].transform.position = position;
                 cameraObjects[i].transform.rotation = Quaternion.Euler(0, 0, 0);
                 virtualCameraEnable.Enable();
             } 
