@@ -15,12 +15,14 @@ public class EnableCamera : MonoBehaviour
     }
 
     void Update() {
+        /*
         if (virtualCamera.enabled && objectName == "FollowCamera" && virtualCamera.Follow == null) {
             // make the virtual camera follow the player
             for (int i = 0; i < playerObjects.Length; ++i) {
                 virtualCamera.Follow = playerObjects[i].transform; 
             }
         }
+        */
     }
 
     public void Enable() {
