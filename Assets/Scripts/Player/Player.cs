@@ -4,38 +4,59 @@ using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering.UI;
 using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour {
    
+    public enum State { GAME, SELECT_ITEM, STOP };
+
     [SerializeField] private float moveSpeed;
+    [SerializeField] private float accelerateMoveSpeed;
+    [SerializeField] private float moveSpeedJumpWallratio;
     [SerializeField] private float rotateSpeed;
     [SerializeField] private float jumpSpeed;
     [SerializeField] private float gravityMaxSpeedWithFriction;
     [SerializeField] private float gravityMaxSpeed;
+    [SerializeField] private float gravity;
     [SerializeField] private float buttonPressedWindow;
-    [SerializeField] private GameInput gameInput;
 
     private bool isWalking = false;
     private bool isJumping = false;
     private bool canJump = false;
     private float buttonPressedTime;
-    private Rigidbody rigidbody_;
+    private float verticalVelocity;
+    public State state;
+    private CharacterController controller;
+    private GameInput gameInput;
+    private string item;
+    
 
-    public void Start() {
-        moveSpeed = 7f;
+    private void Awake() {
+        gameInput = GameObject.FindGameObjectWithTag("GameInput").GetComponent<GameInput>();
+        controller = GetComponent<CharacterController>();
+        state = State.STOP;
+    }
+
+    private void Start() {
+        moveSpeed = 5f;
+        accelerateMoveSpeed = 7f;
+        moveSpeedJumpWallratio = 5f;
         rotateSpeed = 10f;
         jumpSpeed = 25f;
+        gravity = 60;
         gravityMaxSpeed = 20f;
         gravityMaxSpeedWithFriction = 5f;
         buttonPressedWindow = .3f;
-        rigidbody_ = GetComponent<Rigidbody>();
-        rigidbody_.useGravity = true;
+        item = null;
     }
 
     private void Update() {
-        HandleMovement();
-        HandleFacement();
+        if (state == State.GAME || state == State.SELECT_ITEM) {
+            HandleMovement();
+            HandleJump();
+            HandleFacement();
+        }
     }
 
     public bool IsWalking() {
@@ -43,47 +64,108 @@ public class Player : MonoBehaviour {
     }
 
     private void HandleMovement() {
+        // velocity = sqrt(JumpHeight * (-2) * gravity)
         Vector3 moveDir = gameInput.GetMovementVectorNormalized();
-        transform.position += moveSpeed * Time.deltaTime * moveDir;
+        float velocity = gameInput.AccelerateMove() ? accelerateMoveSpeed : moveSpeed;
+        Vector3 moveVector = velocity * Time.deltaTime * moveDir;
+        controller.Move(moveVector);
+        isWalking = moveDir != Vector3.zero;
+    }
 
+    private void HandleJump() {
+        Vector3 moveVector = Vector3.zero;
+        bool isWall = CheckWall();
+        bool isGrounded = IsGrounded();
+        canJump = isWall || isGrounded;
         if (Input.GetKeyDown(KeyCode.Space) && canJump) {
             isJumping = true;
             buttonPressedTime = 0;
         }
+        if (isJumping && isWall) {
+            WallJump();
+            return;
+        }
         if (isJumping) {
             buttonPressedTime += Time.deltaTime;
-            rigidbody_.velocity = jumpSpeed * Vector3.up;
+            verticalVelocity = jumpSpeed;
             if (buttonPressedTime > buttonPressedWindow || Input.GetKeyUp(KeyCode.Space)) {
                 isJumping = false;
+                verticalVelocity = 0;
             }
-        } else if (rigidbody_.velocity.y < -gravityMaxSpeed) {
-            rigidbody_.velocity = gravityMaxSpeed * Vector3.down;
+        } else {
+            verticalVelocity -= gravity * Time.deltaTime;
         }
 
-        isWalking = moveDir != Vector3.zero;
+        verticalVelocity = Mathf.Clamp(verticalVelocity, 
+                                        isWall ? -gravityMaxSpeedWithFriction : -gravityMaxSpeed, 
+                                        float.PositiveInfinity);
+        moveVector.y = verticalVelocity;
+        controller.Move(moveVector * Time.deltaTime);
     }
 
-    void OnCollisionEnter(Collision collision) {
-        if (collision.gameObject.GetComponent<Collider>() != null) {
-            canJump = true;
-            gravityMaxSpeed = gravityMaxSpeedWithFriction;
+    private void WallJump() {
+        Vector3 moveVector = Vector3.zero;
+        verticalVelocity = 20;
+        Vector3 p1 = transform.position + controller.center + 0.5F * -controller.height * Vector3.up;
+        Vector3 p2 = p1 + Vector3.up * controller.height;
+        float castDistance = .2f;
+        if (Physics.CapsuleCast(p1, p2, controller.radius, transform.forward, out RaycastHit hit, castDistance) 
+                && hit.collider.CompareTag("Wall")) {
+            moveVector = moveSpeed * moveSpeedJumpWallratio * hit.normal;
         }
+        moveVector.y = verticalVelocity;
+        controller.Move(moveVector * Time.deltaTime);
+        isJumping = false;
     }
 
-    void OnCollisionStay(Collision collision) {
-        if (collision.gameObject.GetComponent<Collider>() != null) {
-            canJump = true;
-            gravityMaxSpeed = gravityMaxSpeedWithFriction;
-        }
+    private bool CheckWall() {
+        Vector3 p1 = transform.position + controller.center + 0.5F * -controller.height * Vector3.up;
+        Vector3 p2 = p1 + Vector3.up * controller.height;
+        float castDistance = .2f;
+        return Physics.CapsuleCast(p1, p2, controller.radius, transform.forward, out RaycastHit hit, castDistance)
+                && hit.collider.CompareTag("Wall");
     }
 
-    void OnCollisionExit(Collision collision) {
-        canJump = false;
-        gravityMaxSpeed = 20;
+    private bool IsGrounded() {
+        Vector3 p1 = transform.position + controller.center;
+        float castDistance = .2f;
+        return Physics.SphereCast(p1, controller.height / 2, Vector3.down, out RaycastHit hit, castDistance) 
+                && hit.collider.CompareTag("Wall");
     }
 
     private void HandleFacement() {
         Vector3 moveDir = gameInput.GetMovementVectorNormalized();
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
+    }
+
+    public void ModifyPosition(Vector3 newPosition) {
+        bool origin = controller.enabled;
+        controller.enabled = false;
+        transform.position = newPosition;
+        controller.enabled = origin;
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit) {
+        if (state == State.SELECT_ITEM && hit.gameObject.CompareTag("Item")) {
+            item = hit.gameObject.name;
+            // Remove the odd name ending
+            item = item.Replace("(Clone)", "");
+            Destroy(hit.gameObject);
+            // TODO: move to the start position of stage
+            ModifyPosition(Vector3.zero);
+            state = State.STOP;
+        }
+    }   
+
+    public string GetItemName() {
+        return item;
+    }
+
+    public void RemoveItem() {
+        item = null;
+    }
+
+    public bool HaveItem() {
+        return item != null;
     }
 }

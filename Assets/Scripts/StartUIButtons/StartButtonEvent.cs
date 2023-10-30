@@ -8,14 +8,12 @@ public class StartButtonEvent : MonoBehaviour
 {
     public Image image;
     private float alpha = 0.3f;
-    // Start is called before the first frame update
     void Start() {
         Color newColor = image.color;
         newColor.a = alpha;
         image.color = newColor;
     }
 
-    // Update is called once per frame
     void Update() {
         if (image.color.a != 0.0f) {
             Vector3 mousePosition = Input.mousePosition;

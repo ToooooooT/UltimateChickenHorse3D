@@ -27,4 +27,7 @@ public class GameInput : MonoBehaviour {
         return moveDir;
     }
 
+    public bool AccelerateMove() {
+        return Input.GetKey(KeyCode.LeftShift);
+    }
 }
