@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEditor;
 using UnityEngine;
+using Cinemachine;
 using UnityEngine.Rendering.UI;
 using UnityEngine.UIElements;
 
@@ -20,6 +21,8 @@ public class Player : MonoBehaviour {
     [SerializeField] private float gravityMaxSpeed;
     [SerializeField] private float gravity;
     [SerializeField] private float buttonPressedWindow;
+    private CinemachineVirtualCamera virtualCamera;
+
 
     private bool isWalking = false;
     private bool isJumping = false;
@@ -34,6 +37,12 @@ public class Player : MonoBehaviour {
 
     private void Awake() {
         gameInput = GameObject.FindGameObjectWithTag("GameInput").GetComponent<GameInput>();
+        GameObject[] virtualCameras = GameObject.FindGameObjectsWithTag("Camera");
+        for(int i = 0; i < virtualCameras.Length; i++) {
+            if(virtualCameras[i].name == "FollowCamera") {
+                virtualCamera = virtualCameras[i].GetComponent<CinemachineVirtualCamera>();
+            }
+        }
         controller = GetComponent<CharacterController>();
         state = State.STOP;
     }
@@ -65,7 +74,23 @@ public class Player : MonoBehaviour {
 
     private void HandleMovement() {
         // velocity = sqrt(JumpHeight * (-2) * gravity)
-        Vector3 moveDir = gameInput.GetMovementVectorNormalized();
+        Vector3 dir = new Vector3(0,0,0);
+        if (Input.GetKey(KeyCode.W)) {
+            dir += virtualCamera.transform.forward;
+        }
+        if (Input.GetKey(KeyCode.S)) {
+            dir += -virtualCamera.transform.forward;
+        }
+        if (Input.GetKey(KeyCode.D)) {
+            dir += virtualCamera.transform.right;
+        }
+        if (Input.GetKey(KeyCode.A)) {
+            dir += -virtualCamera.transform.right;
+        }
+
+        dir.y = 0;
+        dir.Normalize();
+        Vector3 moveDir = dir;
         float velocity = gameInput.AccelerateMove() ? accelerateMoveSpeed : moveSpeed;
         Vector3 moveVector = velocity * Time.deltaTime * moveDir;
         controller.Move(moveVector);
@@ -134,8 +159,23 @@ public class Player : MonoBehaviour {
     }
 
     private void HandleFacement() {
-        Vector3 moveDir = gameInput.GetMovementVectorNormalized();
-        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
+        Vector3 dir = new Vector3(0, 0, 0);
+        if (Input.GetKey(KeyCode.W)) {
+            dir += virtualCamera.transform.forward;
+        }
+        if (Input.GetKey(KeyCode.S)) {
+            dir += -virtualCamera.transform.forward;
+        }
+        if (Input.GetKey(KeyCode.D)) {
+            dir += virtualCamera.transform.right;
+        }
+        if (Input.GetKey(KeyCode.A)) {
+            dir += -virtualCamera.transform.right;
+        }
+
+        dir.y = 0;
+        dir.Normalize();
+        transform.forward = Vector3.Slerp(transform.forward, dir, Time.deltaTime * rotateSpeed);
     }
 
     public void ModifyPosition(Vector3 newPosition) {
