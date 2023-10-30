@@ -9,6 +9,8 @@ using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour {
    
+    public enum State { GAME, SELECT_ITEM, STOP };
+
     [SerializeField] private float moveSpeed;
     [SerializeField] private float accelerateMoveSpeed;
     [SerializeField] private float moveSpeedJumpWallratio;
@@ -18,16 +20,25 @@ public class Player : MonoBehaviour {
     [SerializeField] private float gravityMaxSpeed;
     [SerializeField] private float gravity;
     [SerializeField] private float buttonPressedWindow;
-    [SerializeField] private GameInput gameInput;
 
     private bool isWalking = false;
     private bool isJumping = false;
     private bool canJump = false;
     private float buttonPressedTime;
     private float verticalVelocity;
+    public State state;
     private CharacterController controller;
+    private GameInput gameInput;
+    private string item;
+    
 
-    public void Start() {
+    private void Awake() {
+        gameInput = GameObject.FindGameObjectWithTag("GameInput").GetComponent<GameInput>();
+        controller = GetComponent<CharacterController>();
+        state = State.STOP;
+    }
+
+    private void Start() {
         moveSpeed = 5f;
         accelerateMoveSpeed = 7f;
         moveSpeedJumpWallratio = 5f;
@@ -37,13 +48,15 @@ public class Player : MonoBehaviour {
         gravityMaxSpeed = 20f;
         gravityMaxSpeedWithFriction = 5f;
         buttonPressedWindow = .3f;
-        controller = GetComponent<CharacterController>();
+        item = null;
     }
 
     private void Update() {
-        HandleMovement();
-        HandleJump();
-        HandleFacement();
+        if (state == State.GAME || state == State.SELECT_ITEM) {
+            HandleMovement();
+            HandleJump();
+            HandleFacement();
+        }
     }
 
     public bool IsWalking() {
@@ -93,12 +106,12 @@ public class Player : MonoBehaviour {
     private void WallJump() {
         Vector3 moveVector = Vector3.zero;
         verticalVelocity = 20;
-        Vector3 p1 = transform.position + controller.center + Vector3.up * -controller.height * 0.5F;
+        Vector3 p1 = transform.position + controller.center + 0.5F * -controller.height * Vector3.up;
         Vector3 p2 = p1 + Vector3.up * controller.height;
         float castDistance = .2f;
         if (Physics.CapsuleCast(p1, p2, controller.radius, transform.forward, out RaycastHit hit, castDistance) 
                 && hit.collider.CompareTag("Wall")) {
-            moveVector = hit.normal * moveSpeed * moveSpeedJumpWallratio;
+            moveVector = moveSpeed * moveSpeedJumpWallratio * hit.normal;
         }
         moveVector.y = verticalVelocity;
         controller.Move(moveVector * Time.deltaTime);
@@ -106,7 +119,7 @@ public class Player : MonoBehaviour {
     }
 
     private bool CheckWall() {
-        Vector3 p1 = transform.position + controller.center + Vector3.up * -controller.height * 0.5F;
+        Vector3 p1 = transform.position + controller.center + 0.5F * -controller.height * Vector3.up;
         Vector3 p2 = p1 + Vector3.up * controller.height;
         float castDistance = .2f;
         return Physics.CapsuleCast(p1, p2, controller.radius, transform.forward, out RaycastHit hit, castDistance)
@@ -123,5 +136,36 @@ public class Player : MonoBehaviour {
     private void HandleFacement() {
         Vector3 moveDir = gameInput.GetMovementVectorNormalized();
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
+    }
+
+    public void ModifyPosition(Vector3 newPosition) {
+        bool origin = controller.enabled;
+        controller.enabled = false;
+        transform.position = newPosition;
+        controller.enabled = origin;
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit) {
+        if (state == State.SELECT_ITEM && hit.gameObject.CompareTag("Item")) {
+            item = hit.gameObject.name;
+            // Remove the odd name ending
+            item = item.Replace("(Clone)", "");
+            Destroy(hit.gameObject);
+            // TODO: move to the start position of stage
+            ModifyPosition(Vector3.zero);
+            state = State.STOP;
+        }
+    }   
+
+    public string GetItemName() {
+        return item;
+    }
+
+    public void RemoveItem() {
+        item = null;
+    }
+
+    public bool HaveItem() {
+        return item != null;
     }
 }
