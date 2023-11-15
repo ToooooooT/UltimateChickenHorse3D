@@ -14,6 +14,7 @@ public class StageController : MonoBehaviour
     private GameObject itemGenerator;
     private GameObject[] cameraObjects;
     private GameObject scoreBoardObject;
+    private GameObject LinBenObject;
 
     void Start() {
         gameMode = PlayerPrefs.GetString("GameMode", "Party");
@@ -26,6 +27,7 @@ public class StageController : MonoBehaviour
         itemGenerator = GameObject.FindGameObjectWithTag("ItemGenerator");
         cameraObjects = GameObject.FindGameObjectsWithTag("Camera");
         scoreBoardObject = GameObject.FindGameObjectWithTag("ScoreBoard");
+        LinBenObject = GameObject.FindGameObjectWithTag("LinBen");
     }
 
     void Update() {
@@ -155,8 +157,10 @@ public class StageController : MonoBehaviour
     private void CheckWin() {
         for (int i = 0; i < playerObjects.Length; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
-            if (player.state == Player.State.WIN) {
+            LinBenScript LinBen = LinBenObject.GetComponent<LinBenScript>();
+            if (player.state == Player.State.WIN && LinBen.state == LinBenScript.State.FINISH_POINTING) {
                 stage = Stage.SCOREBOARD;
+                LinBen.state = LinBenScript.State.IDLE;
             }
         }
     }
