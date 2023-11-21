@@ -33,6 +33,7 @@ public class Player : MonoBehaviour {
     private CharacterController controller;
     private GameInput gameInput;
     private string item;
+    Vector3 followObjectMove;
     
 
     private void Awake() {
@@ -74,7 +75,7 @@ public class Player : MonoBehaviour {
 
     private void HandleMovement() {
         // velocity = sqrt(JumpHeight * (-2) * gravity)
-        Vector3 dir = new Vector3(0,0,0);
+        Vector3 dir = new(0,0,0);
         if (Input.GetKey(KeyCode.W)) {
             dir += virtualCamera.transform.forward;
         }
@@ -95,6 +96,9 @@ public class Player : MonoBehaviour {
         Vector3 moveVector = velocity * Time.deltaTime * moveDir;
         controller.Move(moveVector);
         isWalking = moveDir != Vector3.zero;
+        // follow object move
+        controller.Move(0.25f * followObjectMove);
+        followObjectMove = Vector3.zero;
     }
 
     private void HandleJump() {
@@ -135,7 +139,7 @@ public class Player : MonoBehaviour {
         Vector3 p2 = p1 + Vector3.up * controller.height;
         float castDistance = .2f;
         if (Physics.CapsuleCast(p1, p2, controller.radius, transform.forward, out RaycastHit hit, castDistance) 
-                && hit.collider.CompareTag("Wall")) {
+                && (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("MovingObject"))) {
             moveVector = moveSpeed * moveSpeedJumpWallratio * hit.normal;
         }
         moveVector.y = verticalVelocity;
@@ -148,18 +152,28 @@ public class Player : MonoBehaviour {
         Vector3 p2 = p1 + Vector3.up * controller.height;
         float castDistance = .2f;
         return Physics.CapsuleCast(p1, p2, controller.radius, transform.forward, out RaycastHit hit, castDistance)
-                && hit.collider.CompareTag("Wall");
+                && (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("MovingObject"));
     }
 
     private bool IsGrounded() {
         Vector3 p1 = transform.position + controller.center;
         float castDistance = .2f;
         return Physics.SphereCast(p1, controller.height / 2, Vector3.down, out RaycastHit hit, castDistance) 
-                && hit.collider.CompareTag("Wall");
+                && (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("MovingObject"));
     }
 
+    // private GameObject IsOnMovingObject() {
+    //     Vector3 p1 = transform.position + controller.center;
+    //     float castDistance = .2f;
+    //     if (Physics.SphereCast(p1, controller.height / 2, Vector3.down, out RaycastHit hit, castDistance) 
+    //             && hit.collider.CompareTag("MovingObject")) {
+    //         return hit.collider.gameObject;
+    //     }
+    //     return null;
+    // }
+
     private void HandleFacement() {
-        Vector3 dir = new Vector3(0, 0, 0);
+        Vector3 dir = new(0, 0, 0);
         if (Input.GetKey(KeyCode.W)) {
             dir += virtualCamera.transform.forward;
         }
@@ -194,6 +208,9 @@ public class Player : MonoBehaviour {
             // TODO: move to the start position of stage
             ModifyPosition(Vector3.zero);
             state = State.STOP;
+        } else if (state == State.GAME && hit.gameObject.CompareTag("MovingObject")) {
+            // follow object move
+            followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition();
         }
     }   
 

@@ -31,7 +31,7 @@ public class StageController : MonoBehaviour
     void Update() {
         switch (stage) {
         case Stage.BEFORE_SELECT_ITEM:
-            playerSelectItem();
+            PlayerSelectItem();
             EnableFollowCamera();
             itemGenerator.GetComponent<ItemGenerator>().GenerateItems();
             stage = Stage.SELECT_ITEM;
@@ -58,12 +58,12 @@ public class StageController : MonoBehaviour
             CheckWin();
             break;
         case Stage.SCOREBOARD:
-            moveWinner();
+            MoveWinner();
             break;
         }
     }
 
-    private void playerSelectItem() {
+    private void PlayerSelectItem() {
         for (int i = 0; i < playerObjects.Length; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             player.state = Player.State.SELECT_ITEM;
@@ -171,7 +171,7 @@ public class StageController : MonoBehaviour
         stage = Stage.BEFORE_SELECT_ITEM;
     }
 
-    private void moveWinner() {
+    private void MoveWinner() {
         WinnerMoving winnerMoving = scoreBoardObject.GetComponent<WinnerMoving>();
         for (int i = 0; i < playerObjects.Length; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
