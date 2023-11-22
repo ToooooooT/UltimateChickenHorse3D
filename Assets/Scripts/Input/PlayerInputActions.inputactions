@@ -7,17 +7,26 @@
             "actions": [
                 {
                     "name": "Move",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "d555a739-cf0e-49f4-a737-d8e368794445",
-                    "expectedControlType": "Vector2",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Interact",
+                    "name": "Jump",
                     "type": "Button",
                     "id": "b1a5b74d-66bf-4f29-b021-8ea18a93102a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Accelerate",
+                    "type": "Button",
+                    "id": "b3f6c904-f6f7-437c-8c43-219dcf17f1e9",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -138,11 +147,22 @@
                 {
                     "name": "",
                     "id": "6d146354-a244-4d78-a371-d2109f8853d3",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Interact",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "83880e54-eb62-4193-b008-81bef747e33b",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Accelerate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
