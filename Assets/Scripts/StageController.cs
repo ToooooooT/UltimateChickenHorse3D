@@ -66,7 +66,7 @@ public class StageController : MonoBehaviour
     private void PlayerSelectItem() {
         for (int i = 0; i < playerObjects.Length; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
-            player.state = Player.State.SELECT_ITEM;
+            player.Enable(Player.State.SELECT_ITEM);
             RandomPositionToSelectItem(player);
         }
     }
@@ -94,7 +94,7 @@ public class StageController : MonoBehaviour
     private void SetPlayersPlay() {
         for (int i = 0; i < playerObjects.Length; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
-            player.state = Player.State.GAME;
+            player.Enable(Player.State.GAME);
         }
     }
 
@@ -146,7 +146,7 @@ public class StageController : MonoBehaviour
         for (int i = 0; i < playerObjects.Length; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.transform.position.y < -50) {
-                player.state = Player.State.LOSE;
+                player.Disable(Player.State.LOSE);
                 SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
             }
         }
@@ -179,7 +179,7 @@ public class StageController : MonoBehaviour
                 Vector3 position = winnerMoving.GetPlayerCubePosition(i);
                 position.y += 1;
                 player.ModifyPosition(position);
-                player.state = Player.State.GAME;
+                player.Enable(Player.State.GAME);
                 winnerMoving.winner = i;
             }
         }
