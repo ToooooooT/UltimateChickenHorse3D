@@ -247,4 +247,8 @@ public class Player : MonoBehaviour {
             collider.CompareTag("Wall") ||
             collider.CompareTag("CannonPipe");
     }
+
+    public PlayerInputActions GetPlayerInputActions() {
+        return playerInputActions;
+    }
 }
