@@ -201,7 +201,7 @@ public class Player : MonoBehaviour {
 
     private void OnControllerColliderHit(ControllerColliderHit hit) {
         if (state == State.SELECT_ITEM && hit.gameObject.CompareTag("ChoosingItem")) {
-            item = hit.gameObject.name;
+            item = GetTopParentObjectName(hit.gameObject.transform);
             // Remove the odd name ending
             item = item.Replace("(Clone)", "");
             Destroy(hit.gameObject);
@@ -213,6 +213,13 @@ public class Player : MonoBehaviour {
             followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition();
         }
     }   
+
+    private string GetTopParentObjectName(Transform obj) {
+        while (obj.parent) {
+            obj = obj.parent;
+        }
+        return obj.gameObject.name;
+    }
 
     public string GetItemName() {
         return item;
