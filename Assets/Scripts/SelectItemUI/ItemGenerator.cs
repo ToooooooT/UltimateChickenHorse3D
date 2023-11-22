@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class ItemGenerator : MonoBehaviour
@@ -8,7 +9,7 @@ public class ItemGenerator : MonoBehaviour
     [SerializeField] private Vector3 size;
     [SerializeField] private int numberOfObjectsToGenerate;
     private const string FOLDERPATH = "Item";
-    private string gameMode;
+    private const string ITEMTAG = "ChoosingItem";
 
     void Start() {
 
@@ -31,11 +32,9 @@ public class ItemGenerator : MonoBehaviour
             Vector3 randomPosition = new(randomX, randomY, randomZ);
 
             GameObject generatedItem = Instantiate(objectToGenerate, randomPosition, Quaternion.identity);
-            generatedItem.tag = "ChoosingItem";
-            if (!generatedItem.TryGetComponent<Rigidbody>(out _)) {
-                // if no rigidbody, then add
-                generatedItem.AddComponent<Rigidbody>();
-            }
+            SetTag(generatedItem.transform);
+            DisableIsTrigger(generatedItem.transform);
+            AddRigidBody(generatedItem.transform);
         }
     }
 
@@ -50,5 +49,28 @@ public class ItemGenerator : MonoBehaviour
         }
 
         return prefabs.ToArray();
+    }
+
+    private void SetTag(Transform parent) {
+        parent.gameObject.tag = ITEMTAG;
+        foreach (Transform child in parent) {
+            SetTag(child);
+        }
+    }
+
+    private void AddRigidBody(Transform parent) {
+        // Do we need to add rigidbody on all child object???
+        if (!parent.gameObject.TryGetComponent<Rigidbody>(out _)) {
+            parent.gameObject.AddComponent<Rigidbody>();
+        }
+    }
+
+    private void DisableIsTrigger(Transform parent) {
+        if (parent.gameObject.TryGetComponent<Collider>(out var collider)) {
+            collider.isTrigger = false;
+        }
+        foreach (Transform child in parent) {
+            SetTag(child);
+        }
     }
 }

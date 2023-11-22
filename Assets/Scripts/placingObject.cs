@@ -9,12 +9,17 @@ public class CameraMovement : MonoBehaviour
     private GameObject[] playerObjects;
     private Color invalidColor = new(1.0f, 0.0f, 0.0f, 0.05f);
     private Color validColor = new(0.0f, 1.0f, 0.0f, 0.05f);
+    private Dictionary<string, GameObject> name2object;
     private float rotationX = 0;
     private float rotationY = 0;
     public bool isAddingObject = false;
+    private const string FOLDERPATH = "Item";
 
     void Start() {
         playerObjects = GameObject.FindGameObjectsWithTag("Player");
+        // load prefab for creating object
+        name2object = new Dictionary<string, GameObject>();
+        LoadAllPrefabsInFolder();
     }
 
     void Update() {
@@ -91,23 +96,18 @@ public class CameraMovement : MonoBehaviour
             transparentObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             transparentObject.name = "transparent sphere";
         } else {
+            // TODO(Nigo): use the correct primitive
+            // currently use sphere instead
+            transparentObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            transparentObject.name = "transparent sphere";
             Debug.Log(name);
         }
     }
     
     private void CreateObject() {
         string name = playerObjects[0].GetComponent<Player>().GetItemName();
-        if (name == "Cube") {
-            var newObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            newObject.name = "new";
-            newObject.transform.SetPositionAndRotation(transparentObject.transform.position, transparentObject.transform.rotation);
-            newObject.tag = "Wall";
-        } else if (name == "Sphere") {
-            var newObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            newObject.name = "new";
-            newObject.transform.SetPositionAndRotation(transparentObject.transform.position, transparentObject.transform.rotation);
-            newObject.tag = "Wall";
-        }
+        GameObject obj = Instantiate(name2object[name], transparentObject.transform.position, transparentObject.transform.rotation);
+        obj.name = name;
         Destroy(transparentObject);
         playerObjects[0].GetComponent<Player>().RemoveItem();
     }
@@ -186,6 +186,15 @@ public class CameraMovement : MonoBehaviour
         } else {
             if (transparentObject.TryGetComponent<Renderer>(out var renderer)) {
                 renderer.material.color = invalidColor;
+            }
+        }
+    }
+
+    private void LoadAllPrefabsInFolder() {
+        UnityEngine.Object[] loadedObjects = Resources.LoadAll(FOLDERPATH);
+        foreach (UnityEngine.Object obj in loadedObjects) {
+            if (obj is GameObject) {
+                name2object[obj.name] = obj as GameObject;
             }
         }
     }
