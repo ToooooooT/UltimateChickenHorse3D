@@ -13,6 +13,7 @@ TagManager:
   - PlayerGenerator
   - ChoosingItem
   - LinBen
+  - portal
   layers:
   - Default
   - TransparentFX
