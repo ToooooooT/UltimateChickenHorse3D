@@ -15,14 +15,14 @@ public class MouseControlFollowCamera : MonoBehaviour
     private float rotationY = 0;
     private CinemachineVirtualCamera virtualCamera;
     private Camera camera_;
-    private PlayerInputActions playerInputActions;
+    private InputActionMap playerInputActionMap;
     private Transform playerTransform;
     private bool FPS;
     private float distance;
 
     void Start() {
         playerTransform = transform.parent;
-        playerInputActions = transform.parent.gameObject.GetComponent<Player>().GetPlayerInputActions();
+        playerInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlayerInputActionMap();
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
         camera_ = GetComponent<Camera>();
         sensitive_rotate = 1.0f;
@@ -39,13 +39,13 @@ public class MouseControlFollowCamera : MonoBehaviour
     }
 
     public void Enable() {
-        playerInputActions.Player.FPS2TPS.started += FPS2TPS;
+        playerInputActionMap.FindAction("FPS2TPS").started += FPS2TPS;
         virtualCamera.enabled = true;
         camera_.enabled = true;
     }
 
     public void Disable() {
-        playerInputActions.Player.FPS2TPS.started -= FPS2TPS;
+        playerInputActionMap.FindAction("FPS2TPS").started -= FPS2TPS;
         virtualCamera.enabled = false;
         camera_.enabled = false;
     }
@@ -56,7 +56,7 @@ public class MouseControlFollowCamera : MonoBehaviour
     }
 
     private void ZoomCamera() {
-        float scrollWheelInput = playerInputActions.Player.ZoomCamera.ReadValue<float>();
+        float scrollWheelInput = playerInputActionMap.FindAction("ZoomCamera").ReadValue<float>();
         if (scrollWheelInput != 0) {
             if (scrollWheelInput > 0) {
                 distance -= sensitive_zoom;
@@ -68,7 +68,7 @@ public class MouseControlFollowCamera : MonoBehaviour
     }
 
     private void FollowPlayer() {
-        Vector2 inputVector = playerInputActions.Player.MoveCamera.ReadValue<Vector2>().normalized;
+        Vector2 inputVector = playerInputActionMap.FindAction("MoveCamera").ReadValue<Vector2>().normalized;
         rotationX -= inputVector.y * sensitive_rotate;
         rotationY += inputVector.x * sensitive_rotate;
         rotationX = Mathf.Clamp(rotationX, -90, 90);

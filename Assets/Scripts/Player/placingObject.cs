@@ -17,7 +17,7 @@ public class CameraMovement : MonoBehaviour
     private Color invalidColor = new(1.0f, 0.0f, 0.0f, 0.05f);
     private Color validColor = new(0.0f, 1.0f, 0.0f, 0.05f);
     private Dictionary<string, GameObject> name2object;
-    private PlayerInputActions playerInputActions;
+    private InputActionMap placeObjectInputActionMap;
     private CinemachineVirtualCamera virtualCamera;
     private Camera camera_;
     // private Transform playerTransform;
@@ -33,7 +33,7 @@ public class CameraMovement : MonoBehaviour
 
     void Start() {
         stageController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageController>();
-        playerInputActions = transform.parent.gameObject.GetComponent<Player>().GetPlayerInputActions();
+        placeObjectInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlaceObjectInputActionMap();
         playerObject = transform.parent.gameObject;
         transparentObject = null;
         sensitive_rotate = 1.0f;
@@ -51,7 +51,7 @@ public class CameraMovement : MonoBehaviour
     }
 
     void Update() {
-        Vector2 inputVector = playerInputActions.PlaceObject.MoveCamera.ReadValue<Vector2>().normalized;
+        Vector2 inputVector = placeObjectInputActionMap.FindAction("MoveCamera").ReadValue<Vector2>().normalized;
         MoveCamera();
         ZoomCamera();
         if (camera_.enabled && virtualCamera.enabled) {
@@ -63,7 +63,7 @@ public class CameraMovement : MonoBehaviour
     }
 
     private void RotateCamera() {
-        Vector2 inputVector = playerInputActions.PlaceObject.RotateCamera.ReadValue<Vector2>().normalized;
+        Vector2 inputVector = placeObjectInputActionMap.FindAction("RotateCamera").ReadValue<Vector2>().normalized;
         rotationX -= inputVector.y * sensitive_rotate;
         rotationY += inputVector.x * sensitive_rotate;
         rotationX = Mathf.Clamp(rotationX, -90, 90);
@@ -72,7 +72,7 @@ public class CameraMovement : MonoBehaviour
 
     private void MoveCamera() {
         float x1=-100, x2=100, y1=-20, y2=100, z1=-100, z2=100;
-        Vector2 inputVector = playerInputActions.PlaceObject.MoveCamera.ReadValue<Vector2>().normalized;
+        Vector2 inputVector = placeObjectInputActionMap.FindAction("MoveCamera").ReadValue<Vector2>().normalized;
         if (inputVector.y > 0) {
             transform.position += sensitive_move * transform.forward;
         } else if (inputVector.y < 0) {
@@ -83,7 +83,7 @@ public class CameraMovement : MonoBehaviour
         } else if (inputVector.x < 0) {
             transform.position -= sensitive_move * transform.right;
         }
-        float inputValue = playerInputActions.PlaceObject.MoveCameraUpDown.ReadValue<float>();
+        float inputValue = placeObjectInputActionMap.FindAction("MoveCameraUpDown").ReadValue<float>();
         if (inputValue > 0) {
             transform.position += new Vector3(0, sensitive_move, 0);
         } else if (inputValue < 0) {
@@ -110,7 +110,7 @@ public class CameraMovement : MonoBehaviour
     }
 
     private void ZoomCamera() {
-        float scrollWheelInput = playerInputActions.PlaceObject.ZoomCamera.ReadValue<float>();
+        float scrollWheelInput = placeObjectInputActionMap.FindAction("ZoomCamera").ReadValue<float>();
         if (scrollWheelInput != 0) {
             if (scrollWheelInput > 0) {
                 distance -= sensitive_zoom;
@@ -126,18 +126,20 @@ public class CameraMovement : MonoBehaviour
     }
 
     public void Enable() {
-        playerInputActions.PlaceObject.Enable();
-        playerInputActions.PlaceObject.Place.started += PlaceObject;
-        playerInputActions.PlaceObject.rotateObjectHorizontal.performed += ctx => pressRotateHorizontal = true;
-        playerInputActions.PlaceObject.rotateObjectHorizontal.canceled += ctx => pressRotateHorizontal = false;
-        playerInputActions.PlaceObject.rotateObjectVertical.performed += ctx => pressRotateVertical = true;
-        playerInputActions.PlaceObject.rotateObjectVertical.canceled += ctx => pressRotateVertical = false;
+        placeObjectInputActionMap.Enable();
+        placeObjectInputActionMap.FindAction("Place").started += PlaceObject;
+        InputAction rotateObjectHorizontalAction = placeObjectInputActionMap.FindAction("rotateObjectHorizontal");
+        rotateObjectHorizontalAction.performed += ctx => pressRotateHorizontal = true;
+        rotateObjectHorizontalAction.canceled += ctx => pressRotateHorizontal = false;
+        InputAction rotateObjectVerticalAction = placeObjectInputActionMap.FindAction("rotateObjectVertical");
+        rotateObjectVerticalAction.performed += ctx => pressRotateHorizontal = true;
+        rotateObjectVerticalAction.canceled += ctx => pressRotateHorizontal = false;
         virtualCamera.enabled = true;
         camera_.enabled = true;
     }
 
     public void Disable() {
-        playerInputActions.PlaceObject.Disable();
+        placeObjectInputActionMap.Disable();
         virtualCamera.enabled = false;
         camera_.enabled = false;
     }

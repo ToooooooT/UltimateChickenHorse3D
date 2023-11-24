@@ -36,16 +36,19 @@ public class Player : MonoBehaviour {
     private Vector3 lastExSpeed;
     public State state;
     private CharacterController controller;
-    private PlayerInputActions playerInputActions;
     private CinemachineVirtualCamera virtualCamera;
+    private InputActionMap playerInputActionMap;
+    private InputActionMap placeObjectInputActionMap;
     private string item;
     Vector3 followObjectMove;
     
 
     private void Awake() {
-        playerInputActions = new PlayerInputActions();
+        // playerInputActions = new PlayerInputActions();
         virtualCamera = transform.Find("FollowCamera").GetComponent<CinemachineVirtualCamera>();
         controller = GetComponent<CharacterController>();
+        playerInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("Player");
+        placeObjectInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("PlaceObject");
     }
 
     private void Start() {
@@ -77,15 +80,17 @@ public class Player : MonoBehaviour {
 
     public void Enable(State new_state) {
         state = new_state;
-        playerInputActions.Player.Enable();
-        playerInputActions.Player.Jump.started += DoJump;
-        playerInputActions.Player.Jump.canceled += CancelJump;
-        playerInputActions.Player.Accelerate.started += DoAccelerate;
-        playerInputActions.Player.Accelerate.canceled += NoAccelerate;
+        playerInputActionMap.Enable();
+        InputAction jump = playerInputActionMap.FindAction("Jump");
+        jump.started += DoJump;
+        jump.canceled += CancelJump;
+        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+        accelerate.started += DoAccelerate;
+        accelerate.canceled += NoAccelerate;
     }
 
     public void Disable(State new_state) {
-        playerInputActions.Player.Disable();
+        playerInputActionMap.Disable();
         state = new_state;
     }
 
@@ -94,7 +99,7 @@ public class Player : MonoBehaviour {
     }
 
     private Vector3 GetMoveDirNormalized() {
-        Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>().normalized;
+        Vector2 inputVector = playerInputActionMap.FindAction("Move").ReadValue<Vector2>().normalized;
         Vector3 dir = new(0,0,0);
         if (inputVector.y > 0) {
             dir += virtualCamera.transform.forward;
@@ -250,7 +255,11 @@ public class Player : MonoBehaviour {
             collider.CompareTag("CannonPipe");
     }
 
-    public PlayerInputActions GetPlayerInputActions() {
-        return playerInputActions;
+    public InputActionMap GetPlayerInputActionMap() {
+        return playerInputActionMap;
+    }
+
+    public InputActionMap GetPlaceObjectInputActionMap() {
+        return placeObjectInputActionMap;
     }
 }

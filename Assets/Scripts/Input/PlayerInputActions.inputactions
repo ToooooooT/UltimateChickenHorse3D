@@ -15,7 +15,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Jump",
+                    "name": "Jump",
                     "type": "Button",
                     "id": "b1a5b74d-66bf-4f29-b021-8ea18a93102a",
                     "expectedControlType": "Button",
@@ -78,7 +78,7 @@
                     "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -89,7 +89,7 @@
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -100,7 +100,7 @@
                     "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -111,7 +111,7 @@
                     "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -133,7 +133,7 @@
                     "path": "<XInputController>/leftStick/up",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -144,7 +144,7 @@
                     "path": "<XInputController>/leftStick/down",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -155,7 +155,7 @@
                     "path": "<XInputController>/leftStick/left",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -166,7 +166,7 @@
                     "path": "<XInputController>/leftStick/right",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -188,7 +188,7 @@
                     "path": "<Keyboard>/upArrow",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -199,7 +199,7 @@
                     "path": "<Keyboard>/downArrow",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -210,7 +210,7 @@
                     "path": "<Keyboard>/leftArrow",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -221,7 +221,7 @@
                     "path": "<Keyboard>/rightArrow",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -232,8 +232,8 @@
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "Jump",
+                    "groups": "Keyboard_mouse",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -243,8 +243,8 @@
                     "path": "<XInputController>/buttonSouth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "Jump",
+                    "groups": "Xbox_controller",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -254,7 +254,7 @@
                     "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "Accelerate",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -265,7 +265,7 @@
                     "path": "<XInputController>/buttonWest",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "Accelerate",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -276,7 +276,7 @@
                     "path": "<Keyboard>/v",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "FPS2TPS",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -287,7 +287,7 @@
                     "path": "<XInputController>/rightShoulder",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "FPS2TPS",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -298,7 +298,7 @@
                     "path": "<Mouse>/scroll/y",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "ZoomCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -320,7 +320,7 @@
                     "path": "<XInputController>/dpad/down",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "ZoomCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -331,7 +331,7 @@
                     "path": "<XInputController>/dpad/up",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "ZoomCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -353,7 +353,7 @@
                     "path": "<XInputController>/rightStick/up",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -364,7 +364,7 @@
                     "path": "<XInputController>/rightStick/down",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -375,7 +375,7 @@
                     "path": "<XInputController>/rightStick/left",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -386,7 +386,7 @@
                     "path": "<XInputController>/rightStick/right",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -408,7 +408,7 @@
                     "path": "<Mouse>/delta/up",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -419,7 +419,7 @@
                     "path": "<Mouse>/delta/down",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -430,7 +430,7 @@
                     "path": "<Mouse>/delta/left",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -441,7 +441,7 @@
                     "path": "<Mouse>/delta/right",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -523,7 +523,7 @@
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "Place",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -534,7 +534,7 @@
                     "path": "<XInputController>/buttonNorth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "Place",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -556,7 +556,7 @@
                     "path": "<XInputController>/rightStick/up",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "RotateCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -567,7 +567,7 @@
                     "path": "<XInputController>/rightStick/down",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "RotateCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -578,7 +578,7 @@
                     "path": "<XInputController>/rightStick/left",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "RotateCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -589,7 +589,7 @@
                     "path": "<XInputController>/rightStick/right",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "RotateCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -611,7 +611,7 @@
                     "path": "<Mouse>/delta/up",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "RotateCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -622,7 +622,7 @@
                     "path": "<Mouse>/delta/down",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "RotateCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -633,7 +633,7 @@
                     "path": "<Mouse>/delta/left",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "RotateCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -644,7 +644,7 @@
                     "path": "<Mouse>/delta/right",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "RotateCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -666,7 +666,7 @@
                     "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -677,7 +677,7 @@
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -688,7 +688,7 @@
                     "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -699,7 +699,7 @@
                     "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -721,7 +721,7 @@
                     "path": "<XInputController>/leftStick/up",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -732,7 +732,7 @@
                     "path": "<XInputController>/leftStick/down",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -743,7 +743,7 @@
                     "path": "<XInputController>/leftStick/left",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -754,7 +754,7 @@
                     "path": "<XInputController>/leftStick/right",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "MoveCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -776,7 +776,7 @@
                     "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "MoveCameraUpDown",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -787,7 +787,7 @@
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "MoveCameraUpDown",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -809,7 +809,7 @@
                     "path": "<XInputController>/buttonSouth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "MoveCameraUpDown",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -820,7 +820,7 @@
                     "path": "<XInputController>/buttonEast",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "MoveCameraUpDown",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -831,7 +831,7 @@
                     "path": "<Mouse>/scroll/y",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "ZoomCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -853,7 +853,7 @@
                     "path": "<XInputController>/dpad/down",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "ZoomCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -864,7 +864,7 @@
                     "path": "<XInputController>/dpad/up",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "ZoomCamera",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -875,7 +875,7 @@
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "rotateObjectHorizontal",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -886,7 +886,7 @@
                     "path": "<XInputController>/leftShoulder",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "rotateObjectHorizontal",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -897,7 +897,7 @@
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard_mouse",
                     "action": "rotateObjectVertical",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -908,7 +908,7 @@
                     "path": "<XInputController>/rightShoulder",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Xbox_controller",
                     "action": "rotateObjectVertical",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -916,5 +916,33 @@
             ]
         }
     ],
-    "controlSchemes": []
+    "controlSchemes": [
+        {
+            "name": "Keyboard_mouse",
+            "bindingGroup": "Keyboard_mouse",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Xbox_controller",
+            "bindingGroup": "Xbox_controller",
+            "devices": [
+                {
+                    "devicePath": "<XInputController>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
 }
