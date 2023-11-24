@@ -4,17 +4,15 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Wall
-  - PlayerGenerator
-  - GameInput
-  - Item
-  - ItemGenerator
-  - ObjectGenerator
   - Camera
-  - ChoosingItem
-  - ScoreBoard
+  - Wall
   - MovingObject
   - Danger
+  - ScoreBoard
+  - ItemGenerator
+  - PlayerGenerator
+  - ChoosingItem
+  - LinBen
   - portal
   layers:
   - Default
@@ -23,7 +21,7 @@ TagManager:
   - 
   - Water
   - UI
-  - Counters
+  - 
   - 
   - 
   - 

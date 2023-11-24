@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028326, g: 0.22571333, b: 0.30692202, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -739,6 +739,11 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: eaaa2d406bbf6bd4bbd7b5c63b72d65e,
         type: 3}
       propertyPath: m_Name
+      value: LinBen
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eaaa2d406bbf6bd4bbd7b5c63b72d65e,
+        type: 3}
+      propertyPath: m_TagString
       value: LinBen
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -2436,6 +2441,7 @@ MonoBehaviour:
           m_StringArgument: touchFlag
           m_BoolArgument: 0
         m_CallState: 2
+  state: 0
 --- !u!95 &1554859280
 Animator:
   serializedVersion: 5
