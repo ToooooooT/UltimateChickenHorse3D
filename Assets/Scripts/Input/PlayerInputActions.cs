@@ -518,6 +518,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""rotateObjectHorizontal"",
+                    ""type"": ""Button"",
+                    ""id"": ""52dc9e1e-0ee3-48bc-be59-a9f4289980b6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""rotateObjectVertical"",
+                    ""type"": ""Button"",
+                    ""id"": ""3f19c85d-1712-45e9-a598-80350824ec44"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -872,6 +890,50 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ZoomCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""62f2101c-4b3a-46d0-b2c8-29275f1fa5b6"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""rotateObjectHorizontal"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d032a916-15c5-4981-80c5-12d30246c9c3"",
+                    ""path"": ""<XInputController>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""rotateObjectHorizontal"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c0f067b5-46c3-478c-ae34-c3bab999c88a"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""rotateObjectVertical"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""126f2eb3-0692-4553-98cd-888508a69649"",
+                    ""path"": ""<XInputController>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""rotateObjectVertical"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -893,6 +955,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_PlaceObject_MoveCamera = m_PlaceObject.FindAction("MoveCamera", throwIfNotFound: true);
         m_PlaceObject_MoveCameraUpDown = m_PlaceObject.FindAction("MoveCameraUpDown", throwIfNotFound: true);
         m_PlaceObject_ZoomCamera = m_PlaceObject.FindAction("ZoomCamera", throwIfNotFound: true);
+        m_PlaceObject_rotateObjectHorizontal = m_PlaceObject.FindAction("rotateObjectHorizontal", throwIfNotFound: true);
+        m_PlaceObject_rotateObjectVertical = m_PlaceObject.FindAction("rotateObjectVertical", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1045,6 +1109,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlaceObject_MoveCamera;
     private readonly InputAction m_PlaceObject_MoveCameraUpDown;
     private readonly InputAction m_PlaceObject_ZoomCamera;
+    private readonly InputAction m_PlaceObject_rotateObjectHorizontal;
+    private readonly InputAction m_PlaceObject_rotateObjectVertical;
     public struct PlaceObjectActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -1054,6 +1120,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @MoveCamera => m_Wrapper.m_PlaceObject_MoveCamera;
         public InputAction @MoveCameraUpDown => m_Wrapper.m_PlaceObject_MoveCameraUpDown;
         public InputAction @ZoomCamera => m_Wrapper.m_PlaceObject_ZoomCamera;
+        public InputAction @rotateObjectHorizontal => m_Wrapper.m_PlaceObject_rotateObjectHorizontal;
+        public InputAction @rotateObjectVertical => m_Wrapper.m_PlaceObject_rotateObjectVertical;
         public InputActionMap Get() { return m_Wrapper.m_PlaceObject; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1078,6 +1146,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ZoomCamera.started += instance.OnZoomCamera;
             @ZoomCamera.performed += instance.OnZoomCamera;
             @ZoomCamera.canceled += instance.OnZoomCamera;
+            @rotateObjectHorizontal.started += instance.OnRotateObjectHorizontal;
+            @rotateObjectHorizontal.performed += instance.OnRotateObjectHorizontal;
+            @rotateObjectHorizontal.canceled += instance.OnRotateObjectHorizontal;
+            @rotateObjectVertical.started += instance.OnRotateObjectVertical;
+            @rotateObjectVertical.performed += instance.OnRotateObjectVertical;
+            @rotateObjectVertical.canceled += instance.OnRotateObjectVertical;
         }
 
         private void UnregisterCallbacks(IPlaceObjectActions instance)
@@ -1097,6 +1171,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ZoomCamera.started -= instance.OnZoomCamera;
             @ZoomCamera.performed -= instance.OnZoomCamera;
             @ZoomCamera.canceled -= instance.OnZoomCamera;
+            @rotateObjectHorizontal.started -= instance.OnRotateObjectHorizontal;
+            @rotateObjectHorizontal.performed -= instance.OnRotateObjectHorizontal;
+            @rotateObjectHorizontal.canceled -= instance.OnRotateObjectHorizontal;
+            @rotateObjectVertical.started -= instance.OnRotateObjectVertical;
+            @rotateObjectVertical.performed -= instance.OnRotateObjectVertical;
+            @rotateObjectVertical.canceled -= instance.OnRotateObjectVertical;
         }
 
         public void RemoveCallbacks(IPlaceObjectActions instance)
@@ -1130,5 +1210,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnMoveCamera(InputAction.CallbackContext context);
         void OnMoveCameraUpDown(InputAction.CallbackContext context);
         void OnZoomCamera(InputAction.CallbackContext context);
+        void OnRotateObjectHorizontal(InputAction.CallbackContext context);
+        void OnRotateObjectVertical(InputAction.CallbackContext context);
     }
 }

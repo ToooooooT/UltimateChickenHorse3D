@@ -26,17 +26,22 @@ public class CameraMovement : MonoBehaviour
     private float diviateX = 0;
     private float diviateZ = 0;
     private float distance;
-    private bool isAddingObject = false;
+    private bool pressRotateHorizontal;
+    private bool pressRotateVertical;
+
     private const string FOLDERPATH = "Item";
 
     void Start() {
         stageController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageController>();
         playerInputActions = transform.parent.gameObject.GetComponent<Player>().GetPlayerInputActions();
         playerObject = transform.parent.gameObject;
+        transparentObject = null;
         sensitive_rotate = 1.0f;
         sensitive_move = 0.5f;
-        sensitive_zoom = 0.5f;
+        sensitive_zoom = 0.3f;
         distance = 25.0f;
+        pressRotateHorizontal = false;
+        pressRotateVertical = false;
         // load prefab for creating object
         name2object = new Dictionary<string, GameObject>();
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
@@ -47,16 +52,13 @@ public class CameraMovement : MonoBehaviour
 
     void Update() {
         Vector2 inputVector = playerInputActions.PlaceObject.MoveCamera.ReadValue<Vector2>().normalized;
-        RotateCamera();
         MoveCamera();
         ZoomCamera();
-        string name = playerObject.GetComponent<Player>().GetItemName();
-        if (name != null && !isAddingObject) {
-            isAddingObject = true;
-            TransparentObject();
-        }
-        if (name != null && isAddingObject) {
-            AddingObject(inputVector.x, inputVector.y, 5.0f);
+        if (camera_.enabled && virtualCamera.enabled) {
+            if (transparentObject == null) {
+                TransparentObject();
+            }
+            AddingObject(inputVector.x, inputVector.y, 10.0f);
         }
     }
 
@@ -126,6 +128,10 @@ public class CameraMovement : MonoBehaviour
     public void Enable() {
         playerInputActions.PlaceObject.Enable();
         playerInputActions.PlaceObject.Place.started += PlaceObject;
+        playerInputActions.PlaceObject.rotateObjectHorizontal.performed += ctx => pressRotateHorizontal = true;
+        playerInputActions.PlaceObject.rotateObjectHorizontal.canceled += ctx => pressRotateHorizontal = false;
+        playerInputActions.PlaceObject.rotateObjectVertical.performed += ctx => pressRotateVertical = true;
+        playerInputActions.PlaceObject.rotateObjectVertical.canceled += ctx => pressRotateVertical = false;
         virtualCamera.enabled = true;
         camera_.enabled = true;
     }
@@ -137,15 +143,31 @@ public class CameraMovement : MonoBehaviour
     }
 
     private void PlaceObject(InputAction.CallbackContext context) {
-        if (isAddingObject && PlacingIsValid()) {
+        if (PlacingIsValid()) {
             CreateObject(); 
-            isAddingObject = false;
+            Disable();
         }
     }
 
     private void TransparentObject() {
+<<<<<<< HEAD
         string name = playerObjects[0].GetComponent<Player>().GetItemName();
         transparentObject = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/" + name));
+=======
+        string name = playerObject.GetComponent<Player>().GetItemName();
+        if (name == "Cube") {
+            transparentObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            transparentObject.name = "transparent cube";
+        } else if (name == "Sphere") {
+            transparentObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            transparentObject.name = "transparent sphere";
+        } else {
+            // TODO(Nigo): use the correct primitive
+            // currently use cube instead
+            transparentObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            transparentObject.name = "transparent cube";
+        }
+>>>>>>> 6b5d804 (feat: add xbox to rotate object during placing)
     }
     
     private void CreateObject() {
@@ -154,6 +176,7 @@ public class CameraMovement : MonoBehaviour
         obj.name = name;
         stageController.items.Add(obj);
         Destroy(transparentObject);
+        transparentObject = null;
         playerObject.GetComponent<Player>().RemoveItem();
     }
 
@@ -166,8 +189,7 @@ public class CameraMovement : MonoBehaviour
 
     private void AddingObject(float mouseX, float mouseY, float sensitive, float x1=-100, float x2=100, float y1=-20, float y2=100, float z1=-100, float z2=100) {
         MoveObject(x1, x2, y1, y2, z1, z2);
-        RotateObject(mouseX, mouseY, sensitive);
-
+        RotateObjectOrCamera(mouseX, mouseY, sensitive);
         if (PlacingIsValid()) {
             if (transparentObject.TryGetComponent<Renderer>(out var renderer)) {
                 renderer.material.color = validColor;
@@ -180,29 +202,31 @@ public class CameraMovement : MonoBehaviour
     }
 
     private void MoveObject(float x1=-100, float x2=100, float y1=-20, float y2=100, float z1=-100, float z2=100) {
-        transparentObject.transform.position = transform.position + distance * transform.forward;
-        if (transparentObject.transform.position.x < x1) {
-            transparentObject.transform.position = transparentObject.transform.position - Math.Abs((x1 - transparentObject.transform.position.x) / transform.forward.x) * transform.forward;
+        Transform transparentObjectTransform = transparentObject.transform;
+        Vector3 forward = transform.forward;
+        transparentObjectTransform.position = transform.position + distance * transform.forward;
+        if (transparentObjectTransform.position.x < x1) {
+            transparentObjectTransform.position -= Math.Abs((x1 - transparentObjectTransform.position.x) / forward.x) * forward;
         }
-        if (transparentObject.transform.position.x > x2) {
-            transparentObject.transform.position = transparentObject.transform.position - Math.Abs((x2 - transparentObject.transform.position.x) / transform.forward.x) * transform.forward;
+        if (transparentObjectTransform.position.x > x2) {
+            transparentObjectTransform.position -= Math.Abs((x2 - transparentObjectTransform.position.x) / forward.x) * forward;
         }
-        if (transparentObject.transform.position.y < y1) {
-            transparentObject.transform.position = transparentObject.transform.position - Math.Abs((y1 - transparentObject.transform.position.y) / transform.forward.y) * transform.forward;
+        if (transparentObjectTransform.position.y < y1) {
+            transparentObjectTransform.position -= Math.Abs((y1 - transparentObjectTransform.position.y) / forward.y) * forward;
         }
-        if (transparentObject.transform.position.y > y2) {
-            transparentObject.transform.position = transparentObject.transform.position - Math.Abs((y2 - transparentObject.transform.position.y) / transform.forward.y) * transform.forward;
+        if (transparentObjectTransform.position.y > y2) {
+            transparentObjectTransform.position -= Math.Abs((y2 - transparentObjectTransform.position.y) / forward.y) * forward;
         }
-        if (transparentObject.transform.position.z < z1) {
-            transparentObject.transform.position = transparentObject.transform.position - Math.Abs((z1 - transparentObject.transform.position.z) / transform.forward.z) * transform.forward;
+        if (transparentObjectTransform.position.z < z1) {
+            transparentObjectTransform.position -= Math.Abs((z1 - transparentObjectTransform.position.z) / forward.z) * forward;
         }
-        if (transparentObject.transform.position.z > z2) {
-            transparentObject.transform.position = transparentObject.transform.position - Math.Abs((z2 - transparentObject.transform.position.z) / transform.forward.z) * transform.forward;
+        if (transparentObjectTransform.position.z > z2) {
+            transparentObjectTransform.position -= Math.Abs((z2 - transparentObjectTransform.position.z) / forward.z) * forward;
         }
     }
 
-    private void RotateObject(float mouseX, float mouseY, float sensitive) {
-        if (Input.GetMouseButton(0)) {
+    private void RotateObjectOrCamera(float mouseX, float mouseY, float sensitive) {
+        if (pressRotateHorizontal) {
             //mouseY = 0;
             Vector3 cameraForward = -transform.right;
 
@@ -223,7 +247,7 @@ public class CameraMovement : MonoBehaviour
             newRotation.x = newRotation.x - diviateX;
             newRotation.z = newRotation.z - diviateZ;
             transparentObject.transform.rotation = Quaternion.Euler(newRotation);
-        } else if (Input.GetMouseButton(1)) {
+        } else if (pressRotateVertical) {
             mouseX = 0;
             Vector3 cameraForward = -transform.right;
 
@@ -245,11 +269,7 @@ public class CameraMovement : MonoBehaviour
             transparentObject.transform.rotation = Quaternion.Euler(newRotation);
 
         } else {
-            rotationX -= mouseY ;
-            rotationY += mouseX ;
-            rotationX = Mathf.Clamp(rotationX, -90, 90);
-
-            transform.rotation = Quaternion.Euler(rotationX, rotationY, 0.0f);
+            RotateCamera();
         }
 
         ItemVisible(transparentObject, PlacingIsValid());
