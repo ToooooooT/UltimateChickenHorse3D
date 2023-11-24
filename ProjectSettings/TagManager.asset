@@ -15,6 +15,7 @@ TagManager:
   - ScoreBoard
   - MovingObject
   - Danger
+  - portal
   layers:
   - Default
   - TransparentFX
