@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem.iOS;
 using UnityEngine.SceneManagement;
 
 public class StageController : MonoBehaviour
@@ -33,7 +34,8 @@ public class StageController : MonoBehaviour
     void Update() {
         switch (stage) {
         case Stage.BEFORE_SELECT_ITEM:
-            playerSelectItem();
+            ResetItems();
+            PlayerSelectItem();
             EnableFollowCamera();
             itemGenerator.GetComponent<ItemGenerator>().GenerateItems();
             stage = Stage.SELECT_ITEM;
@@ -52,6 +54,7 @@ public class StageController : MonoBehaviour
             }
             SetPlayersPlay();
             EnableFollowCamera();
+            MemorizeItemsState();
             stage = Stage.PLAY;
             break;
         case Stage.PLAY:
@@ -60,15 +63,15 @@ public class StageController : MonoBehaviour
             CheckWin();
             break;
         case Stage.SCOREBOARD:
-            moveWinner();
+            MoveWinner();
             break;
         }
     }
 
-    private void playerSelectItem() {
+    private void PlayerSelectItem() {
         for (int i = 0; i < playerObjects.Length; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
-            player.state = Player.State.SELECT_ITEM;
+            player.Enable(Player.State.SELECT_ITEM);
             RandomPositionToSelectItem(player);
         }
     }
@@ -96,7 +99,7 @@ public class StageController : MonoBehaviour
     private void SetPlayersPlay() {
         for (int i = 0; i < playerObjects.Length; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
-            player.state = Player.State.GAME;
+            player.Enable(Player.State.GAME);
         }
     }
 
@@ -122,8 +125,7 @@ public class StageController : MonoBehaviour
             EnableCamera virtualCameraEnable = cameraObjects[i].GetComponent<EnableCamera>();
             if (cameraObjects[i].name == "FollowCamera") {
                 virtualCameraEnable.Enable();
-            } 
-            if (cameraObjects[i].name == "VirtualCamera") {
+            } else if (cameraObjects[i].name == "VirtualCamera") {
                 virtualCameraEnable.Disable();
             } 
         }
@@ -134,11 +136,9 @@ public class StageController : MonoBehaviour
             EnableCamera virtualCameraEnable = cameraObjects[i].GetComponent<EnableCamera>();
             if (cameraObjects[i].name == "FollowCamera") {
                 virtualCameraEnable.Disable();
-            } 
-            if (cameraObjects[i].name == "VirtualCamera") {
+            } else if (cameraObjects[i].name == "VirtualCamera") {
                 Vector3 position = new(0, 10, 0);
-                cameraObjects[i].transform.position = position;
-                cameraObjects[i].transform.rotation = Quaternion.Euler(0, 0, 0);
+                cameraObjects[i].transform.SetPositionAndRotation(position, Quaternion.Euler(0, 0, 0));
                 virtualCameraEnable.Enable();
             } 
         }
@@ -148,7 +148,7 @@ public class StageController : MonoBehaviour
         for (int i = 0; i < playerObjects.Length; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.transform.position.y < -50) {
-                player.state = Player.State.LOSE;
+                player.Disable(Player.State.LOSE);
                 SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
             }
         }
@@ -175,7 +175,7 @@ public class StageController : MonoBehaviour
         stage = Stage.BEFORE_SELECT_ITEM;
     }
 
-    private void moveWinner() {
+    private void MoveWinner() {
         WinnerMoving winnerMoving = scoreBoardObject.GetComponent<WinnerMoving>();
         for (int i = 0; i < playerObjects.Length; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
@@ -183,7 +183,7 @@ public class StageController : MonoBehaviour
                 Vector3 position = winnerMoving.GetPlayerCubePosition(i);
                 position.y += 1;
                 player.ModifyPosition(position);
-                player.state = Player.State.GAME;
+                player.Enable(Player.State.GAME);
                 winnerMoving.winner = i;
             }
         }
@@ -191,6 +191,22 @@ public class StageController : MonoBehaviour
         // SceneManager.LoadScene("WIN", LoadSceneMode.Additive);
         if (winnerMoving.IsFinishMoving()) {
             stage = Stage.BEFORE_SELECT_ITEM;
+        }
+    }
+
+    private void MemorizeItemsState() {
+        // TODO: use a more general way to memorize initial items' state
+        GameObject[] objs = GameObject.FindGameObjectsWithTag("Danger");
+        foreach (GameObject obj in objs) {
+            obj.GetComponent<BaseItem>().Initialize();
+        }
+    }
+
+    private void ResetItems() {
+        // TODO: use a more general way to reset items
+        GameObject[] objs = GameObject.FindGameObjectsWithTag("Danger");
+        foreach (GameObject obj in objs) {
+            obj.GetComponent<BaseItem>().Reset();
         }
     }
 }
