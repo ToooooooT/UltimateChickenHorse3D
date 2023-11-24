@@ -3,7 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Camera
+  - Wall
+  - MovingObject
+  - Danger
+  - ScoreBoard
+  - ItemGenerator
+  - PlayerGenerator
+  - ChoosingItem
+  - LinBen
   layers:
   - Default
   - TransparentFX

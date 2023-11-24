@@ -112,29 +112,52 @@ public class Player : MonoBehaviour {
         followObjectMove = Vector3.zero;
     }
 
-    private void HandleJump() {
-        Vector3 moveVector = Vector3.zero;
-        bool isWall = CheckWall();
-        if (isJumping && isWall) {
-            WallJump();
-            return;
-        }
-        if (isJumping) {
-            buttonPressedTime += Time.deltaTime;
-            verticalVelocity = jumpSpeed;
-            if (buttonPressedTime > buttonPressedWindow) {
-                isJumping = false;
-                verticalVelocity = 0;
-            }
-        } else {
-            verticalVelocity -= gravity * Time.deltaTime;
-        }
+    public bool IsFlying() {
+        float pressJump = playerInputActions.Player.Jump.ReadValue<float>();
+        return pressJump > 0;
+    }
 
-        verticalVelocity = Mathf.Clamp(verticalVelocity, 
-                                        isWall ? -gravityMaxSpeedWithFriction : -gravityMaxSpeed, 
-                                        float.PositiveInfinity);
-        moveVector.y = verticalVelocity;
-        controller.Move(moveVector * Time.deltaTime);
+    private void HandleJump() {
+        Transform rocketTransform = transform.Find("Rocket");
+        
+        if (rocketTransform != null) {
+            Vector3 moveVector = Vector3.zero;
+            bool isWall = CheckWall();
+            if (IsFlying()) {
+                buttonPressedTime += Time.deltaTime;
+                verticalVelocity = jumpSpeed;
+            } else {
+                verticalVelocity -= gravity * Time.deltaTime;
+            }
+            verticalVelocity = Mathf.Clamp(verticalVelocity,
+                                            isWall ? -gravityMaxSpeedWithFriction : -gravityMaxSpeed,
+                                            float.PositiveInfinity);
+            moveVector.y = verticalVelocity;
+            controller.Move(moveVector * Time.deltaTime);
+        } else {
+            Vector3 moveVector = Vector3.zero;
+            bool isWall = CheckWall();
+            if (isJumping && isWall) {
+                WallJump();
+                return;
+            }
+            if (isJumping) {
+                buttonPressedTime += Time.deltaTime;
+                verticalVelocity = jumpSpeed;
+                if (buttonPressedTime > buttonPressedWindow) {
+                    isJumping = false;
+                    verticalVelocity = 0;
+                }
+            } else {
+                verticalVelocity -= gravity * Time.deltaTime;
+            }
+
+            verticalVelocity = Mathf.Clamp(verticalVelocity, 
+                                            isWall ? -gravityMaxSpeedWithFriction : -gravityMaxSpeed, 
+                                            float.PositiveInfinity);
+            moveVector.y = verticalVelocity;
+            controller.Move(moveVector * Time.deltaTime);
+        }
     }
 
     private void DoAccelerate(InputAction.CallbackContext context) {
