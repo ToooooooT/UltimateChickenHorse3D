@@ -108,7 +108,7 @@ public class Player : MonoBehaviour {
         controller.Move(moveVector);
         isWalking = moveDir != Vector3.zero;
         // follow object move
-        controller.Move(0.25f * followObjectMove);
+        controller.Move(followObjectMove);
         followObjectMove = Vector3.zero;
     }
 
