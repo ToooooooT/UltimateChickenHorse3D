@@ -19,6 +19,7 @@ TagManager:
   - Bullet
   - CannonBomb
   - CannonPipe
+  - Airplane
   layers:
   - Default
   - TransparentFX
