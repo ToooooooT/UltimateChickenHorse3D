@@ -16,6 +16,9 @@ TagManager:
   - MovingObject
   - Danger
   - portal
+  - Bullet
+  - CannonBomb
+  - CannonPipe
   layers:
   - Default
   - TransparentFX
