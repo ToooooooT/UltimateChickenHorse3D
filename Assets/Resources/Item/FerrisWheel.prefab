@@ -204,7 +204,7 @@ GameObject:
   - component: {fileID: 5796989673500642188}
   m_Layer: 0
   m_Name: LeftUp
-  m_TagString: MovingObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -307,7 +307,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86baeb19b2db74f79bd65dabafce1976, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  followSpeed: 0
 --- !u!1 &2983285528764768593
 GameObject:
   m_ObjectHideFlags: 0
@@ -907,7 +906,7 @@ GameObject:
   - component: {fileID: 6893445258788866783}
   m_Layer: 0
   m_Name: LeftDown
-  m_TagString: MovingObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1010,7 +1009,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86baeb19b2db74f79bd65dabafce1976, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  followSpeed: 0
 --- !u!1 &6355899829024820805
 GameObject:
   m_ObjectHideFlags: 0
@@ -1026,7 +1024,7 @@ GameObject:
   - component: {fileID: 8832132922527660565}
   m_Layer: 0
   m_Name: RightUp
-  m_TagString: MovingObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1129,7 +1127,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86baeb19b2db74f79bd65dabafce1976, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  followSpeed: 0
 --- !u!1 &9167646474753673326
 GameObject:
   m_ObjectHideFlags: 0
@@ -1145,7 +1142,7 @@ GameObject:
   - component: {fileID: 3238856934132111887}
   m_Layer: 0
   m_Name: RightDown
-  m_TagString: MovingObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1248,4 +1245,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86baeb19b2db74f79bd65dabafce1976, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  followSpeed: 0

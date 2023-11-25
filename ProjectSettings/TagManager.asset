@@ -6,8 +6,6 @@ TagManager:
   tags:
   - Camera
   - Wall
-  - MovingObject
-  - Danger
   - ScoreBoard
   - ItemGenerator
   - PlayerGenerator
