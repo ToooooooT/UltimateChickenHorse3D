@@ -187,7 +187,7 @@ public class Player : MonoBehaviour {
         Vector3 p2 = p1 + Vector3.up * controller.height;
         float castDistance = .2f;
         if (Physics.CapsuleCast(p1, p2, controller.radius, transform.forward, out RaycastHit hit, castDistance) 
-                && (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("MovingObject"))) {
+                && hit.collider.CompareTag("Wall")) {
             moveVector = normalMoveSpeed * moveSpeedJumpWallratio * hit.normal;
         }
         moveVector.y = verticalVelocity;
@@ -200,14 +200,14 @@ public class Player : MonoBehaviour {
         Vector3 p2 = p1 + Vector3.up * controller.height;
         float castDistance = .2f;
         return Physics.CapsuleCast(p1, p2, controller.radius, transform.forward, out RaycastHit hit, castDistance)
-                && (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("MovingObject"));
+                && hit.collider.CompareTag("Wall");
     }
 
     private bool IsGrounded() {
         Vector3 p1 = transform.position + controller.center;
         float castDistance = .2f;
         return Physics.SphereCast(p1, controller.height / 2, Vector3.down, out RaycastHit hit, castDistance) 
-                && (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("MovingObject"));
+                && hit.collider.CompareTag("Wall");
     }
 
     private void HandleFacement() {
