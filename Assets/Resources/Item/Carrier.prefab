@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8249025134203898205}
   m_Layer: 0
   m_Name: Carrier
-  m_TagString: Untagged
+  m_TagString: CannonPipe
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -122,3 +122,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 765cb6608887b5a458ac783d16ed8852, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  countdown: 0
+  countdownTime: 0

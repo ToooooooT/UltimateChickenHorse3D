@@ -14,6 +14,8 @@ public class CameraMovement : MonoBehaviour
     private Dictionary<string, GameObject> name2object;
     private float rotationX = 0;
     private float rotationY = 0;
+    private float diviateX = 0;
+    private float diviateZ = 0;
     public bool isAddingObject = false;
     private const string FOLDERPATH = "Item";
 
@@ -92,18 +94,7 @@ public class CameraMovement : MonoBehaviour
 
     private void TransparentObject() {
         string name = playerObjects[0].GetComponent<Player>().GetItemName();
-        if (name == "Cube") {
-            transparentObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            transparentObject.name = "transparent cube";
-        } else if (name == "Sphere") {
-            transparentObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            transparentObject.name = "transparent sphere";
-        } else {
-            // TODO(Nigo): use the correct primitive
-            // currently use sphere instead
-            transparentObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            transparentObject.name = "transparent sphere";
-        }
+        transparentObject = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/" + name));
     }
     
     private void CreateObject() {
@@ -150,7 +141,7 @@ public class CameraMovement : MonoBehaviour
             float verticalRotationAngle = -mouseY * sensitive;
 
             float horizontalRotationAngle = mouseX * sensitive;
-            horizontalRotationAngle = Mathf.Clamp(horizontalRotationAngle, -90f, 90f);
+            //horizontalRotationAngle = Mathf.Clamp(horizontalRotationAngle, -90f, 90f);
 
             Vector3 transparentObjectForward = transparentObject.transform.forward;
             transparentObjectForward.y = 0.0f;
@@ -158,6 +149,12 @@ public class CameraMovement : MonoBehaviour
             Vector3 finalForward = Quaternion.AngleAxis(verticalRotationAngle, cameraForward) * rotatedForward;
 
             transparentObject.transform.rotation = Quaternion.LookRotation(finalForward, cameraForward);
+            Vector3 newRotation = transparentObject.transform.rotation.eulerAngles;
+            diviateX = newRotation.x;
+            diviateZ = newRotation.z;
+            newRotation.x = newRotation.x - diviateX;
+            newRotation.z = newRotation.z - diviateZ;
+            transparentObject.transform.rotation = Quaternion.Euler(newRotation);
         } else if (Input.GetMouseButton(1)) {
             mouseX = 0;
             Vector3 cameraForward = -transform.right;
@@ -165,7 +162,7 @@ public class CameraMovement : MonoBehaviour
             float verticalRotationAngle = -mouseY * sensitive;
 
             float horizontalRotationAngle = mouseX * sensitive;
-            horizontalRotationAngle = Mathf.Clamp(horizontalRotationAngle, -90f, 90f);
+            //horizontalRotationAngle = Mathf.Clamp(horizontalRotationAngle, -90f, 90f);
 
             Vector3 transparentObjectForward = transparentObject.transform.forward;
             //transparentObjectForward.y = 0.0f;
@@ -173,6 +170,11 @@ public class CameraMovement : MonoBehaviour
             Vector3 finalForward = Quaternion.AngleAxis(verticalRotationAngle, cameraForward) * rotatedForward;
 
             transparentObject.transform.rotation = Quaternion.LookRotation(finalForward, cameraForward);
+
+            Vector3 newRotation = transparentObject.transform.rotation.eulerAngles;
+            newRotation.x = newRotation.x - diviateX;
+            newRotation.z = newRotation.z - diviateZ;
+            transparentObject.transform.rotation = Quaternion.Euler(newRotation);
 
         } else {
             rotationX -= mouseY ;
@@ -182,17 +184,20 @@ public class CameraMovement : MonoBehaviour
             transform.rotation = Quaternion.Euler(rotationX, rotationY, 0.0f);
         }
 
-        if (PlacingIsValid()) {
-            if (transparentObject.TryGetComponent<Renderer>(out var renderer)) {
-                renderer.material.color = validColor;
-            }
-        } else {
-            if (transparentObject.TryGetComponent<Renderer>(out var renderer)) {
-                renderer.material.color = invalidColor;
-            }
+        ItemVisible(transparentObject, PlacingIsValid());
+    }
+    private void ItemVisible(GameObject item, bool visible)
+    {
+
+        Transform parentTransform = item.transform;
+        if (item.TryGetComponent<Renderer>(out var renderer))
+            renderer.enabled = visible;
+        for (int i = 0; i < parentTransform.childCount; i++) {
+            Transform childTransform = parentTransform.GetChild(i);
+            GameObject childObject = childTransform.gameObject;
+            ItemVisible(childObject, visible);
         }
     }
-
     private void LoadAllPrefabsInFolder() {
         UnityEngine.Object[] loadedObjects = Resources.LoadAll(FOLDERPATH);
         foreach (UnityEngine.Object obj in loadedObjects) {

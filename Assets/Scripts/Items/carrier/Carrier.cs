@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Carrier : MonoBehaviour
+public class Carrier : BaseItem
 {
-    private enum State { shooting, idle };
+    private enum State { shooting, idle ,placing};
     private State state;
     private const string FOLDERPATH = "airplane";
     public float countdown;
@@ -13,14 +13,18 @@ public class Carrier : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        state = State.idle;
+        state = State.placing;
         countdownTime = 25;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (state != State.placing)
+            shootingMode();
+    }
+    void shootingMode()
+    {
         if (state == State.shooting) {
             GenerateAirplane();
             state = State.idle;
@@ -32,7 +36,15 @@ public class Carrier : MonoBehaviour
                 state = State.shooting;
             }
         }
+    }
 
+    public override void Initialize()
+    {
+        state = State.shooting;
+    }
+    public override void Reset()
+    {
+        state = State.placing;
     }
     public void GenerateAirplane()
     {

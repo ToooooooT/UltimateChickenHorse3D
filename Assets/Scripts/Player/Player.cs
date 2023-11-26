@@ -264,6 +264,7 @@ public class Player : MonoBehaviour {
 
     private bool TagCanJump(Collider collider) {
         return collider.CompareTag("Airplane") ||
-            collider.CompareTag("Wall");
+            collider.CompareTag("Wall") ||
+            collider.CompareTag("CannonPipe");
     }
 }
