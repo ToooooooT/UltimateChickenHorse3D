@@ -42,7 +42,7 @@ public class Rocket : BaseItem
 
     private void HandleFly() {
         if (state == State.Flying) {
-            player.exSpeed += new Vector3(0, player.jumpSpeed / 10, 0);
+            player.exSpeed += new Vector3(0, player.jumpSpeed / 40, 0);
         }
     }
 

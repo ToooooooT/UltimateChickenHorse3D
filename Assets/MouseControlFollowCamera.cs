@@ -33,7 +33,6 @@ public class MouseControlFollowCamera : MonoBehaviour
             else if (scrollWheelInput < 0) {
                 distance += 0.5f;
             }
-            Debug.Log("Distance: " + distance);
         }
         if (Input.GetKeyDown(KeyCode.V))
             FPS = !FPS;
