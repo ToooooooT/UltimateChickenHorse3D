@@ -7,13 +7,15 @@ public class Cannon : BaseItem
     private enum State { shooting, idle , placing};
     private State state;
     private const string FOLDERPATH = "cannon bomb";
-    public float countdown;
-    public float countdownTime;
+    [SerializeField] private float rotateSpeed;
+    [SerializeField] private float countdown;
+    [SerializeField] private float countdownTime;
     // Start is called before the first frame update
     void Start()
     {
         state = State.placing;
-        countdownTime = 5;
+        countdownTime = 10;
+        rotateSpeed = 40;
     }
 
     // Update is called once per frame
@@ -23,6 +25,7 @@ public class Cannon : BaseItem
             shootingMode();
         }
     }
+
     void shootingMode()
     {
         if (state == State.shooting) {
@@ -36,6 +39,7 @@ public class Cannon : BaseItem
                 state = State.shooting;
             }
         }
+        transform.Rotate(transform.up, rotateSpeed * Time.deltaTime);
     }
 
     public override void Initialize()
@@ -50,9 +54,10 @@ public class Cannon : BaseItem
     {
         GameObject newBomb = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/Round_shot"));
         newBomb.transform.position = transform.position + 1.6f*transform.up + 2f*transform.forward;
-        newBomb.transform.localScale = new Vector3(3f,3f,3f);
+        newBomb.transform.localScale = new Vector3(10f,10f,10f);
         CannonBomb BombScript = newBomb.GetComponent<CannonBomb>();
-        BombScript.velocity =  transform.forward;
+        BombScript.velocity =  transform.forward * 0.5f;
         BombScript.parentCannon = this.gameObject;
+        Destroy(newBomb, 5f);
     }
 }

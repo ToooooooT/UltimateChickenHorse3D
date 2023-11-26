@@ -121,53 +121,30 @@ public class Player : MonoBehaviour {
         controller.Move(followObjectMove);
         followObjectMove = Vector3.zero;
     }
-    /*
-    public bool IsFlying() {
-        float pressJump = playerInputActions.Player.Jump.ReadValue<float>();
-        return pressJump > 0;
-    }*/
 
     private void HandleJump() {
-        /*Transform rocketTransform = transform.Find("Rocket");
-        
-        if (rocketTransform != null) {
-            Vector3 moveVector = Vector3.zero;
-            bool isWall = CheckWall();
-            if (IsFlying()) {
-                buttonPressedTime += Time.deltaTime;
-                verticalVelocity = jumpSpeed;
-            } else {
-                verticalVelocity -= gravity * Time.deltaTime;
+        Vector3 moveVector = Vector3.zero;
+        bool isWall = CheckWall();
+        if (isJumping && isWall) {
+            WallJump();
+            return;
+        }
+        if (isJumping) {
+            buttonPressedTime += Time.deltaTime;
+            verticalVelocity = jumpSpeed;
+            if (buttonPressedTime > buttonPressedWindow) {
+                isJumping = false;
+                verticalVelocity = 0;
             }
-            verticalVelocity = Mathf.Clamp(verticalVelocity,
-                                            isWall ? -gravityMaxSpeedWithFriction : -gravityMaxSpeed,
-                                            float.PositiveInfinity);
-            moveVector.y = verticalVelocity;
-            controller.Move(moveVector * Time.deltaTime);*/
-        //} else {
-            Vector3 moveVector = Vector3.zero;
-            bool isWall = CheckWall();
-            if (isJumping && isWall) {
-                WallJump();
-                return;
-            }
-            if (isJumping) {
-                buttonPressedTime += Time.deltaTime;
-                verticalVelocity = jumpSpeed;
-                if (buttonPressedTime > buttonPressedWindow) {
-                    isJumping = false;
-                    verticalVelocity = 0;
-                }
-            } else {
-                verticalVelocity -= gravity * Time.deltaTime;
-            }
+        } else {
+            verticalVelocity -= gravity * Time.deltaTime;
+        }
 
-            verticalVelocity = Mathf.Clamp(verticalVelocity, 
-                                            isWall ? -gravityMaxSpeedWithFriction : -gravityMaxSpeed, 
-                                            float.PositiveInfinity);
-            moveVector.y = verticalVelocity;
-            controller.Move(moveVector * Time.deltaTime);
-        //}
+        verticalVelocity = Mathf.Clamp(verticalVelocity, 
+                                        isWall ? -gravityMaxSpeedWithFriction : -gravityMaxSpeed, 
+                                        float.PositiveInfinity);
+        moveVector.y = verticalVelocity;
+        controller.Move(moveVector * Time.deltaTime);
     }
 
     private void DoAccelerate(InputAction.CallbackContext context) {
@@ -214,7 +191,7 @@ public class Player : MonoBehaviour {
 
     private bool IsGrounded() {
         Vector3 p1 = transform.position + controller.center;
-        float castDistance = .2f;
+        float castDistance = 2f;
         return Physics.SphereCast(p1, controller.height / 2, Vector3.down, out RaycastHit hit, castDistance) 
                 && TagCanJump(hit.collider);
     }
@@ -243,13 +220,7 @@ public class Player : MonoBehaviour {
         } else if (state == State.GAME && hit.gameObject.TryGetComponent<PlayerFollowObject>(out var playerFollow)) {
             // follow object move
             followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition();
-        } /*else if (state == State.GAME && hit.gameObject.CompareTag("SpringTop")) {
-            Spring spring = hit.gameObject.GetComponentInParent<Spring>();
-            if (spring && spring.isTriggerVibration == true) {
-                verticalVelocity = jumpSpeed * (float)Math.Sqrt(2);
-                Debug.Log("I touch spring, I should jump very high");
-            }
-        } */
+        }
     }
 
     private string GetTopParentObjectName(Transform obj) {
