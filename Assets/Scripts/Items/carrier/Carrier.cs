@@ -9,6 +9,7 @@ public class Carrier : MonoBehaviour
     private const string FOLDERPATH = "airplane";
     public float countdown;
     public float countdownTime;
+    private static readonly string[] airplaneType = { "Awacs" , "F18" , "F35" , "Hawkeye" , "Seahawk"};
     // Start is called before the first frame update
     void Start()
     {
@@ -35,10 +36,14 @@ public class Carrier : MonoBehaviour
     }
     public void GenerateAirplane()
     {
-        GameObject newAirplane = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/Awacs"));
+        string chooseType = airplaneType[(int)Random.Range(0, airplaneType.Length)];
+        GameObject newAirplane = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/" + chooseType));
         newAirplane.transform.position = transform.position + 1.6f * transform.up + 2f * transform.forward;
         newAirplane.transform.rotation = transform.rotation;
-        newAirplane.transform.localScale = new Vector3(0.002f, 0.002f, 0.002f);
+        if(chooseType == "Awacs")
+            newAirplane.transform.localScale = new Vector3(0.002f, 0.002f, 0.002f);
+        else
+            newAirplane.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
         Airplane airplaneScript = newAirplane.GetComponent<Airplane>();
         airplaneScript.velocity = 0.2f * transform.forward;
         airplaneScript.parentCarrier = this.gameObject;
