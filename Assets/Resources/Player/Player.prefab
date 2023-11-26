@@ -939,9 +939,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6717786617014538751}
   - component: {fileID: 6966210496510365072}
-  - component: {fileID: 8764743184214681684}
   - component: {fileID: 1485242744207440564}
   - component: {fileID: 8367553340063406013}
+  - component: {fileID: 4555201535915965470}
   m_Layer: 0
   m_Name: VirtualCamera
   m_TagString: Camera
@@ -1004,21 +1004,6 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 3798502902091859529}
---- !u!114 &8764743184214681684
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8218304032134536336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ded7f65e8861d24992b78c6bcc30a2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sensitive_rotate: 0
-  sensitive_move: 0
-  sensitive_zoom: 0
 --- !u!20 &1485242744207440564
 Camera:
   m_ObjectHideFlags: 0
@@ -1114,3 +1099,18 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!114 &4555201535915965470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8218304032134536336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ded7f65e8861d24992b78c6bcc30a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sensitive_rotate: 0
+  sensitive_move: 0
+  sensitive_zoom: 0

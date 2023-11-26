@@ -12,7 +12,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private float sensitive_zoom;
 
     private GameObject transparentObject;
-    private StageController stageController;
+    // private StageController stageController;
     private GameObject playerObject;
     private Color invalidColor = new(1.0f, 0.0f, 0.0f, 0.05f);
     private Color validColor = new(0.0f, 1.0f, 0.0f, 0.05f);
@@ -32,7 +32,7 @@ public class CameraMovement : MonoBehaviour
     private const string FOLDERPATH = "Item";
 
     void Start() {
-        stageController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageController>();
+        // stageController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageController>();
         placeObjectInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlaceObjectInputActionMap();
         playerObject = transform.parent.gameObject;
         transparentObject = null;
@@ -51,10 +51,10 @@ public class CameraMovement : MonoBehaviour
     }
 
     void Update() {
-        Vector2 inputVector = placeObjectInputActionMap.FindAction("MoveCamera").ReadValue<Vector2>().normalized;
-        MoveCamera();
-        ZoomCamera();
         if (camera_.enabled && virtualCamera.enabled) {
+            Vector2 inputVector = placeObjectInputActionMap.FindAction("MoveCamera").ReadValue<Vector2>().normalized;
+            MoveCamera();
+            ZoomCamera();
             if (transparentObject == null) {
                 TransparentObject();
             }
@@ -176,7 +176,7 @@ public class CameraMovement : MonoBehaviour
         string name = playerObject.GetComponent<Player>().GetItemName();
         GameObject obj = Instantiate(name2object[name], transparentObject.transform.position, transparentObject.transform.rotation);
         obj.name = name;
-        stageController.items.Add(obj);
+        // stageController.items.Add(obj);
         Destroy(transparentObject);
         transparentObject = null;
         playerObject.GetComponent<Player>().RemoveItem();
