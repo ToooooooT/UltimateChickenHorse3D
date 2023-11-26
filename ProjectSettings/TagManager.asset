@@ -6,14 +6,16 @@ TagManager:
   tags:
   - Camera
   - Wall
-  - MovingObject
-  - Danger
   - ScoreBoard
   - ItemGenerator
   - PlayerGenerator
   - ChoosingItem
   - LinBen
   - portal
+  - Bullet
+  - CannonBomb
+  - CannonPipe
+  - Airplane
   - GameInput
   - SpringTop
   layers:

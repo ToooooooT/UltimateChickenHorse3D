@@ -41,10 +41,10 @@ public class Bee : BaseItem
                 state = State.Move;
                 player2follow = other.gameObject;
             } else if (state == State.Move) {
-                animator.SetTrigger("Attack");
-                state = State.Attack;
                 if (player2follow.GetComponent<Player>().state == Player.State.GAME) {
-                    player2follow.GetComponent<Player>().state = Player.State.STOP;
+                    animator.SetTrigger("Attack");
+                    state = State.Attack;
+                    player2follow.GetComponent<Player>().state = Player.State.LOSE;
                 }
             }
         }

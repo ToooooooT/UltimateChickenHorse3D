@@ -16,8 +16,10 @@ public class StageController : MonoBehaviour
     private GameObject[] cameraObjects;
     private GameObject scoreBoardObject;
     private GameObject LinBenObject;
+    public List<GameObject> items;
 
     void Start() {
+        items = new();
         gameMode = PlayerPrefs.GetString("GameMode", "Party");
         if (gameMode == "Party") {
             stage = Stage.BEFORE_SELECT_ITEM;
@@ -195,18 +197,18 @@ public class StageController : MonoBehaviour
     }
 
     private void MemorizeItemsState() {
-        // TODO: use a more general way to memorize initial items' state
-        GameObject[] objs = GameObject.FindGameObjectsWithTag("Danger");
-        foreach (GameObject obj in objs) {
-            obj.GetComponent<BaseItem>().Initialize();
+        foreach (GameObject item in items) {
+            if (item.TryGetComponent<BaseItem>(out var item_base)) {
+                item_base.Initialize();
+            }
         }
     }
 
     private void ResetItems() {
-        // TODO: use a more general way to reset items
-        GameObject[] objs = GameObject.FindGameObjectsWithTag("Danger");
-        foreach (GameObject obj in objs) {
-            obj.GetComponent<BaseItem>().Reset();
+        foreach (GameObject item in items) {
+            if (item.TryGetComponent<BaseItem>(out var item_base)) {
+                item_base.Reset();
+            }
         }
     }
 }

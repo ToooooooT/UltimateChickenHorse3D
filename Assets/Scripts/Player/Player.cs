@@ -197,7 +197,7 @@ public class Player : MonoBehaviour {
         Vector3 p2 = p1 + Vector3.up * controller.height;
         float castDistance = .2f;
         if (Physics.CapsuleCast(p1, p2, controller.radius, transform.forward, out RaycastHit hit, castDistance) 
-                && (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("MovingObject"))) {
+                && TagCanJump(hit.collider)) {
             exSpeed += normalMoveSpeed * moveSpeedJumpWallratio * hit.normal;
         }
         isJumping = false;
@@ -208,14 +208,14 @@ public class Player : MonoBehaviour {
         Vector3 p2 = p1 + Vector3.up * controller.height;
         float castDistance = .2f;
         return Physics.CapsuleCast(p1, p2, controller.radius, transform.forward, out RaycastHit hit, castDistance)
-                && (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("MovingObject"));
+                && TagCanJump(hit.collider);
     }
 
     private bool IsGrounded() {
         Vector3 p1 = transform.position + controller.center;
         float castDistance = .2f;
         return Physics.SphereCast(p1, controller.height / 2, Vector3.down, out RaycastHit hit, castDistance) 
-                && (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("MovingObject"));
+                && TagCanJump(hit.collider);
     }
 
     private void HandleFacement() {
@@ -239,7 +239,7 @@ public class Player : MonoBehaviour {
             // TODO: move to the start position of stage
             ModifyPosition(Vector3.zero);
             state = State.STOP;
-        } else if (state == State.GAME && hit.gameObject.CompareTag("MovingObject")) {
+        } else if (state == State.GAME && hit.gameObject.TryGetComponent<PlayerFollowObject>(out var playerFollow)) {
             // follow object move
             followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition();
         } /*else if (state == State.GAME && hit.gameObject.CompareTag("SpringTop")) {
@@ -268,5 +268,10 @@ public class Player : MonoBehaviour {
 
     public bool HaveItem() {
         return item != null;
+    }
+
+    private bool TagCanJump(Collider collider) {
+        return collider.CompareTag("Airplane") ||
+            collider.CompareTag("Wall");
     }
 }
