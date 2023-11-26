@@ -1,63 +1,91 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using System;
-using System.Linq;
+using Cinemachine;
 
 public class CameraMovement : MonoBehaviour
 {
+    [SerializeField] private float sensitive_rotate;
+    [SerializeField] private float sensitive_move;
+    [SerializeField] private float sensitive_zoom;
+
     private GameObject transparentObject;
-    private GameObject[] playerObjects;
     private StageController stageController;
+    private GameObject playerObject;
     private Color invalidColor = new(1.0f, 0.0f, 0.0f, 0.05f);
     private Color validColor = new(0.0f, 1.0f, 0.0f, 0.05f);
     private Dictionary<string, GameObject> name2object;
+    private PlayerInputActions playerInputActions;
+    private CinemachineVirtualCamera virtualCamera;
+    private Camera camera_;
+    // private Transform playerTransform;
     private float rotationX = 0;
     private float rotationY = 0;
     private float diviateX = 0;
     private float diviateZ = 0;
-    public bool isAddingObject = false;
+    private float distance;
+    private bool isAddingObject = false;
     private const string FOLDERPATH = "Item";
 
     void Start() {
         stageController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageController>();
-        playerObjects = GameObject.FindGameObjectsWithTag("Player");
+        playerInputActions = transform.parent.gameObject.GetComponent<Player>().GetPlayerInputActions();
+        playerObject = transform.parent.gameObject;
+        sensitive_rotate = 1.0f;
+        sensitive_move = 0.5f;
+        sensitive_zoom = 0.5f;
+        distance = 25.0f;
         // load prefab for creating object
         name2object = new Dictionary<string, GameObject>();
+        virtualCamera = GetComponent<CinemachineVirtualCamera>();
+        camera_ = GetComponent<Camera>();
         LoadAllPrefabsInFolder();
+        Disable();
     }
 
     void Update() {
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
-        float sensitive = 0.2f;
+        Vector2 inputVector = playerInputActions.PlaceObject.MoveCamera.ReadValue<Vector2>().normalized;
+        RotateCamera();
+        MoveCamera();
+        ZoomCamera();
+        string name = playerObject.GetComponent<Player>().GetItemName();
+        if (name != null && !isAddingObject) {
+            isAddingObject = true;
+            TransparentObject();
+        }
+        if (name != null && isAddingObject) {
+            AddingObject(inputVector.x, inputVector.y, 5.0f);
+        }
+    }
+
+    private void RotateCamera() {
+        Vector2 inputVector = playerInputActions.PlaceObject.RotateCamera.ReadValue<Vector2>().normalized;
+        rotationX -= inputVector.y * sensitive_rotate;
+        rotationY += inputVector.x * sensitive_rotate;
+        rotationX = Mathf.Clamp(rotationX, -90, 90);
+        transform.rotation = Quaternion.Euler(rotationX, rotationY, 0.0f);
+    }
+
+    private void MoveCamera() {
         float x1=-100, x2=100, y1=-20, y2=100, z1=-100, z2=100;
-        if (!isAddingObject) {
-            rotationX -= mouseY * sensitive * 5;
-            rotationY += mouseX * sensitive * 5;
-            rotationX = Mathf.Clamp(rotationX, -90, 90);
-
-            transform.rotation = Quaternion.Euler(rotationX, rotationY, 0.0f);
+        Vector2 inputVector = playerInputActions.PlaceObject.MoveCamera.ReadValue<Vector2>().normalized;
+        if (inputVector.y > 0) {
+            transform.position += sensitive_move * transform.forward;
+        } else if (inputVector.y < 0) {
+            transform.position -= sensitive_move * transform.forward;
         }
-
-        
-        if (Input.GetKey(KeyCode.W)) {
-            transform.position += 2*sensitive * transform.forward;
+        if (inputVector.x > 0) {
+            transform.position += sensitive_move * transform.right;
+        } else if (inputVector.x < 0) {
+            transform.position -= sensitive_move * transform.right;
         }
-        if (Input.GetKey(KeyCode.S)) {
-            transform.position += 2*sensitive * -transform.forward;
-        }
-        if (Input.GetKey(KeyCode.A)) {
-            transform.position += sensitive * -transform.right;
-        }
-        if (Input.GetKey(KeyCode.D)) {
-            transform.position += sensitive * transform.right;
-        }
-        if (Input.GetKey(KeyCode.Space)) {
-            transform.position += new Vector3(0, sensitive, 0);
-        }
-        if (Input.GetKey(KeyCode.LeftControl)) {
-            transform.position += new Vector3(0, -sensitive, 0);
+        float inputValue = playerInputActions.PlaceObject.MoveCameraUpDown.ReadValue<float>();
+        if (inputValue > 0) {
+            transform.position += new Vector3(0, sensitive_move, 0);
+        } else if (inputValue < 0) {
+            transform.position -= new Vector3(0, sensitive_move, 0);
         }
         if (transform.position.x < x1) {
             transform.position = new Vector3(x1, transform.position.y, transform.position.z);
@@ -77,18 +105,41 @@ public class CameraMovement : MonoBehaviour
         if (transform.position.y > y2) {
             transform.position = new Vector3(transform.position.x, y2, transform.position.z);
         }
-        string name = playerObjects[0].GetComponent<Player>().GetItemName();
-        if (name != null && !isAddingObject) {
-            isAddingObject = true;
-            TransparentObject();
-        } else if (Input.GetKeyDown(KeyCode.E)) {
-            if (isAddingObject && PlacingIsValid()) {
-                CreateObject(); 
-                isAddingObject = false;
+    }
+
+    private void ZoomCamera() {
+        float scrollWheelInput = playerInputActions.PlaceObject.ZoomCamera.ReadValue<float>();
+        if (scrollWheelInput != 0) {
+            if (scrollWheelInput > 0) {
+                distance -= sensitive_zoom;
+                distance = Mathf.Max(distance, 2.0f);
+                if (distance > 2.0) {
+                    transform.position = transform.position + transform.forward * sensitive_zoom;
+                }
+            } else if (scrollWheelInput < 0) {
+                distance += sensitive_zoom;
+                transform.position = transform.position - transform.forward * sensitive_zoom;
             }
         }
-        if (name != null && isAddingObject) {
-            AddingObject(mouseX, mouseY, 5.0f);
+    }
+
+    public void Enable() {
+        playerInputActions.PlaceObject.Enable();
+        playerInputActions.PlaceObject.Place.started += PlaceObject;
+        virtualCamera.enabled = true;
+        camera_.enabled = true;
+    }
+
+    public void Disable() {
+        playerInputActions.PlaceObject.Disable();
+        virtualCamera.enabled = false;
+        camera_.enabled = false;
+    }
+
+    private void PlaceObject(InputAction.CallbackContext context) {
+        if (isAddingObject && PlacingIsValid()) {
+            CreateObject(); 
+            isAddingObject = false;
         }
     }
 
@@ -98,12 +149,12 @@ public class CameraMovement : MonoBehaviour
     }
     
     private void CreateObject() {
-        string name = playerObjects[0].GetComponent<Player>().GetItemName();
+        string name = playerObject.GetComponent<Player>().GetItemName();
         GameObject obj = Instantiate(name2object[name], transparentObject.transform.position, transparentObject.transform.rotation);
         obj.name = name;
         stageController.items.Add(obj);
         Destroy(transparentObject);
-        playerObjects[0].GetComponent<Player>().RemoveItem();
+        playerObject.GetComponent<Player>().RemoveItem();
     }
 
     private bool PlacingIsValid() {
@@ -114,7 +165,22 @@ public class CameraMovement : MonoBehaviour
     }
 
     private void AddingObject(float mouseX, float mouseY, float sensitive, float x1=-100, float x2=100, float y1=-20, float y2=100, float z1=-100, float z2=100) {
-        transparentObject.transform.position = transform.position + 25.0f* transform.forward;
+        MoveObject(x1, x2, y1, y2, z1, z2);
+        RotateObject(mouseX, mouseY, sensitive);
+
+        if (PlacingIsValid()) {
+            if (transparentObject.TryGetComponent<Renderer>(out var renderer)) {
+                renderer.material.color = validColor;
+            }
+        } else {
+            if (transparentObject.TryGetComponent<Renderer>(out var renderer)) {
+                renderer.material.color = invalidColor;
+            }
+        }
+    }
+
+    private void MoveObject(float x1=-100, float x2=100, float y1=-20, float y2=100, float z1=-100, float z2=100) {
+        transparentObject.transform.position = transform.position + distance * transform.forward;
         if (transparentObject.transform.position.x < x1) {
             transparentObject.transform.position = transparentObject.transform.position - Math.Abs((x1 - transparentObject.transform.position.x) / transform.forward.x) * transform.forward;
         }
@@ -133,7 +199,9 @@ public class CameraMovement : MonoBehaviour
         if (transparentObject.transform.position.z > z2) {
             transparentObject.transform.position = transparentObject.transform.position - Math.Abs((z2 - transparentObject.transform.position.z) / transform.forward.z) * transform.forward;
         }
+    }
 
+    private void RotateObject(float mouseX, float mouseY, float sensitive) {
         if (Input.GetMouseButton(0)) {
             //mouseY = 0;
             Vector3 cameraForward = -transform.right;
@@ -186,6 +254,7 @@ public class CameraMovement : MonoBehaviour
 
         ItemVisible(transparentObject, PlacingIsValid());
     }
+
     private void ItemVisible(GameObject item, bool visible)
     {
 

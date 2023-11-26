@@ -4,15 +4,17 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.InputSystem;
 using System;
+using Unity.VisualScripting;
 
 public class MouseControlFollowCamera : MonoBehaviour
 {
-    [SerializeField] private float sensitive_move;
+    [SerializeField] private float sensitive_rotate;
     [SerializeField] private float sensitive_zoom;
 
     private float rotationX = 0;
     private float rotationY = 0;
     private CinemachineVirtualCamera virtualCamera;
+    private Camera camera_;
     private PlayerInputActions playerInputActions;
     private Transform playerTransform;
     private bool FPS;
@@ -22,13 +24,13 @@ public class MouseControlFollowCamera : MonoBehaviour
         playerTransform = transform.parent;
         playerInputActions = transform.parent.gameObject.GetComponent<Player>().GetPlayerInputActions();
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
-        sensitive_move = 1.0f;
+        camera_ = GetComponent<Camera>();
+        sensitive_rotate = 1.0f;
         sensitive_zoom = 0.5f;
         FPS = false;
         distance = 25.0f;
         rotationX = 0;
         rotationY = 0;
-        Enable();
     }
 
     private void Update() {
@@ -38,7 +40,16 @@ public class MouseControlFollowCamera : MonoBehaviour
 
     public void Enable() {
         playerInputActions.Player.FPS2TPS.started += FPS2TPS;
+        virtualCamera.enabled = true;
+        camera_.enabled = true;
     }
+
+    public void Disable() {
+        playerInputActions.Player.FPS2TPS.started -= FPS2TPS;
+        virtualCamera.enabled = false;
+        camera_.enabled = false;
+    }
+
 
     private void FPS2TPS(InputAction.CallbackContext context) {
         FPS = !FPS;
@@ -58,8 +69,8 @@ public class MouseControlFollowCamera : MonoBehaviour
 
     private void FollowPlayer() {
         Vector2 inputVector = playerInputActions.Player.MoveCamera.ReadValue<Vector2>().normalized;
-        rotationX -= inputVector.y * sensitive_move;
-        rotationY += inputVector.x * sensitive_move;
+        rotationX -= inputVector.y * sensitive_rotate;
+        rotationY += inputVector.x * sensitive_rotate;
         rotationX = Mathf.Clamp(rotationX, -90, 90);
         transform.rotation = Quaternion.Euler(rotationX, rotationY, 0.0f);
         if (virtualCamera.enabled && virtualCamera.Follow == null) {

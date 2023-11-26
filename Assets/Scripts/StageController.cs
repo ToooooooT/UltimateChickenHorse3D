@@ -48,6 +48,9 @@ public class StageController : MonoBehaviour
             }
             ClearChoosingItems();
             EnableVirtualCamera();
+            foreach (GameObject player in playerObjects) {
+                player.GetComponent<Player>().Disable(Player.State.STOP);
+            }
             stage = Stage.PLACE_ITEM;
             break;
         case Stage.PLACE_ITEM:
@@ -124,24 +127,21 @@ public class StageController : MonoBehaviour
 
     private void EnableFollowCamera() {
         for (int i = 0; i < cameraObjects.Length; ++i) {
-            EnableCamera virtualCameraEnable = cameraObjects[i].GetComponent<EnableCamera>();
             if (cameraObjects[i].name == "FollowCamera") {
-                virtualCameraEnable.Enable();
+                cameraObjects[i].GetComponent<MouseControlFollowCamera>().Enable();
             } else if (cameraObjects[i].name == "VirtualCamera") {
-                virtualCameraEnable.Disable();
+                cameraObjects[i].GetComponent<CameraMovement>().Disable();
             } 
         }
     }
 
     private void EnableVirtualCamera() {
         for (int i = 0; i < cameraObjects.Length; ++i) {
-            EnableCamera virtualCameraEnable = cameraObjects[i].GetComponent<EnableCamera>();
             if (cameraObjects[i].name == "FollowCamera") {
-                virtualCameraEnable.Disable();
+                cameraObjects[i].GetComponent<MouseControlFollowCamera>().Disable();
             } else if (cameraObjects[i].name == "VirtualCamera") {
-                Vector3 position = new(0, 10, 0);
-                cameraObjects[i].transform.SetPositionAndRotation(position, Quaternion.Euler(0, 0, 0));
-                virtualCameraEnable.Enable();
+                cameraObjects[i].transform.SetPositionAndRotation(new(0, 10, 0), Quaternion.Euler(0, 0, 0));
+                cameraObjects[i].GetComponent<CameraMovement>().Enable();
             } 
         }
     }
