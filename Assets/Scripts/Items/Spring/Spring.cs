@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,13 +11,13 @@ public class Spring : BaseItem
     private Vector3 origin_position;
     private Quaternion origin_rotation;
     private bool triggerVibration;
-    public bool isTriggerVibration;
     private float dampingRatio;
     private Vector3 initialTopPosition;
     private Vector3 initialSpringScale;
     private float frequency;
     private float amplitude;
     private float startTime;
+    private Player player;
 
     // Start is called before the first frame update
     void Start() {
@@ -28,10 +29,10 @@ public class Spring : BaseItem
         amplitude = initialTopPosition.y / 2 - baseTransform.localPosition.y;
         initialSpringScale = springTransform.localScale;
         triggerVibration = false;
-        isTriggerVibration = false;
         dampingRatio = 0.1f;
         frequency = 5;
         startTime = -1;
+        player = null;
     }
 
     // Update is called once per frame
@@ -41,19 +42,21 @@ public class Spring : BaseItem
     }
 
     private void HandleStep() {
-        if (topScript.TouchPlayer()) {
+        if (topScript.TouchPlayer() && !triggerVibration) {
             triggerVibration = true;
-            isTriggerVibration = true;
+            player = topScript.Player();
+            Vector3 velocity = new Vector3(0, -player.verticalVelocity, 0) + player.jumpSpeed * (float)Math.Sqrt(2) * transform.up.normalized;
+            Debug.Log(velocity);
+            player.exSpeed += velocity;
+            player = null;
         }
     }
 
+    int counter = 0;
     private void Vibration() {
-        if (!triggerVibration) {
-            isTriggerVibration = false;
-        }
-
         if (triggerVibration) {
             startTime = Time.time;
+            Debug.Log("step on spring" + counter++);
             triggerVibration = false;
         } else if (startTime == -1) {
             return;

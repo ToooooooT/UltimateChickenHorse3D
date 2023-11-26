@@ -23,17 +23,17 @@ public class Player : MonoBehaviour {
     [SerializeField] private float gravityMaxSpeed;
     [SerializeField] private float gravity;
     [SerializeField] private float buttonPressedWindow;
+    [SerializeField] private float resistanceRatio;
 
 
     private bool isWalking = false;
     private bool isJumping = false;
     public bool isPressSpace = false;
     private float buttonPressedTime;
-    private float verticalVelocity;
+    public float verticalVelocity;
     private float velocity;
     public Vector3 exSpeed;
     private Vector3 lastExSpeed;
-    private float resistanceRatio;
     public State state;
     private CharacterController controller;
     private PlayerInputActions playerInputActions;
@@ -61,7 +61,7 @@ public class Player : MonoBehaviour {
         buttonPressedWindow = .3f;
         item = null;
         exSpeed = Vector3.zero;
-        resistanceRatio = 0.9f;
+        resistanceRatio = 0.95f;
         state = State.STOP;
     }
 
@@ -112,7 +112,8 @@ public class Player : MonoBehaviour {
         Vector3 moveDir = GetMoveDirNormalized();
         Vector3 moveVector = velocity * Time.deltaTime * moveDir;
         moveVector += lastExSpeed * Time.deltaTime;
-        lastExSpeed = resistanceRatio * lastExSpeed + exSpeed;
+        lastExSpeed = resistanceRatio * new Vector3(lastExSpeed.x, 0, lastExSpeed.z) 
+                    + new Vector3(0, Mathf.Max(lastExSpeed.y - gravity * Time.deltaTime, 0), 0) + exSpeed;
         exSpeed = Vector3.zero;
         controller.Move(moveVector);
         isWalking = moveDir != Vector3.zero;

@@ -6,6 +6,8 @@ public class SpringTop : MonoBehaviour
 {
     private bool touchPlayer;
     private Player player;
+    private bool stay;
+    public Vector3 normal;
 
     // Start is called before the first frame update
     void Start() {
@@ -15,7 +17,9 @@ public class SpringTop : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        
+        if (touchPlayer) {
+            touchPlayer = false;
+        }
     }
 
     public bool TouchPlayer() {
@@ -28,16 +32,26 @@ public class SpringTop : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Player")) {
-            Debug.Log("Touch player");
+            Debug.Log("Touch player" + Time.frameCount);
             player = other.GetComponent<Player>();
             touchPlayer = true;
         }
     }
 
+    private void OnTriggerStay(Collider other) {
+        if (!stay && other.gameObject.CompareTag("Player")) {
+            player = other.GetComponent<Player>();
+            Debug.Log("Touching player" + Time.frameCount);
+            touchPlayer = true;
+            stay = true;
+        } else if (other.gameObject.CompareTag("Player")) {
+            touchPlayer = false;
+        }
+    }
+
     private void OnTriggerExit(Collider other) {
         if (other.gameObject.CompareTag("Player")) {
-            player = null;
-            touchPlayer = false;
+            stay = false;
         }
     }
 }
