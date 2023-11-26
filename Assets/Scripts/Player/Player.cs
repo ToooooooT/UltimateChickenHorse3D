@@ -18,18 +18,22 @@ public class Player : MonoBehaviour {
     [SerializeField] private float accelerateMoveSpeed;
     [SerializeField] private float moveSpeedJumpWallratio;
     [SerializeField] private float rotateSpeed;
-    [SerializeField] private float jumpSpeed;
+    [SerializeField] public float jumpSpeed;
     [SerializeField] private float gravityMaxSpeedWithFriction;
     [SerializeField] private float gravityMaxSpeed;
     [SerializeField] private float gravity;
     [SerializeField] private float buttonPressedWindow;
+    [SerializeField] private float resistanceRatio;
 
 
     private bool isWalking = false;
     private bool isJumping = false;
+    public bool isPressSpace = false;
     private float buttonPressedTime;
-    private float verticalVelocity;
+    public float verticalVelocity;
     private float velocity;
+    public Vector3 exSpeed;
+    private Vector3 lastExSpeed;
     public State state;
     private CharacterController controller;
     private PlayerInputActions playerInputActions;
@@ -47,7 +51,7 @@ public class Player : MonoBehaviour {
     private void Start() {
         normalMoveSpeed = 5f;
         accelerateMoveSpeed = 7f;
-        moveSpeedJumpWallratio = 5f;
+        moveSpeedJumpWallratio = 10f;
         rotateSpeed = 10f;
         velocity = normalMoveSpeed;
         jumpSpeed = 25f;
@@ -56,6 +60,8 @@ public class Player : MonoBehaviour {
         gravityMaxSpeedWithFriction = 5f;
         buttonPressedWindow = .3f;
         item = null;
+        exSpeed = Vector3.zero;
+        resistanceRatio = 0.95f;
         state = State.STOP;
     }
 
@@ -105,20 +111,24 @@ public class Player : MonoBehaviour {
     private void HandleMovement() {
         Vector3 moveDir = GetMoveDirNormalized();
         Vector3 moveVector = velocity * Time.deltaTime * moveDir;
+        moveVector += lastExSpeed * Time.deltaTime;
+        lastExSpeed = resistanceRatio * new Vector3(lastExSpeed.x, 0, lastExSpeed.z) 
+                    + new Vector3(0, Mathf.Max(lastExSpeed.y - gravity * Time.deltaTime, 0), 0) + exSpeed;
+        exSpeed = Vector3.zero;
         controller.Move(moveVector);
         isWalking = moveDir != Vector3.zero;
         // follow object move
         controller.Move(followObjectMove);
         followObjectMove = Vector3.zero;
     }
-
+    /*
     public bool IsFlying() {
         float pressJump = playerInputActions.Player.Jump.ReadValue<float>();
         return pressJump > 0;
-    }
+    }*/
 
     private void HandleJump() {
-        Transform rocketTransform = transform.Find("Rocket");
+        /*Transform rocketTransform = transform.Find("Rocket");
         
         if (rocketTransform != null) {
             Vector3 moveVector = Vector3.zero;
@@ -133,8 +143,8 @@ public class Player : MonoBehaviour {
                                             isWall ? -gravityMaxSpeedWithFriction : -gravityMaxSpeed,
                                             float.PositiveInfinity);
             moveVector.y = verticalVelocity;
-            controller.Move(moveVector * Time.deltaTime);
-        } else {
+            controller.Move(moveVector * Time.deltaTime);*/
+        //} else {
             Vector3 moveVector = Vector3.zero;
             bool isWall = CheckWall();
             if (isJumping && isWall) {
@@ -157,7 +167,7 @@ public class Player : MonoBehaviour {
                                             float.PositiveInfinity);
             moveVector.y = verticalVelocity;
             controller.Move(moveVector * Time.deltaTime);
-        }
+        //}
     }
 
     private void DoAccelerate(InputAction.CallbackContext context) {
@@ -169,6 +179,7 @@ public class Player : MonoBehaviour {
     }
 
     private void DoJump(InputAction.CallbackContext context) {
+        isPressSpace = true;
         if (CheckWall() || IsGrounded()) {
             isJumping = true;
             buttonPressedTime = 0;
@@ -176,22 +187,20 @@ public class Player : MonoBehaviour {
     }
 
     private void CancelJump(InputAction.CallbackContext context) {
+        isPressSpace = false;
         isJumping = false;
         verticalVelocity = Mathf.Min(verticalVelocity, 0);
     }
 
     private void WallJump() {
-        Vector3 moveVector = Vector3.zero;
         verticalVelocity = 20;
         Vector3 p1 = transform.position + controller.center + 0.5F * -controller.height * Vector3.up;
         Vector3 p2 = p1 + Vector3.up * controller.height;
         float castDistance = .2f;
         if (Physics.CapsuleCast(p1, p2, controller.radius, transform.forward, out RaycastHit hit, castDistance) 
                 && TagCanJump(hit.collider)) {
-            moveVector = normalMoveSpeed * moveSpeedJumpWallratio * hit.normal;
+            exSpeed += normalMoveSpeed * moveSpeedJumpWallratio * hit.normal;
         }
-        moveVector.y = verticalVelocity;
-        controller.Move(moveVector * Time.deltaTime);
         isJumping = false;
     }
 
@@ -234,13 +243,13 @@ public class Player : MonoBehaviour {
         } else if (state == State.GAME && hit.gameObject.TryGetComponent<PlayerFollowObject>(out var playerFollow)) {
             // follow object move
             followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition();
-        } else if (state == State.GAME && hit.gameObject.CompareTag("SpringTop")) {
+        } /*else if (state == State.GAME && hit.gameObject.CompareTag("SpringTop")) {
             Spring spring = hit.gameObject.GetComponentInParent<Spring>();
             if (spring && spring.isTriggerVibration == true) {
                 verticalVelocity = jumpSpeed * (float)Math.Sqrt(2);
                 Debug.Log("I touch spring, I should jump very high");
             }
-        }
+        } */
     }
 
     private string GetTopParentObjectName(Transform obj) {
