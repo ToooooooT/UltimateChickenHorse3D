@@ -25,6 +25,7 @@ public class Rocket : BaseItem
     void Update() {
         HandleFire();
         UpdateState();
+        HandleFly();
     }
 
     private void InitFire() {
@@ -32,10 +33,16 @@ public class Rocket : BaseItem
     }
 
     private void UpdateState() {
-        if (player != null && player.IsFlying()) {
+        if (player != null && player.isPressSpace) {
             state = State.Flying;
         } else if (player != null) {
             state = State.Equipped;
+        }
+    }
+
+    private void HandleFly() {
+        if (state == State.Flying) {
+            player.exSpeed += new Vector3(0, player.jumpSpeed / 10, 0);
         }
     }
 
