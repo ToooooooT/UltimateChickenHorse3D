@@ -12,6 +12,10 @@ TagManager:
   - ChoosingItem
   - LinBen
   - portal
+  - Bullet
+  - CannonBomb
+  - CannonPipe
+  - Airplane
   - GameInput
   - SpringTop
   layers:
