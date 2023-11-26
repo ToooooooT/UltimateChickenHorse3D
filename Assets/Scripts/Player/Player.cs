@@ -234,8 +234,14 @@ public class Player : MonoBehaviour {
         } else if (state == State.GAME && hit.gameObject.CompareTag("MovingObject")) {
             // follow object move
             followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition();
+        } else if (state == State.GAME && hit.gameObject.CompareTag("SpringTop")) {
+            Spring spring = hit.gameObject.GetComponentInParent<Spring>();
+            if (spring && spring.isTriggerVibration == true) {
+                verticalVelocity = jumpSpeed * (float)Math.Sqrt(2);
+                Debug.Log("I touch spring, I should jump very high");
+            }
         }
-    }   
+    }
 
     private string GetTopParentObjectName(Transform obj) {
         while (obj.parent) {
