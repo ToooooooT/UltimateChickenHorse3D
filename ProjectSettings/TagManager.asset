@@ -12,6 +12,8 @@ TagManager:
   - ChoosingItem
   - LinBen
   - portal
+  - GameInput
+  - SpringTop
   layers:
   - Default
   - TransparentFX

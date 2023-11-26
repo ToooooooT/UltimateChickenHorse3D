@@ -27,8 +27,7 @@ public class Rocket : BaseItem
         UpdateState();
     }
 
-    private void InitFire()
-    {
+    private void InitFire() {
         FireTransform.gameObject.SetActive(false);
     }
 
