@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6970770169568291349}
   - component: {fileID: -1796947297603520458}
   - component: {fileID: 5936060974931596952}
+  - component: {fileID: -6576773394682836320}
   m_Layer: 0
   m_Name: Awacs
   m_TagString: Airplane
@@ -124,3 +125,15 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 7241036918137702786, guid: ab6066cb297b97442a6b18379204db4e, type: 3}
+--- !u!114 &-6576773394682836320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8683486014554234569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86baeb19b2db74f79bd65dabafce1976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -35,7 +35,7 @@ public class AirplaneController : MonoBehaviour
             if (Physics.Raycast(new Ray(airplane.transform.position, airplane.transform.forward), out hitInfo, 1f)) {
                 GameObject collidedObject = hitInfo.collider.gameObject;
                 Airplane airplaneScript = airplane.GetComponent<Airplane>();
-                if (collidedObject != airplaneScript.parentCarrier) {
+                if (collidedObject != airplaneScript.parentCarrier && collidedObject.CompareTag("Wall")) {
                     DestroyAirplane(airplane);
                 }
             }

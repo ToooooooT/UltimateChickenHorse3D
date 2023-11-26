@@ -37,6 +37,7 @@ public class Carrier : MonoBehaviour
     {
         GameObject newAirplane = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/Awacs"));
         newAirplane.transform.position = transform.position + 1.6f * transform.up + 2f * transform.forward;
+        newAirplane.transform.rotation = transform.rotation;
         newAirplane.transform.localScale = new Vector3(0.002f, 0.002f, 0.002f);
         Airplane airplaneScript = newAirplane.GetComponent<Airplane>();
         airplaneScript.velocity = 0.2f * transform.forward;

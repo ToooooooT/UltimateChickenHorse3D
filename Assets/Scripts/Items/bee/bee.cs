@@ -44,7 +44,7 @@ public class Bee : BaseItem
                 if (player2follow.GetComponent<Player>().state == Player.State.GAME) {
                     animator.SetTrigger("Attack");
                     state = State.Attack;
-                    player2follow.GetComponent<Player>().state = Player.State.STOP;
+                    player2follow.GetComponent<Player>().state = Player.State.LOSE;
                 }
             }
         }
