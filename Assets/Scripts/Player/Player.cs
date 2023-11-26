@@ -205,7 +205,7 @@ public class Player : MonoBehaviour {
 
     private bool IsGrounded() {
         Vector3 p1 = transform.position + controller.center;
-        float castDistance = .2f;
+        float castDistance = 2f;
         return Physics.SphereCast(p1, controller.height / 2, Vector3.down, out RaycastHit hit, castDistance) 
                 && TagCanJump(hit.collider);
     }
