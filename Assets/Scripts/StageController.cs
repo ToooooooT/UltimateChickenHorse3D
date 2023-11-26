@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem.iOS;
 using UnityEngine.SceneManagement;
 
 public class StageController : MonoBehaviour
@@ -14,8 +15,11 @@ public class StageController : MonoBehaviour
     private GameObject itemGenerator;
     private GameObject[] cameraObjects;
     private GameObject scoreBoardObject;
+    private GameObject LinBenObject;
+    public List<GameObject> items;
 
     void Start() {
+        items = new();
         gameMode = PlayerPrefs.GetString("GameMode", "Party");
         if (gameMode == "Party") {
             stage = Stage.BEFORE_SELECT_ITEM;
@@ -26,11 +30,13 @@ public class StageController : MonoBehaviour
         itemGenerator = GameObject.FindGameObjectWithTag("ItemGenerator");
         cameraObjects = GameObject.FindGameObjectsWithTag("Camera");
         scoreBoardObject = GameObject.FindGameObjectWithTag("ScoreBoard");
+        LinBenObject = GameObject.FindGameObjectWithTag("LinBen");
     }
 
     void Update() {
         switch (stage) {
         case Stage.BEFORE_SELECT_ITEM:
+            ResetItems();
             PlayerSelectItem();
             EnableFollowCamera();
             itemGenerator.GetComponent<ItemGenerator>().GenerateItems();
@@ -50,6 +56,7 @@ public class StageController : MonoBehaviour
             }
             SetPlayersPlay();
             EnableFollowCamera();
+            MemorizeItemsState();
             stage = Stage.PLAY;
             break;
         case Stage.PLAY:
@@ -120,8 +127,7 @@ public class StageController : MonoBehaviour
             EnableCamera virtualCameraEnable = cameraObjects[i].GetComponent<EnableCamera>();
             if (cameraObjects[i].name == "FollowCamera") {
                 virtualCameraEnable.Enable();
-            } 
-            if (cameraObjects[i].name == "VirtualCamera") {
+            } else if (cameraObjects[i].name == "VirtualCamera") {
                 virtualCameraEnable.Disable();
             } 
         }
@@ -132,11 +138,9 @@ public class StageController : MonoBehaviour
             EnableCamera virtualCameraEnable = cameraObjects[i].GetComponent<EnableCamera>();
             if (cameraObjects[i].name == "FollowCamera") {
                 virtualCameraEnable.Disable();
-            } 
-            if (cameraObjects[i].name == "VirtualCamera") {
+            } else if (cameraObjects[i].name == "VirtualCamera") {
                 Vector3 position = new(0, 10, 0);
-                cameraObjects[i].transform.position = position;
-                cameraObjects[i].transform.rotation = Quaternion.Euler(0, 0, 0);
+                cameraObjects[i].transform.SetPositionAndRotation(position, Quaternion.Euler(0, 0, 0));
                 virtualCameraEnable.Enable();
             } 
         }
@@ -155,8 +159,10 @@ public class StageController : MonoBehaviour
     private void CheckWin() {
         for (int i = 0; i < playerObjects.Length; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
-            if (player.state == Player.State.WIN) {
+            LinBenScript LinBen = LinBenObject.GetComponent<LinBenScript>();
+            if (player.state == Player.State.WIN && LinBen.state == LinBenScript.State.FINISH_POINTING) {
                 stage = Stage.SCOREBOARD;
+                LinBen.state = LinBenScript.State.IDLE;
             }
         }
     }
@@ -187,6 +193,22 @@ public class StageController : MonoBehaviour
         // SceneManager.LoadScene("WIN", LoadSceneMode.Additive);
         if (winnerMoving.IsFinishMoving()) {
             stage = Stage.BEFORE_SELECT_ITEM;
+        }
+    }
+
+    private void MemorizeItemsState() {
+        foreach (GameObject item in items) {
+            if (item.TryGetComponent<BaseItem>(out var item_base)) {
+                item_base.Initialize();
+            }
+        }
+    }
+
+    private void ResetItems() {
+        foreach (GameObject item in items) {
+            if (item.TryGetComponent<BaseItem>(out var item_base)) {
+                item_base.Reset();
+            }
         }
     }
 }

@@ -829,6 +829,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: LinBen
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eaaa2d406bbf6bd4bbd7b5c63b72d65e,
+        type: 3}
+      propertyPath: m_TagString
+      value: LinBen
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1529,7 +1534,7 @@ GameObject:
   - component: {fileID: 542105591}
   m_Layer: 0
   m_Name: GameStage
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1546,6 +1551,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d61c9e88b919400babe6345543a7051, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  items: []
 --- !u!4 &542105592
 Transform:
   m_ObjectHideFlags: 0
@@ -2612,6 +2618,7 @@ MonoBehaviour:
           m_StringArgument: touchFlag
           m_BoolArgument: 0
         m_CallState: 2
+  state: 0
 --- !u!95 &1554859280
 Animator:
   serializedVersion: 5

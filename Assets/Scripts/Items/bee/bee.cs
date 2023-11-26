@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public class Bee : MonoBehaviour
+public class Bee : BaseItem
 {
     private enum State { Idle, Move, Attack };
 
@@ -14,6 +15,8 @@ public class Bee : MonoBehaviour
     private Animator animator;
     private State state;
     private GameObject player2follow;
+    private Vector3 origin_position;
+    private Quaternion origin_rotation;
 
     void Start() {
         animator = GetComponent<Animator>(); 
@@ -38,19 +41,33 @@ public class Bee : MonoBehaviour
                 state = State.Move;
                 player2follow = other.gameObject;
             } else if (state == State.Move) {
-                animator.SetTrigger("Attack");
-                state = State.Attack;
-                player2follow.GetComponent<Player>().state = Player.State.STOP;
+                if (player2follow.GetComponent<Player>().state == Player.State.GAME) {
+                    animator.SetTrigger("Attack");
+                    state = State.Attack;
+                    player2follow.GetComponent<Player>().state = Player.State.STOP;
+                }
             }
         }
     } 
 
     private void FollowPlayer() {
-        speed = speed + accelerate * Time.deltaTime;
+        speed += accelerate * Time.deltaTime;
         speed = Mathf.Clamp(speed, 0, max_speed);
         Vector3 dir = (player2follow.transform.position - transform.position).normalized;
-        transform.position += dir * speed * Time.deltaTime;
+        transform.position += speed * Time.deltaTime * dir;
         // handle face
         transform.forward = Vector3.Slerp(transform.forward, dir, Time.deltaTime * rotateSpeed);
+    }
+
+    public override void Initialize() {
+        origin_position = transform.position;
+        origin_rotation = transform.rotation;
+    }
+
+    public override void Reset() {
+        animator.SetTrigger("Idle");
+        state = State.Idle;
+        player2follow = null;
+        transform.SetPositionAndRotation(origin_position, origin_rotation);
     }
 }

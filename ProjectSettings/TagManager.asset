@@ -4,17 +4,13 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Wall
-  - PlayerGenerator
-  - GameInput
-  - Item
-  - ItemGenerator
-  - ObjectGenerator
   - Camera
-  - ChoosingItem
+  - Wall
   - ScoreBoard
-  - MovingObject
-  - Danger
+  - ItemGenerator
+  - PlayerGenerator
+  - ChoosingItem
+  - LinBen
   - portal
   - Bullet
   - CannonBomb
@@ -27,7 +23,7 @@ TagManager:
   - 
   - Water
   - UI
-  - Counters
+  - 
   - 
   - 
   - 

@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: -8128925905290389461}
   m_Layer: 0
   m_Name: FantasyBee
-  m_TagString: Danger
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
