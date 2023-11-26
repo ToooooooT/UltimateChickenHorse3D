@@ -16,6 +16,8 @@ TagManager:
   - CannonBomb
   - CannonPipe
   - Airplane
+  - GameInput
+  - SpringTop
   layers:
   - Default
   - TransparentFX
