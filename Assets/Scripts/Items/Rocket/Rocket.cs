@@ -53,11 +53,9 @@ public class Rocket : BaseItem
         if (other.gameObject.CompareTag("Player")) {
             state = State.Equipped;
             transform.SetParent(other.transform);
-            transform.localPosition = new Vector3(0f, 0f, -1f);
-            transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+            transform.SetLocalPositionAndRotation(new Vector3(0f, 0f, -1f), Quaternion.Euler(0f, 0f, 0f));
             GetComponent<BoxCollider>().enabled = false;
             player = GetComponentInParent<Player>();
-            Debug.Log("Object collided with Player!");
         }
     }
 

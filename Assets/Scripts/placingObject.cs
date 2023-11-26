@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public class CameraMovement : MonoBehaviour
 {
     private GameObject transparentObject;
     private GameObject[] playerObjects;
+    private StageController stageController;
     private Color invalidColor = new(1.0f, 0.0f, 0.0f, 0.05f);
     private Color validColor = new(0.0f, 1.0f, 0.0f, 0.05f);
     private Dictionary<string, GameObject> name2object;
@@ -16,6 +18,7 @@ public class CameraMovement : MonoBehaviour
     private const string FOLDERPATH = "Item";
 
     void Start() {
+        stageController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageController>();
         playerObjects = GameObject.FindGameObjectsWithTag("Player");
         // load prefab for creating object
         name2object = new Dictionary<string, GameObject>();
@@ -100,7 +103,6 @@ public class CameraMovement : MonoBehaviour
             // currently use sphere instead
             transparentObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             transparentObject.name = "transparent sphere";
-            Debug.Log(name);
         }
     }
     
@@ -108,6 +110,7 @@ public class CameraMovement : MonoBehaviour
         string name = playerObjects[0].GetComponent<Player>().GetItemName();
         GameObject obj = Instantiate(name2object[name], transparentObject.transform.position, transparentObject.transform.rotation);
         obj.name = name;
+        stageController.items.Add(obj);
         Destroy(transparentObject);
         playerObjects[0].GetComponent<Player>().RemoveItem();
     }

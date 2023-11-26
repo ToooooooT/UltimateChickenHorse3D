@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class PlayerFollowObject : MonoBehaviour
 {
-    private Vector3 diffPosition;
     private Vector3 lastPosition;
     private Vector3 lastlastPosition;
 
@@ -16,11 +15,10 @@ public class PlayerFollowObject : MonoBehaviour
     void Update() {
         lastlastPosition = lastPosition;
         lastPosition = transform.position;
-        diffPosition = lastPosition - lastlastPosition;
     }
 
     public Vector3 GetDiffPosition() {
-        Vector3 ret = diffPosition;
+        Vector3 ret = lastPosition - lastlastPosition;
         ret.y = 0;
         return ret;
     }
