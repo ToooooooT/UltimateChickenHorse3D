@@ -21,7 +21,7 @@ public class CameraMovement : MonoBehaviour
     private InputActionMap placeObjectInputActionMap;
     private CinemachineVirtualCamera virtualCamera;
     private Camera camera_;
-    // private Transform playerTransform;
+    private StageController stageController;
     private float rotationX = 0;
     private float rotationY = 0;
     private float diviateX = 0;
@@ -33,7 +33,7 @@ public class CameraMovement : MonoBehaviour
     private const string FOLDERPATH = "Item";
 
     void Start() {
-        // stageController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageController>();
+        stageController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageController>();
         placeObjectInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlaceObjectInputActionMap();
         playerObject = transform.parent.gameObject;
         transparentObject = null;
@@ -161,7 +161,7 @@ public class CameraMovement : MonoBehaviour
         string name = playerObject.GetComponent<Player>().GetItemName();
         GameObject obj = Instantiate(name2object[name], transparentObject.transform.position, transparentObject.transform.rotation);
         obj.name = name;
-        // stageController.items.Add(obj);
+        stageController.items.Add(obj);
         Destroy(transparentObject);
         transparentObject = null;
         playerObject.GetComponent<Player>().RemoveItem();
