@@ -35,6 +35,7 @@ public class ItemGenerator : MonoBehaviour
             SetTag(generatedItem.transform);
             DisableIsTrigger(generatedItem.transform);
             AddRigidBody(generatedItem.transform);
+            AddBoxCollider(generatedItem.transform);
         }
     }
 
@@ -62,6 +63,16 @@ public class ItemGenerator : MonoBehaviour
         // Do we need to add rigidbody on all child object???
         if (!parent.gameObject.TryGetComponent<Rigidbody>(out _)) {
             parent.gameObject.AddComponent<Rigidbody>();
+        }
+    }
+
+    private void AddBoxCollider(Transform parent) {
+        // Do we need to add rigidbody on all child object???
+        if (!parent.gameObject.TryGetComponent<BoxCollider>(out _)) {
+            parent.gameObject.AddComponent<BoxCollider>();
+        }
+        foreach (Transform child in parent) {
+            AddBoxCollider(child);
         }
     }
 

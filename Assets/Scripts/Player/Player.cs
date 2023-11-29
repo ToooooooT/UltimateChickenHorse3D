@@ -15,6 +15,11 @@ public class Player : MonoBehaviour {
     public enum State { GAME, SELECT_ITEM, STOP, WIN, LOSE };
 
     public float jumpSpeed;
+    public bool isPressSpace = false;
+    public float verticalVelocity;
+    public State state;
+    public Vector3 exSpeed;
+
     [SerializeField] private float normalMoveSpeed;
     [SerializeField] private float accelerateMoveSpeed;
     [SerializeField] private float moveSpeedJumpWallratio;
@@ -25,22 +30,17 @@ public class Player : MonoBehaviour {
     [SerializeField] private float buttonPressedWindow;
     [SerializeField] private float resistanceRatio;
 
-
     private bool isWalking = false;
     private bool isJumping = false;
-    public bool isPressSpace = false;
     private float buttonPressedTime;
-    public float verticalVelocity;
     private float velocity;
-    public Vector3 exSpeed;
     private Vector3 lastExSpeed;
-    public State state;
     private CharacterController controller;
     private CinemachineVirtualCamera virtualCamera;
     private InputActionMap playerInputActionMap;
     private InputActionMap placeObjectInputActionMap;
     private string item;
-    Vector3 followObjectMove;
+    private Vector3 followObjectMove;
     
 
     private void Awake() {
@@ -65,8 +65,8 @@ public class Player : MonoBehaviour {
         item = null;
         exSpeed = Vector3.zero;
         resistanceRatio = 0.8f;
-        // the below line is for test, don't push
-        Enable(State.STOP);
+        // the below line is for test scene
+        // Enable(State.STOP);
         state = State.STOP;
     }
 

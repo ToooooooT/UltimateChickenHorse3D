@@ -81,6 +81,7 @@ GameObject:
   - component: {fileID: 8155874082385934717}
   - component: {fileID: 574430508193384968}
   - component: {fileID: 9170460995706355060}
+  - component: {fileID: 6598037286007921582}
   m_Layer: 0
   m_Name: Player2ScoreCube
   m_TagString: Wall
@@ -174,6 +175,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6598037286007921582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2557114072370817373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86baeb19b2db74f79bd65dabafce1976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2820335358575499787
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,6 +199,7 @@ GameObject:
   - component: {fileID: 604800465831243860}
   - component: {fileID: 4180151148526745167}
   - component: {fileID: 6259877951137503563}
+  - component: {fileID: 3497354884220123663}
   m_Layer: 0
   m_Name: Player1ScoreCube
   m_TagString: Wall
@@ -279,6 +293,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3497354884220123663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2820335358575499787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86baeb19b2db74f79bd65dabafce1976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7359672970041405666
 GameObject:
   m_ObjectHideFlags: 0
@@ -291,6 +317,7 @@ GameObject:
   - component: {fileID: 1670689107533300547}
   - component: {fileID: 3125144271641754421}
   - component: {fileID: 3141561363969128001}
+  - component: {fileID: 1797529969202190963}
   m_Layer: 0
   m_Name: Player4ScoreCube
   m_TagString: Wall
@@ -384,6 +411,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1797529969202190963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7359672970041405666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86baeb19b2db74f79bd65dabafce1976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8850566440641167825
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,6 +435,7 @@ GameObject:
   - component: {fileID: 2779240689008718372}
   - component: {fileID: 5637866540560130557}
   - component: {fileID: 5897836308070491858}
+  - component: {fileID: 7719437545860734990}
   m_Layer: 0
   m_Name: Player3ScoreCube
   m_TagString: Wall
@@ -489,3 +529,15 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7719437545860734990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8850566440641167825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86baeb19b2db74f79bd65dabafce1976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
