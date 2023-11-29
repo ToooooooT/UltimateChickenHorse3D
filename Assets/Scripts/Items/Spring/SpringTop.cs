@@ -32,7 +32,6 @@ public class SpringTop : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Player")) {
-            Debug.Log("Touch player" + Time.frameCount);
             player = other.GetComponent<Player>();
             touchPlayer = true;
         }
@@ -41,7 +40,6 @@ public class SpringTop : MonoBehaviour
     private void OnTriggerStay(Collider other) {
         if (!stay && other.gameObject.CompareTag("Player")) {
             player = other.GetComponent<Player>();
-            Debug.Log("Touching player" + Time.frameCount);
             touchPlayer = true;
             stay = true;
         } else if (other.gameObject.CompareTag("Player")) {

@@ -346,15 +346,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 391ed7c8615024b5390ca9209e29da95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jumpSpeed: 25
   normalMoveSpeed: 0
   accelerateMoveSpeed: 7
   moveSpeedJumpWallratio: 5
   rotateSpeed: 10
-  jumpSpeed: 25
   gravityMaxSpeedWithFriction: 5
   gravityMaxSpeed: 20
   gravity: 60
   buttonPressedWindow: 0.3
+  resistanceRatio: 0
+  isPressSpace: 0
+  verticalVelocity: 0
+  exSpeed: {x: 0, y: 0, z: 0}
   state: 2
 --- !u!143 &3995116485821713591
 CharacterController:
@@ -1111,6 +1115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ded7f65e8861d24992b78c6bcc30a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensitive_rotate: 0
+  sensitive_rotate_camera: 0
+  sensitive_rotate_object: 0
   sensitive_move: 0
   sensitive_zoom: 0

@@ -7,7 +7,8 @@ using Cinemachine;
 
 public class CameraMovement : MonoBehaviour
 {
-    [SerializeField] private float sensitive_rotate;
+    [SerializeField] private float sensitive_rotate_camera;
+    [SerializeField] private float sensitive_rotate_object;
     [SerializeField] private float sensitive_move;
     [SerializeField] private float sensitive_zoom;
 
@@ -36,7 +37,8 @@ public class CameraMovement : MonoBehaviour
         placeObjectInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlaceObjectInputActionMap();
         playerObject = transform.parent.gameObject;
         transparentObject = null;
-        sensitive_rotate = 1.0f;
+        sensitive_rotate_camera = 1.0f;
+        sensitive_rotate_object = 1.0f;
         sensitive_move = 0.5f;
         sensitive_zoom = 0.3f;
         distance = 25.0f;
@@ -52,20 +54,19 @@ public class CameraMovement : MonoBehaviour
 
     void Update() {
         if (camera_.enabled && virtualCamera.enabled) {
-            Vector2 inputVector = placeObjectInputActionMap.FindAction("MoveCamera").ReadValue<Vector2>().normalized;
             MoveCamera();
             ZoomCamera();
             if (transparentObject == null) {
                 TransparentObject();
             }
-            AddingObject(inputVector.x, inputVector.y, 10.0f);
+            AddingObject();
         }
     }
 
     private void RotateCamera() {
         Vector2 inputVector = placeObjectInputActionMap.FindAction("RotateCamera").ReadValue<Vector2>().normalized;
-        rotationX -= inputVector.y * sensitive_rotate;
-        rotationY += inputVector.x * sensitive_rotate;
+        rotationX -= inputVector.y * sensitive_rotate_camera;
+        rotationY += inputVector.x * sensitive_rotate_camera;
         rotationX = Mathf.Clamp(rotationX, -90, 90);
         transform.rotation = Quaternion.Euler(rotationX, rotationY, 0.0f);
     }
@@ -132,8 +133,8 @@ public class CameraMovement : MonoBehaviour
         rotateObjectHorizontalAction.performed += ctx => pressRotateHorizontal = true;
         rotateObjectHorizontalAction.canceled += ctx => pressRotateHorizontal = false;
         InputAction rotateObjectVerticalAction = placeObjectInputActionMap.FindAction("rotateObjectVertical");
-        rotateObjectVerticalAction.performed += ctx => pressRotateHorizontal = true;
-        rotateObjectVerticalAction.canceled += ctx => pressRotateHorizontal = false;
+        rotateObjectVerticalAction.performed += ctx => pressRotateVertical = true;
+        rotateObjectVerticalAction.canceled += ctx => pressRotateVertical = false;
         virtualCamera.enabled = true;
         camera_.enabled = true;
     }
@@ -173,9 +174,9 @@ public class CameraMovement : MonoBehaviour
         return true;
     }
 
-    private void AddingObject(float mouseX, float mouseY, float sensitive, float x1=-100, float x2=100, float y1=-20, float y2=100, float z1=-100, float z2=100) {
+    private void AddingObject(float x1=-100, float x2=100, float y1=-20, float y2=100, float z1=-100, float z2=100) {
         MoveObject(x1, x2, y1, y2, z1, z2);
-        RotateObjectOrCamera(mouseX, mouseY, sensitive);
+        RotateObjectOrCamera();
         if (PlacingIsValid()) {
             if (transparentObject.TryGetComponent<Renderer>(out var renderer)) {
                 renderer.material.color = validColor;
@@ -211,15 +212,15 @@ public class CameraMovement : MonoBehaviour
         }
     }
 
-    private void RotateObjectOrCamera(float mouseX, float mouseY, float sensitive) {
+    private void RotateObjectOrCamera() {
+        Vector2 inputVector = placeObjectInputActionMap.FindAction("RotateCamera").ReadValue<Vector2>().normalized;
+        float mouseX = inputVector.x;
+        float mouseY = inputVector.y;
         if (pressRotateHorizontal) {
-            //mouseY = 0;
             Vector3 cameraForward = -transform.right;
 
-            float verticalRotationAngle = -mouseY * sensitive;
-
-            float horizontalRotationAngle = mouseX * sensitive;
-            //horizontalRotationAngle = Mathf.Clamp(horizontalRotationAngle, -90f, 90f);
+            float verticalRotationAngle = -mouseY * sensitive_rotate_object;
+            float horizontalRotationAngle = mouseX * sensitive_rotate_object;
 
             Vector3 transparentObjectForward = transparentObject.transform.forward;
             transparentObjectForward.y = 0.0f;
@@ -230,28 +231,25 @@ public class CameraMovement : MonoBehaviour
             Vector3 newRotation = transparentObject.transform.rotation.eulerAngles;
             diviateX = newRotation.x;
             diviateZ = newRotation.z;
-            newRotation.x = newRotation.x - diviateX;
-            newRotation.z = newRotation.z - diviateZ;
+            newRotation.x -= diviateX;
+            newRotation.z -= diviateZ;
             transparentObject.transform.rotation = Quaternion.Euler(newRotation);
         } else if (pressRotateVertical) {
             mouseX = 0;
             Vector3 cameraForward = -transform.right;
 
-            float verticalRotationAngle = -mouseY * sensitive;
-
-            float horizontalRotationAngle = mouseX * sensitive;
-            //horizontalRotationAngle = Mathf.Clamp(horizontalRotationAngle, -90f, 90f);
+            float verticalRotationAngle = -mouseY * sensitive_rotate_object;
+            float horizontalRotationAngle = mouseX * sensitive_rotate_object;
 
             Vector3 transparentObjectForward = transparentObject.transform.forward;
-            //transparentObjectForward.y = 0.0f;
             Vector3 rotatedForward = Quaternion.AngleAxis(horizontalRotationAngle, Vector3.up) * transparentObjectForward;
             Vector3 finalForward = Quaternion.AngleAxis(verticalRotationAngle, cameraForward) * rotatedForward;
 
             transparentObject.transform.rotation = Quaternion.LookRotation(finalForward, cameraForward);
 
             Vector3 newRotation = transparentObject.transform.rotation.eulerAngles;
-            newRotation.x = newRotation.x - diviateX;
-            newRotation.z = newRotation.z - diviateZ;
+            newRotation.x -= diviateX;
+            newRotation.z -= diviateZ;
             transparentObject.transform.rotation = Quaternion.Euler(newRotation);
 
         } else {

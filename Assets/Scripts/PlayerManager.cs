@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerManager : MonoBehaviour
 {
     private PlayerInputManager playerManager;
-    public List<PlayerInput> playerList = new List<PlayerInput>();
+    public List<PlayerInput> playerList = new();
     public event System.Action<PlayerInput> PlayerJoinedGame;
     public event System.Action<PlayerInput> PlayerLeftGame;
     [SerializeField] InputAction joinAction;
@@ -23,18 +23,17 @@ public class PlayerManager : MonoBehaviour
     }
 
     void Start() {
-        // playerManager.JoinPlayer(0, -1, null);   
+
     }
 
     void Update() {
+
     }
 
     void OnPlayerJoined(PlayerInput playerInput) {
         Debug.Log("Player joined");
         playerList.Add(playerInput);
-        if (PlayerJoinedGame != null) {
-            PlayerJoinedGame(playerInput);
-        }
+        PlayerJoinedGame?.Invoke(playerInput);
     }
 
     void OnPlayerLeft(PlayerInput playerInput) {

@@ -64,7 +64,7 @@ public class Player : MonoBehaviour {
         buttonPressedWindow = .3f;
         item = null;
         exSpeed = Vector3.zero;
-        resistanceRatio = 0.95f;
+        resistanceRatio = 0.8f;
         // the below line is for test, don't push
         Enable(State.STOP);
         state = State.STOP;

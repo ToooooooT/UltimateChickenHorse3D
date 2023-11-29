@@ -12,7 +12,6 @@ public class StageController : MonoBehaviour
     private string gameMode;
     private Stage stage;
     private GameObject[] playerObjects;
-    private GameObject itemGenerator;
     private GameObject[] cameraObjects;
     private GameObject scoreBoardObject;
     private GameObject LinBenObject;
@@ -27,7 +26,6 @@ public class StageController : MonoBehaviour
         // other mode initial stage not sure yet
 
         playerObjects = GameObject.FindGameObjectsWithTag("Player");
-        itemGenerator = GameObject.FindGameObjectWithTag("ItemGenerator");
         cameraObjects = GameObject.FindGameObjectsWithTag("Camera");
         scoreBoardObject = GameObject.FindGameObjectWithTag("ScoreBoard");
         LinBenObject = GameObject.FindGameObjectWithTag("LinBen");
@@ -39,7 +37,7 @@ public class StageController : MonoBehaviour
             ResetItems();
             PlayerSelectItem();
             EnableFollowCamera();
-            itemGenerator.GetComponent<ItemGenerator>().GenerateItems();
+            GetComponent<ItemGenerator>().GenerateItems();
             stage = Stage.SELECT_ITEM;
             break;
         case Stage.SELECT_ITEM:
