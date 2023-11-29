@@ -39,8 +39,8 @@ public class CameraMovement : MonoBehaviour
         transparentObject = null;
         sensitive_rotate_camera = 1.0f;
         sensitive_rotate_object = 1.0f;
-        sensitive_move = 0.5f;
-        sensitive_zoom = 0.3f;
+        sensitive_move = 0.2f;
+        sensitive_zoom = 0.7f;
         distance = 25.0f;
         pressRotateHorizontal = false;
         pressRotateVertical = false;
