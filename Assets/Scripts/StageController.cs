@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.iOS;
 using UnityEngine.SceneManagement;
 
@@ -12,7 +13,6 @@ public class StageController : MonoBehaviour
     private string gameMode;
     private Stage stage;
     private GameObject[] playerObjects;
-    private GameObject[] cameraObjects;
     private GameObject scoreBoardObject;
     private GameObject LinBenObject;
     public List<GameObject> items;
@@ -26,7 +26,6 @@ public class StageController : MonoBehaviour
         // other mode initial stage not sure yet
 
         playerObjects = GameObject.FindGameObjectsWithTag("Player");
-        cameraObjects = GameObject.FindGameObjectsWithTag("Camera");
         scoreBoardObject = GameObject.FindGameObjectWithTag("ScoreBoard");
         LinBenObject = GameObject.FindGameObjectWithTag("LinBen");
     }
@@ -36,7 +35,7 @@ public class StageController : MonoBehaviour
         case Stage.BEFORE_SELECT_ITEM:
             ResetItems();
             PlayerSelectItem();
-            EnableFollowCamera();
+            AdjustCamera(isFollow: true, isVirtual: false);
             GetComponent<ItemGenerator>().GenerateItems();
             stage = Stage.SELECT_ITEM;
             break;
@@ -45,7 +44,7 @@ public class StageController : MonoBehaviour
                 break;
             }
             ClearChoosingItems();
-            EnableVirtualCamera();
+            AdjustCamera(isFollow: false, isVirtual: true);
             foreach (GameObject player in playerObjects) {
                 player.GetComponent<Player>().Disable(Player.State.STOP);
             }
@@ -56,7 +55,7 @@ public class StageController : MonoBehaviour
                 break;
             }
             SetPlayersPlay();
-            EnableFollowCamera();
+            AdjustCamera(isFollow: true, isVirtual: false);
             MemorizeItemsState();
             stage = Stage.PLAY;
             break;
@@ -123,24 +122,18 @@ public class StageController : MonoBehaviour
         player.ModifyPosition(randomPosition);
     }
 
-    private void EnableFollowCamera() {
-        for (int i = 0; i < cameraObjects.Length; ++i) {
-            if (cameraObjects[i].name == "FollowCamera") {
-                cameraObjects[i].GetComponent<MouseControlFollowCamera>().Enable();
-            } else if (cameraObjects[i].name == "VirtualCamera") {
-                cameraObjects[i].GetComponent<CameraMovement>().Disable();
-            } 
-        }
-    }
-
-    private void EnableVirtualCamera() {
-        for (int i = 0; i < cameraObjects.Length; ++i) {
-            if (cameraObjects[i].name == "FollowCamera") {
-                cameraObjects[i].GetComponent<MouseControlFollowCamera>().Disable();
-            } else if (cameraObjects[i].name == "VirtualCamera") {
-                cameraObjects[i].transform.SetPositionAndRotation(new(0, 10, 0), Quaternion.Euler(0, 0, 0));
-                cameraObjects[i].GetComponent<CameraMovement>().Enable();
-            } 
+    private void AdjustCamera(bool isFollow, bool isVirtual) {
+        for (int i = 0; i < playerObjects.Length; ++i) {
+            if (isFollow) {
+                playerObjects[i].transform.Find("FollowCamera").GetComponent<MouseControlFollowCamera>().Enable();
+            } else {
+                playerObjects[i].transform.Find("FollowCamera").GetComponent<MouseControlFollowCamera>().Disable();
+            }
+            if (isVirtual) {
+                playerObjects[i].transform.Find("VirtualCamera").GetComponent<CameraMovement>().Enable();
+            } else {
+                playerObjects[i].transform.Find("VirtualCamera").GetComponent<CameraMovement>().Disable();
+            }
         }
     }
 
@@ -149,6 +142,8 @@ public class StageController : MonoBehaviour
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.transform.position.y < -50) {
                 player.Disable(Player.State.LOSE);
+                SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
+            } else if (player.state == Player.State.LOSE) {
                 SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
             }
         }
