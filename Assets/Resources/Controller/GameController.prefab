@@ -14,8 +14,9 @@ GameObject:
   - component: {fileID: 4153469818897697471}
   - component: {fileID: -754818823613047643}
   - component: {fileID: 808909113237616923}
+  - component: {fileID: -8156706939589918738}
   m_Layer: 0
-  m_Name: GameStage
+  m_Name: GameController
   m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -99,5 +100,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d71bfec7396b50d408d4538595cc09ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-8156706939589918738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8597621969963225916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9acb51c7bbfab494a9f321f5e3001f91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
