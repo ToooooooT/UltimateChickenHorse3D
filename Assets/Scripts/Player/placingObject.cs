@@ -152,24 +152,8 @@ public class CameraMovement : MonoBehaviour
     }
 
     private void TransparentObject() {
-<<<<<<< HEAD
-        string name = playerObjects[0].GetComponent<Player>().GetItemName();
-        transparentObject = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/" + name));
-=======
         string name = playerObject.GetComponent<Player>().GetItemName();
-        if (name == "Cube") {
-            transparentObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            transparentObject.name = "transparent cube";
-        } else if (name == "Sphere") {
-            transparentObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            transparentObject.name = "transparent sphere";
-        } else {
-            // TODO(Nigo): use the correct primitive
-            // currently use cube instead
-            transparentObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            transparentObject.name = "transparent cube";
-        }
->>>>>>> 6b5d804 (feat: add xbox to rotate object during placing)
+        transparentObject = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/" + name));
     }
     
     private void CreateObject() {
@@ -277,8 +261,7 @@ public class CameraMovement : MonoBehaviour
         ItemVisible(transparentObject, PlacingIsValid());
     }
 
-    private void ItemVisible(GameObject item, bool visible)
-    {
+    private void ItemVisible(GameObject item, bool visible) {
 
         Transform parentTransform = item.transform;
         if (item.TryGetComponent<Renderer>(out var renderer))
@@ -289,6 +272,7 @@ public class CameraMovement : MonoBehaviour
             ItemVisible(childObject, visible);
         }
     }
+
     private void LoadAllPrefabsInFolder() {
         UnityEngine.Object[] loadedObjects = Resources.LoadAll(FOLDERPATH);
         foreach (UnityEngine.Object obj in loadedObjects) {

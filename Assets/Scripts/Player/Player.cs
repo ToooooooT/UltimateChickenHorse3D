@@ -14,11 +14,11 @@ public class Player : MonoBehaviour {
    
     public enum State { GAME, SELECT_ITEM, STOP, WIN, LOSE };
 
+    public float jumpSpeed;
     [SerializeField] private float normalMoveSpeed;
     [SerializeField] private float accelerateMoveSpeed;
     [SerializeField] private float moveSpeedJumpWallratio;
     [SerializeField] private float rotateSpeed;
-    [SerializeField] public float jumpSpeed;
     [SerializeField] private float gravityMaxSpeedWithFriction;
     [SerializeField] private float gravityMaxSpeed;
     [SerializeField] private float gravity;
