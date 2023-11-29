@@ -205,7 +205,9 @@ public class Player : MonoBehaviour {
 
     private void HandleFacement() {
         Vector3 dir = GetMoveDirNormalized();
-        transform.forward = Vector3.Slerp(transform.forward, dir, Time.deltaTime * rotateSpeed);
+        if (dir.magnitude > 0f) {
+            transform.forward = Vector3.Slerp(transform.forward, dir, Time.deltaTime * rotateSpeed);
+        }
     }
 
     public void ModifyPosition(Vector3 newPosition) {
