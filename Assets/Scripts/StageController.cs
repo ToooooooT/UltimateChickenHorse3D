@@ -113,13 +113,13 @@ public class StageController : MonoBehaviour
     }
 
     private void RandomPositionToSelectItem(Player player) {
-        Vector3 spawnArea = new(0, 3000, 0);
-        Vector3 size = new(20, 0, 20);
+        Vector3 spawnArea = GetComponent<ItemGenerator>().spawnArea;
+        spawnArea.y = 3;
+        Vector3 size = GetComponent<ItemGenerator>().size;
         float randomX = Random.Range(spawnArea.x - size.x / 2, spawnArea.x + size.x / 2);
         float randomY = Random.Range(spawnArea.y - size.y / 2, spawnArea.y + size.y / 2);
         float randomZ = Random.Range(spawnArea.z - size.z / 2, spawnArea.z + size.z / 2);
-        Vector3 randomPosition = new(randomX, randomY, randomZ);
-        player.ModifyPosition(randomPosition);
+        player.ModifyPosition(new Vector3(randomX, randomY, randomZ));
     }
 
     private void AdjustCamera(bool isFollow, bool isVirtual) {

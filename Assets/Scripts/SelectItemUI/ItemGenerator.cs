@@ -5,14 +5,15 @@ using UnityEngine;
 
 public class ItemGenerator : MonoBehaviour
 {
-    [SerializeField] private Vector3 spawnArea;
-    [SerializeField] private Vector3 size;
+    public Vector3 spawnArea { get; private set; }
+    public Vector3 size { get; private set; }
     [SerializeField] private int numberOfObjectsToGenerate;
     private const string FOLDERPATH = "Item";
     private const string ITEMTAG = "ChoosingItem";
 
     void Start() {
-
+        spawnArea = new(3000, 30, 3000);
+        size = new(70, 0, 70);
     }
 
     void Update() {
@@ -84,4 +85,5 @@ public class ItemGenerator : MonoBehaviour
             SetTag(child);
         }
     }
+
 }
