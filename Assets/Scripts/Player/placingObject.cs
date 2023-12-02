@@ -12,7 +12,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private float sensitive_move;
     [SerializeField] private float sensitive_zoom;
 
-    private GameObject transparentObject;
+    public GameObject transparentObject { get; private set; }
     // private StageController stageController;
     private GameObject playerObject;
     private Color invalidColor = new(1.0f, 0.0f, 0.0f, 0.05f);
@@ -150,13 +150,15 @@ public class CameraMovement : MonoBehaviour
     }
     
     private void CreateObject() {
-        string name = playerObject.GetComponent<Player>().GetItemName();
-        GameObject obj = Instantiate(name2object[name], transparentObject.transform.position, transparentObject.transform.rotation);
-        obj.name = name;
-        stageController.items.Add(obj);
-        Destroy(transparentObject);
-        transparentObject = null;
-        playerObject.GetComponent<Player>().RemoveItem();
+        if (playerObject != null) {
+            string name = playerObject.GetComponent<Player>().GetItemName();
+            GameObject obj = Instantiate(name2object[name], transparentObject.transform.position, transparentObject.transform.rotation);
+            obj.name = name;
+            stageController.items.Add(obj);
+            Destroy(transparentObject);
+            transparentObject = null;
+            playerObject.GetComponent<Player>().RemoveItem();
+        }
         // after create object this script should be disable
         Disable();
         enabled = false;

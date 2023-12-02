@@ -49,10 +49,36 @@ public class PlayerManager : MonoBehaviour
     }
 
     void LeaveAction(InputAction.CallbackContext context) {
+        if (playerList.Count > 1) {
+            foreach (var player in playerList) {
+                foreach (var device in player.devices) {
+                    if (device != null && context.control.device == device) {
+                        Unregisterplayer(player);
+                        return;
+                    }
+                }
+            }
+        }
+    }
 
+    void Unregisterplayer(PlayerInput playerInput) {
+        playerList.Remove(playerInput);
+        stageController.playerObjects.Remove(playerInput.gameObject);
+        CameraMovement virtualCamera = playerInput.gameObject.transform.Find("Camera").GetComponent<CameraMovement>();
+        if (virtualCamera.transparentObject != null) {
+            Destroy(virtualCamera.transparentObject);
+        }
+        virtualCamera.Disable();
+        virtualCamera.enabled = false;
+        playerInput.gameObject.transform.Find("Camera").GetComponent<MouseControlFollowCamera>().enabled = false;
+        Destroy(playerInput.gameObject);
     }
 
     public void DisableJoinAction() {
         joinAction.Disable();
+    }
+
+    public void EnableJoinAction() {
+        joinAction.Enable();
     }
 }

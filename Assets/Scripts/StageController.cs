@@ -19,6 +19,8 @@ public class StageController : MonoBehaviour
     public List<GameObject> items;
     public List<GameObject> playerObjects;
 
+    private bool isFirstChooseStage;
+
     void Start() {
         items = new();
         gameMode = PlayerPrefs.GetString("GameMode", "Party");
@@ -30,19 +32,26 @@ public class StageController : MonoBehaviour
         // playerObjects = GameObject.FindGameObjectsWithTag("Player");
         scoreBoardObject = GameObject.FindGameObjectWithTag("ScoreBoard");
         LinBenObject = GameObject.FindGameObjectWithTag("LinBen");
+        isFirstChooseStage = true;
     }
 
     void Update() {
         switch (stage) {
         case Stage.CHOOSE_STAGE:
+            if (isFirstChooseStage) {
+                GetComponent<PlayerManager>().EnableJoinAction();
+                AdjustCamera(isFollow: true, isVirtual: false);
+                isFirstChooseStage = false;
+            }
             if (Input.GetKey(KeyCode.Y) && playerObjects.Count >= 1) {
                 // TODO: change the condition to all player choose the stage
                 GetComponent<PlayerManager>().DisableJoinAction();
                 stage = Stage.BEFORE_SELECT_ITEM;
+                isFirstChooseStage = true;
             }
             break;
         case Stage.BEFORE_SELECT_ITEM:
-            ResetItems();
+            ResetItemsInStage();
             PlayerSelectItem();
             AdjustCamera(isFollow: true, isVirtual: false);
             GetComponent<ItemGenerator>().GenerateItems();
@@ -65,7 +74,7 @@ public class StageController : MonoBehaviour
             }
             SetPlayersPlay();
             AdjustCamera(isFollow: true, isVirtual: false);
-            MemorizeItemsState();
+            MemorizeItemsStateInStage();
             stage = Stage.PLAY;
             break;
         case Stage.PLAY:
@@ -203,7 +212,7 @@ public class StageController : MonoBehaviour
         }
     }
 
-    private void MemorizeItemsState() {
+    private void MemorizeItemsStateInStage() {
         foreach (GameObject item in items) {
             if (item.TryGetComponent<BaseItem>(out var item_base)) {
                 item_base.Initialize();
@@ -211,7 +220,7 @@ public class StageController : MonoBehaviour
         }
     }
 
-    private void ResetItems() {
+    private void ResetItemsInStage() {
         foreach (GameObject item in items) {
             if (item.TryGetComponent<BaseItem>(out var item_base)) {
                 item_base.Reset();
