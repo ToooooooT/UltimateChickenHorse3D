@@ -62,8 +62,8 @@ public class Player : MonoBehaviour {
         buttonPressedWindow = .3f;
         item = null;
         exSpeed = Vector3.zero;
-        resistanceRatio = 0.95f;
-        exSpeedThreshold = velocity * 8;
+        resistanceRatio = 0.7f;
+        exSpeedThreshold = 55f;
         state = State.STOP;
     }
 

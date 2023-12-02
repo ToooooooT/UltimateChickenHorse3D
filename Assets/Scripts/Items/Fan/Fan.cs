@@ -13,7 +13,7 @@ public class Fan : BaseItem
     private Vector3 windDirection;
     private float windSpeed;
     private float windDistance;
-    [SerializeField] private float speedRatio = 0.01f;
+    [SerializeField] private float speedRatio;
 
     // Start is called before the first frame update
     void Start() {
@@ -22,6 +22,7 @@ public class Fan : BaseItem
         windDirection = transform.rotation * originalWindDirection;
         windSpeed = wind.GetComponent<ParticleSystem>().main.startSpeed.constant;
         windDistance = windSpeed * wind.GetComponent<ParticleSystem>().main.startLifetime.constant;
+        speedRatio = 0.04f;
     }
 
     // Update is called once per frame
