@@ -11,10 +11,11 @@ GameObject:
   - component: {fileID: 8916675306279472983}
   - component: {fileID: 2338691007341759829}
   - component: {fileID: 1085862376636657156}
-  - component: {fileID: 4153469818897697471}
   - component: {fileID: -754818823613047643}
   - component: {fileID: 808909113237616923}
   - component: {fileID: -8156706939589918738}
+  - component: {fileID: 5471086008944794980}
+  - component: {fileID: 574143260042133791}
   m_Layer: 0
   m_Name: GameController
   m_TagString: GameController
@@ -50,6 +51,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   items: []
+  playerObjects: []
 --- !u!114 &1085862376636657156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,22 +64,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 829ab43ef26ac0e4ebceac3fe1f0683d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnArea: {x: 0, y: 3030, z: 0}
-  size: {x: 50, y: 0, z: 50}
   numberOfObjectsToGenerate: 20
---- !u!114 &4153469818897697471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8597621969963225916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05ce6ef454f2d6e4c944bfbabac67cf3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  numberOfPlayersToGenerate: 1
 --- !u!114 &-754818823613047643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,3 +101,111 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9acb51c7bbfab494a9f321f5e3001f91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5471086008944794980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8597621969963225916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 621567455fd1c4ceb811cc8a00b6a1a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NotificationBehavior: 0
+  m_MaxPlayerCount: -1
+  m_AllowJoining: 1
+  m_JoinBehavior: 2
+  m_PlayerJoinedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_PlayerLeftEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_JoinAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: d6a688f7-d65e-4fd1-878b-a17079e65e4d
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+  m_PlayerPrefab: {fileID: 1105817591511042059, guid: 338454df7d1bd41eebe1f9914cb4ab84,
+    type: 3}
+  m_SplitScreen: 1
+  m_MaintainAspectRatioInSplitScreen: 0
+  m_FixedNumberOfSplitScreens: -1
+  m_SplitScreenRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!114 &574143260042133791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8597621969963225916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9990db57ffde4cd4a2148d6391113c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerList: []
+  joinAction:
+    m_Name: Join
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: f1d5b68e-d2be-4bb9-9319-b80334885c9b
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 49210f5a-09d0-4aae-a630-a059f9ea8ac9
+      m_Path: <Keyboard>/space
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Join
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 7ee6290d-2898-4584-83b8-0a45dc3ddb59
+      m_Path: <XInputController>/buttonSouth
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Join
+      m_Flags: 0
+    m_Flags: 0
+  leaveAction:
+    m_Name: Leave
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 1d92433b-3d4c-49a7-b388-2b8011459fb4
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: ec48f647-b066-4b8d-af02-afa4e00c213f
+      m_Path: <Keyboard>/escape
+      m_Interactions: Hold
+      m_Processors: 
+      m_Groups: 
+      m_Action: Leave
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 28ebf3ea-7087-44c5-9112-007b3ea6b26a
+      m_Path: <XInputController>/select
+      m_Interactions: Hold
+      m_Processors: 
+      m_Groups: 
+      m_Action: Leave
+      m_Flags: 0
+    m_Flags: 0

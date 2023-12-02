@@ -35,7 +35,6 @@ public class PlayerManager : MonoBehaviour
     }
 
     void OnPlayerJoined(PlayerInput playerInput) {
-        Debug.Log("Player joined");
         playerList.Add(playerInput);
         PlayerJoinedGame?.Invoke(playerInput);
         stageController.playerObjects.Add(playerInput.gameObject);

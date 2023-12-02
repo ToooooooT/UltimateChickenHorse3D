@@ -122,9 +122,7 @@ public class Player : MonoBehaviour {
     private void HandleMovement() {
         Vector3 moveDir = GetMoveDirNormalized();
         Vector3 moveVector = velocity * Time.deltaTime * moveDir;
-        Debug.Log(moveVector);
         moveVector += lastExSpeed * Time.deltaTime;
-        Debug.Log(moveVector);
         lastExSpeed = resistanceRatio * new Vector3(lastExSpeed.x, 0, lastExSpeed.z) 
                     + new Vector3(0, Mathf.Max(lastExSpeed.y - gravity * Time.deltaTime, 0), 0) + exSpeed;
         exSpeed = Vector3.zero;
