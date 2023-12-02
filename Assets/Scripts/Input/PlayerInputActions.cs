@@ -80,6 +80,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""GiveUp"",
+                    ""type"": ""Button"",
+                    ""id"": ""5237e800-4d70-459e-9852-ab5e8626c56c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold(duration=3,pressPoint=0.5)"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -467,6 +476,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""MoveCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""652f85aa-40ef-4152-b7af-661bc4ac479f"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GiveUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7eda0d17-fdf8-4483-b57a-6a117b9afb62"",
+                    ""path"": ""<XInputController>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GiveUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -976,6 +1007,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_FPS2TPS = m_Player.FindAction("FPS2TPS", throwIfNotFound: true);
         m_Player_ZoomCamera = m_Player.FindAction("ZoomCamera", throwIfNotFound: true);
         m_Player_MoveCamera = m_Player.FindAction("MoveCamera", throwIfNotFound: true);
+        m_Player_GiveUp = m_Player.FindAction("GiveUp", throwIfNotFound: true);
         // PlaceObject
         m_PlaceObject = asset.FindActionMap("PlaceObject", throwIfNotFound: true);
         m_PlaceObject_Place = m_PlaceObject.FindAction("Place", throwIfNotFound: true);
@@ -1052,6 +1084,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_FPS2TPS;
     private readonly InputAction m_Player_ZoomCamera;
     private readonly InputAction m_Player_MoveCamera;
+    private readonly InputAction m_Player_GiveUp;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -1062,6 +1095,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @FPS2TPS => m_Wrapper.m_Player_FPS2TPS;
         public InputAction @ZoomCamera => m_Wrapper.m_Player_ZoomCamera;
         public InputAction @MoveCamera => m_Wrapper.m_Player_MoveCamera;
+        public InputAction @GiveUp => m_Wrapper.m_Player_GiveUp;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1089,6 +1123,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @MoveCamera.started += instance.OnMoveCamera;
             @MoveCamera.performed += instance.OnMoveCamera;
             @MoveCamera.canceled += instance.OnMoveCamera;
+            @GiveUp.started += instance.OnGiveUp;
+            @GiveUp.performed += instance.OnGiveUp;
+            @GiveUp.canceled += instance.OnGiveUp;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1111,6 +1148,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @MoveCamera.started -= instance.OnMoveCamera;
             @MoveCamera.performed -= instance.OnMoveCamera;
             @MoveCamera.canceled -= instance.OnMoveCamera;
+            @GiveUp.started -= instance.OnGiveUp;
+            @GiveUp.performed -= instance.OnGiveUp;
+            @GiveUp.canceled -= instance.OnGiveUp;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1248,6 +1288,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnFPS2TPS(InputAction.CallbackContext context);
         void OnZoomCamera(InputAction.CallbackContext context);
         void OnMoveCamera(InputAction.CallbackContext context);
+        void OnGiveUp(InputAction.CallbackContext context);
     }
     public interface IPlaceObjectActions
     {

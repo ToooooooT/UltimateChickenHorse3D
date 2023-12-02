@@ -9,55 +9,90 @@ using UnityEngine.UIElements;
 
 public class StageController : MonoBehaviour
 {
-    private enum Stage {CHOOSE_STAGE, BEFORE_SELECT_ITEM, SELECT_ITEM, PLACE_ITEM, PLAY, SCOREBOARD};
+    private enum PartyStage {CHOOSE_STAGE, BEFORE_SELECT_ITEM, SELECT_ITEM, PLACE_ITEM, PLAY, SCOREBOARD};
+    private enum CreateStage {CHOOSE_STAGE, PLAY};
 
     private string gameMode;
-    private Stage stage;
+    private PartyStage partyStage;
+    private CreateStage createStage;
     private GameObject scoreBoardObject;
     private GameObject LinBenObject;
 
     public List<GameObject> items;
     public List<GameObject> playerObjects;
 
-    private bool isFirstChooseStage;
+    private bool isFirstChoosePartyStage;
 
     void Start() {
         items = new();
         gameMode = PlayerPrefs.GetString("GameMode", "Party");
         if (gameMode == "Party") {
-            stage = Stage.CHOOSE_STAGE;
-        } 
+            partyStage = PartyStage.CHOOSE_STAGE;
+        } else if (gameMode == "Create") {
+            createStage = CreateStage.CHOOSE_STAGE;
+        }
         // other mode initial stage not sure yet
 
         // playerObjects = GameObject.FindGameObjectsWithTag("Player");
         scoreBoardObject = GameObject.FindGameObjectWithTag("ScoreBoard");
         LinBenObject = GameObject.FindGameObjectWithTag("LinBen");
-        isFirstChooseStage = true;
+        isFirstChoosePartyStage = true;
     }
 
     void Update() {
-        switch (stage) {
-        case Stage.CHOOSE_STAGE:
-            if (isFirstChooseStage) {
+        switch (gameMode) {
+        case "Party":
+            PartyMode();
+            break;
+        case "Create":
+            CreateMode();
+            break;
+        }
+    }
+
+    private void CreateMode() {
+        switch (createStage) {
+        case CreateStage.CHOOSE_STAGE:
+            if (isFirstChoosePartyStage) {
                 GetComponent<PlayerManager>().EnableJoinAction();
                 AdjustCamera(isFollow: true, isVirtual: false);
-                isFirstChooseStage = false;
+                isFirstChoosePartyStage = false;
             }
             if (Input.GetKey(KeyCode.Y) && playerObjects.Count >= 1) {
                 // TODO: change the condition to all player choose the stage
                 GetComponent<PlayerManager>().DisableJoinAction();
-                stage = Stage.BEFORE_SELECT_ITEM;
-                isFirstChooseStage = true;
+                partyStage = PartyStage.BEFORE_SELECT_ITEM;
+                isFirstChoosePartyStage = true;
             }
             break;
-        case Stage.BEFORE_SELECT_ITEM:
+        case CreateStage.PLAY:
+            break;
+        }
+    }
+
+    private void PartyMode() {
+        switch (partyStage) {
+        case PartyStage.CHOOSE_STAGE:
+            if (isFirstChoosePartyStage) {
+                GetComponent<PlayerManager>().EnableJoinAction();
+                AdjustCamera(isFollow: true, isVirtual: false);
+                isFirstChoosePartyStage = false;
+            }
+            if (Input.GetKey(KeyCode.Y) && playerObjects.Count >= 1) {
+                // TODO: change the condition to all player choose the stage
+                GetComponent<PlayerManager>().DisableJoinAction();
+                partyStage = PartyStage.BEFORE_SELECT_ITEM;
+                isFirstChoosePartyStage = true;
+            }
+            break;
+        case PartyStage.BEFORE_SELECT_ITEM:
             ResetItemsInStage();
             PlayerSelectItem();
             AdjustCamera(isFollow: true, isVirtual: false);
             GetComponent<ItemGenerator>().GenerateItems();
-            stage = Stage.SELECT_ITEM;
+            partyStage = PartyStage.SELECT_ITEM;
             break;
-        case Stage.SELECT_ITEM:
+        case PartyStage.SELECT_ITEM:
             if (!IsAllPlayersSelectItem()) {
                 break;
             }
@@ -66,23 +101,23 @@ public class StageController : MonoBehaviour
             foreach (GameObject player in playerObjects) {
                 player.GetComponent<Player>().Disable(Player.State.STOP);
             }
-            stage = Stage.PLACE_ITEM;
+            partyStage = PartyStage.PLACE_ITEM;
             break;
-        case Stage.PLACE_ITEM:
+        case PartyStage.PLACE_ITEM:
             if (!IsAllPlayersPlaceItem()) {
                 break;
             }
             SetPlayersPlay();
             AdjustCamera(isFollow: true, isVirtual: false);
             MemorizeItemsStateInStage();
-            stage = Stage.PLAY;
+            partyStage = PartyStage.PLAY;
             break;
-        case Stage.PLAY:
+        case PartyStage.PLAY:
             CheckPlayersState();
             CheckAllLose();
             CheckWin();
             break;
-        case Stage.SCOREBOARD:
+        case PartyStage.SCOREBOARD:
             MoveWinner();
             break;
         }
@@ -177,7 +212,7 @@ public class StageController : MonoBehaviour
             Player player = playerObjects[i].GetComponent<Player>();
             LinBenScript LinBen = LinBenObject.GetComponent<LinBenScript>();
             if (player.state == Player.State.WIN && LinBen.state == LinBenScript.State.FINISH_POINTING) {
-                stage = Stage.SCOREBOARD;
+                partyStage = PartyStage.SCOREBOARD;
                 LinBen.state = LinBenScript.State.IDLE;
                 winnerMoving.winner = i;
             }
@@ -188,7 +223,7 @@ public class StageController : MonoBehaviour
                 Vector3 position = winnerMoving.GetPlayerCubePosition(i);
                 position.y += 1;
                 player.ModifyPosition(position);
-                player.Enable(Player.State.GAME);
+                player.Enable(Player.State.MOVE);
             }
         }
     }
@@ -200,7 +235,7 @@ public class StageController : MonoBehaviour
                 return;
             }
         }
-        stage = Stage.BEFORE_SELECT_ITEM;
+        partyStage = PartyStage.BEFORE_SELECT_ITEM;
     }
 
     private void MoveWinner() {
@@ -208,7 +243,7 @@ public class StageController : MonoBehaviour
         // TODO: load video when really win
         // SceneManager.LoadScene("WIN", LoadSceneMode.Additive);
         if (winnerMoving.IsFinishMoving()) {
-            stage = Stage.BEFORE_SELECT_ITEM;
+            partyStage = PartyStage.BEFORE_SELECT_ITEM;
         }
     }
 
