@@ -5,33 +5,41 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.iOS;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class StageController : MonoBehaviour
 {
-    private enum Stage {BEFORE_SELECT_ITEM, SELECT_ITEM, PLACE_ITEM, PLAY, SCOREBOARD};
+    private enum Stage {CHOOSE_STAGE, BEFORE_SELECT_ITEM, SELECT_ITEM, PLACE_ITEM, PLAY, SCOREBOARD};
 
     private string gameMode;
     private Stage stage;
-    private GameObject[] playerObjects;
     private GameObject scoreBoardObject;
     private GameObject LinBenObject;
+
     public List<GameObject> items;
+    public List<GameObject> playerObjects;
 
     void Start() {
         items = new();
         gameMode = PlayerPrefs.GetString("GameMode", "Party");
         if (gameMode == "Party") {
-            stage = Stage.BEFORE_SELECT_ITEM;
+            stage = Stage.CHOOSE_STAGE;
         } 
         // other mode initial stage not sure yet
 
-        playerObjects = GameObject.FindGameObjectsWithTag("Player");
+        // playerObjects = GameObject.FindGameObjectsWithTag("Player");
         scoreBoardObject = GameObject.FindGameObjectWithTag("ScoreBoard");
         LinBenObject = GameObject.FindGameObjectWithTag("LinBen");
     }
 
     void Update() {
         switch (stage) {
+        case Stage.CHOOSE_STAGE:
+            if (Input.GetKey(KeyCode.Y) && playerObjects.Count >= 1) {
+                GetComponent<PlayerManager>().DisableJoinAction();
+                stage = Stage.BEFORE_SELECT_ITEM;
+            }
+            break;
         case Stage.BEFORE_SELECT_ITEM:
             ResetItems();
             PlayerSelectItem();
@@ -71,7 +79,7 @@ public class StageController : MonoBehaviour
     }
 
     private void PlayerSelectItem() {
-        for (int i = 0; i < playerObjects.Length; ++i) {
+        for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             player.Enable(Player.State.SELECT_ITEM);
             RandomPositionToSelectItem(player);
@@ -79,7 +87,7 @@ public class StageController : MonoBehaviour
     }
 
     private bool IsAllPlayersSelectItem() {
-        for (int i = 0; i < playerObjects.Length; ++i) {
+        for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.state != Player.State.STOP) {
                 return false;
@@ -89,7 +97,7 @@ public class StageController : MonoBehaviour
     }
 
     private bool IsAllPlayersPlaceItem() {
-        for (int i = 0; i < playerObjects.Length; ++i) {
+        for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.HaveItem()) {
                 return false;
@@ -99,16 +107,16 @@ public class StageController : MonoBehaviour
     }
 
     private void SetPlayersPlay() {
-        for (int i = 0; i < playerObjects.Length; ++i) {
+        for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             player.Enable(Player.State.GAME);
         }
     }
 
     private void ClearChoosingItems() {
-        GameObject[] items = GameObject.FindGameObjectsWithTag("ChoosingItem");
-        for (int i = 0; i < items.Length; ++i) {
-            Destroy(items[i]);
+        GameObject[] choosing_items = GameObject.FindGameObjectsWithTag("ChoosingItem");
+        for (int i = 0; i < choosing_items.Length; ++i) {
+            Destroy(choosing_items[i]);
         }
     }
 
@@ -123,7 +131,7 @@ public class StageController : MonoBehaviour
     }
 
     private void AdjustCamera(bool isFollow, bool isVirtual) {
-        for (int i = 0; i < playerObjects.Length; ++i) {
+        for (int i = 0; i < playerObjects.Count; ++i) {
             if (isFollow) {
                 playerObjects[i].transform.Find("FollowCamera").GetComponent<MouseControlFollowCamera>().Enable();
             } else {
@@ -138,7 +146,7 @@ public class StageController : MonoBehaviour
     }
 
     private void CheckPlayersState() {
-        for (int i = 0; i < playerObjects.Length; i++) {
+        for (int i = 0; i < playerObjects.Count; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.transform.position.y < -50) {
                 player.Disable(Player.State.LOSE);
@@ -150,18 +158,29 @@ public class StageController : MonoBehaviour
     }
 
     private void CheckWin() {
-        for (int i = 0; i < playerObjects.Length; i++) {
+        WinnerMoving winnerMoving = scoreBoardObject.GetComponent<WinnerMoving>();
+        for (int i = 0; i < playerObjects.Count; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
             LinBenScript LinBen = LinBenObject.GetComponent<LinBenScript>();
             if (player.state == Player.State.WIN && LinBen.state == LinBenScript.State.FINISH_POINTING) {
                 stage = Stage.SCOREBOARD;
                 LinBen.state = LinBenScript.State.IDLE;
+                winnerMoving.winner = i;
+            }
+        }
+        if (winnerMoving.winner >= 0) {
+            for (int i = 0; i < playerObjects.Count; i++) {
+                Player player = playerObjects[i].GetComponent<Player>();
+                Vector3 position = winnerMoving.GetPlayerCubePosition(i);
+                position.y += 1;
+                player.ModifyPosition(position);
+                player.Enable(Player.State.GAME);
             }
         }
     }
 
     private void CheckAllLose() {
-        for (int i = 0; i < playerObjects.Length; i++) {
+        for (int i = 0; i < playerObjects.Count; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.state != Player.State.LOSE) {
                 return;
@@ -172,16 +191,6 @@ public class StageController : MonoBehaviour
 
     private void MoveWinner() {
         WinnerMoving winnerMoving = scoreBoardObject.GetComponent<WinnerMoving>();
-        for (int i = 0; i < playerObjects.Length; i++) {
-            Player player = playerObjects[i].GetComponent<Player>();
-            if (player.state == Player.State.WIN) {
-                Vector3 position = winnerMoving.GetPlayerCubePosition(i);
-                position.y += 1;
-                player.ModifyPosition(position);
-                player.Enable(Player.State.GAME);
-                winnerMoving.winner = i;
-            }
-        }
         // TODO: load video when really win
         // SceneManager.LoadScene("WIN", LoadSceneMode.Additive);
         if (winnerMoving.IsFinishMoving()) {

@@ -27,9 +27,7 @@ public class LinBenScript : MonoBehaviour
             targetPosition.y = transform.position.y; // Maintain the same Y level
             transform.LookAt(targetPosition);
 
-            if (myEvents != null) {
-                myEvents.Invoke();
-            }
+            myEvents?.Invoke();
             other.GetComponent<Player>().state = Player.State.WIN;
         }
     }

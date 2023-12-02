@@ -34,7 +34,7 @@ public class Player : MonoBehaviour {
     private bool isJumping = false;
     private float buttonPressedTime;
     private float velocity;
-    private Vector3 lastExSpeed;
+    public Vector3 lastExSpeed;
     private CharacterController controller;
     private CinemachineVirtualCamera virtualCamera;
     private InputActionMap playerInputActionMap;
@@ -65,9 +65,7 @@ public class Player : MonoBehaviour {
         item = null;
         exSpeed = Vector3.zero;
         resistanceRatio = 0.8f;
-        // the below line is for test scene
-        // Enable(State.STOP);
-        state = State.STOP;
+        Enable(State.GAME);
     }
 
     private void Update() {
@@ -91,6 +89,12 @@ public class Player : MonoBehaviour {
 
     public void Disable(State new_state) {
         playerInputActionMap.Disable();
+        InputAction jump = playerInputActionMap.FindAction("Jump");
+        jump.started -= DoJump;
+        jump.canceled -= CancelJump;
+        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+        accelerate.started -= DoAccelerate;
+        accelerate.canceled -= NoAccelerate;
         state = new_state;
     }
 
@@ -118,7 +122,9 @@ public class Player : MonoBehaviour {
     private void HandleMovement() {
         Vector3 moveDir = GetMoveDirNormalized();
         Vector3 moveVector = velocity * Time.deltaTime * moveDir;
+        Debug.Log(moveVector);
         moveVector += lastExSpeed * Time.deltaTime;
+        Debug.Log(moveVector);
         lastExSpeed = resistanceRatio * new Vector3(lastExSpeed.x, 0, lastExSpeed.z) 
                     + new Vector3(0, Mathf.Max(lastExSpeed.y - gravity * Time.deltaTime, 0), 0) + exSpeed;
         exSpeed = Vector3.zero;
@@ -211,18 +217,14 @@ public class Player : MonoBehaviour {
     }
 
     public void ModifyPosition(Vector3 newPosition) {
-        bool origin = controller.enabled;
         controller.enabled = false;
         transform.position = newPosition;
-        controller.enabled = origin;
+        controller.enabled = true;
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit) {
         if (state == State.SELECT_ITEM && hit.gameObject.CompareTag("ChoosingItem")) {
-            item = GetTopParentObjectName(hit.gameObject.transform);
-            // Remove the odd name ending
-            item = item.Replace("(Clone)", "");
-            Destroy(hit.gameObject);
+            GetItem(hit.gameObject);
             // TODO: move to the start position of stage
             ModifyPosition(Vector3.zero);
             state = State.STOP;
@@ -230,6 +232,16 @@ public class Player : MonoBehaviour {
             // follow object move
             followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition();
         }
+    }
+
+    private void GetItem(GameObject obj) {
+        item = GetTopParentObjectName(obj.transform);
+        // Remove the odd name ending
+        item = item.Replace("(Clone)", "");
+        while (obj.transform.parent) {
+            obj = obj.transform.parent.gameObject;
+        }
+        Destroy(obj);
     }
 
     private string GetTopParentObjectName(Transform obj) {

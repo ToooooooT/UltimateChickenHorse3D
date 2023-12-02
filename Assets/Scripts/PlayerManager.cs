@@ -6,14 +6,18 @@ using UnityEngine.InputSystem;
 public class PlayerManager : MonoBehaviour
 {
     private PlayerInputManager playerManager;
+    private StageController stageController;
+
     public List<PlayerInput> playerList = new();
     public event System.Action<PlayerInput> PlayerJoinedGame;
     public event System.Action<PlayerInput> PlayerLeftGame;
+
     [SerializeField] InputAction joinAction;
     [SerializeField] InputAction leaveAction;
 
     private void Awake() {
         playerManager = GetComponent<PlayerInputManager>();
+        stageController = GetComponent<StageController>();
 
         joinAction.Enable();
         joinAction.performed += context => JoinAction(context);
@@ -34,6 +38,7 @@ public class PlayerManager : MonoBehaviour
         Debug.Log("Player joined");
         playerList.Add(playerInput);
         PlayerJoinedGame?.Invoke(playerInput);
+        stageController.playerObjects.Add(playerInput.gameObject);
     }
 
     void OnPlayerLeft(PlayerInput playerInput) {
@@ -46,5 +51,9 @@ public class PlayerManager : MonoBehaviour
 
     void LeaveAction(InputAction.CallbackContext context) {
 
+    }
+
+    public void DisableJoinAction() {
+        joinAction.Disable();
     }
 }

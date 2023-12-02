@@ -10,7 +10,7 @@ public class PlayerGenerator : MonoBehaviour
     public State state;
 
     void Awake() {
-        GeneratePlayers();
+        // GeneratePlayers();
     }
 
     void Start() {

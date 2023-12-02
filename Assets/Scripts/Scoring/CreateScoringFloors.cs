@@ -24,6 +24,7 @@ public class CreateScoringFloors : MonoBehaviour
             }
             plane.transform.localScale = new Vector3(3, 3, 3.0f / WinScore);
             plane.transform.parent = gameObject.transform;
+            plane.tag = "Wall";
         }
     }
     // Update is called once per frame
