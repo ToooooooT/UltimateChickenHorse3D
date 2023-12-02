@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Airplane : Velocity
+public class Velocity : MonoBehaviour
 {
-    
-    public GameObject parentCarrier;
+    public Vector3 velocity;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +14,10 @@ public class Airplane : Velocity
     // Update is called once per frame
     void Update()
     {
-        Forward();
+
+    }
+    protected void Forward()
+    {
+        transform.forward = velocity;
     }
 }
