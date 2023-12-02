@@ -45,8 +45,8 @@ public class Spring : BaseItem
         if (topScript.TouchPlayer() && !triggerVibration) {
             triggerVibration = true;
             player = topScript.Player();
-            Vector3 velocity = new Vector3(0, -player.verticalVelocity, 0) + player.jumpSpeed * (float)Math.Sqrt(2) * transform.up.normalized;
-            player.exSpeed += velocity;
+            Vector3 bounceVelocity = new Vector3(0, -player.verticalVelocity, 0) + player.jumpSpeed * 100 * transform.up.normalized;
+            player.exSpeed += bounceVelocity;
             player = null;
         }
     }

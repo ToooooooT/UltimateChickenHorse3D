@@ -17,9 +17,7 @@ public class SpringTop : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        if (touchPlayer) {
-            touchPlayer = false;
-        }
+        
     }
 
     public bool TouchPlayer() {

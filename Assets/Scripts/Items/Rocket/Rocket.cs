@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Rocket : BaseItem  
 {
+    [SerializeField] float exSpeedRatio;
     public enum State { Idle, Equipped, Flying };
     public State state;
     private State lastState;
@@ -12,12 +13,14 @@ public class Rocket : BaseItem
     private Vector3 origin_position;
     private Quaternion origin_rotation;
 
+
     // Start is called before the first frame update
     void Start() {
         state = State.Idle;
         lastState = State.Idle;
         FireTransform = transform.Find("Fire");
         player = null;
+        exSpeedRatio = 0.018f;
         InitFire();
     }
 
@@ -42,7 +45,7 @@ public class Rocket : BaseItem
 
     private void HandleFly() {
         if (state == State.Flying) {
-            player.exSpeed += new Vector3(0, player.jumpSpeed / 40, 0);
+            player.exSpeed += new Vector3(0, player.jumpSpeed * exSpeedRatio, 0);
         }
     }
 

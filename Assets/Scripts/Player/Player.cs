@@ -29,6 +29,7 @@ public class Player : MonoBehaviour {
     [SerializeField] private float gravity;
     [SerializeField] private float buttonPressedWindow;
     [SerializeField] private float resistanceRatio;
+    [SerializeField] private float exSpeedThreshold;
 
     private bool isWalking = false;
     private bool isJumping = false;
@@ -64,8 +65,9 @@ public class Player : MonoBehaviour {
         buttonPressedWindow = .3f;
         item = null;
         exSpeed = Vector3.zero;
-        resistanceRatio = 0.8f;
         Enable(State.GAME);
+        resistanceRatio = 0.7f;
+        exSpeedThreshold = 55f;
     }
 
     private void Update() {
@@ -125,6 +127,9 @@ public class Player : MonoBehaviour {
         moveVector += lastExSpeed * Time.deltaTime;
         lastExSpeed = resistanceRatio * new Vector3(lastExSpeed.x, 0, lastExSpeed.z) 
                     + new Vector3(0, Mathf.Max(lastExSpeed.y - gravity * Time.deltaTime, 0), 0) + exSpeed;
+        if (lastExSpeed.magnitude > exSpeedThreshold) {
+            lastExSpeed = exSpeedThreshold * lastExSpeed.normalized;
+        }
         exSpeed = Vector3.zero;
         controller.Move(moveVector);
         isWalking = moveDir != Vector3.zero;
