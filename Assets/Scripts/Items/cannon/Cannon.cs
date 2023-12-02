@@ -5,15 +5,19 @@ using UnityEngine;
 public class Cannon : BaseItem
 {
     private enum State { shooting, idle , placing};
-    private State state;
+    [SerializeField] private State state = State.placing;
     private const string FOLDERPATH = "cannon bomb";
     [SerializeField] private float rotateSpeed;
     [SerializeField] private float countdown;
     [SerializeField] private float countdownTime;
+
+    void Awake() {
+        state = State.placing;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        state = State.placing;
         countdownTime = 10;
         rotateSpeed = 40;
     }
@@ -22,18 +26,17 @@ public class Cannon : BaseItem
     void Update()
     {
         if (state != State.placing) {
-            shootingMode();
+            ShootingMode();
         }
     }
 
-    void shootingMode()
+    void ShootingMode()
     {
         if (state == State.shooting) {
             Generatebomb();
             state = State.idle;
             countdown = countdownTime;
-        }
-        else {
+        } else {
             countdown -= 0.1f;
             if (countdown <= 0) {
                 state = State.shooting;
@@ -46,10 +49,12 @@ public class Cannon : BaseItem
     {
         state = State.shooting;
     }
+
     public override void Reset()
     {
         state = State.placing;
     }
+
     public void Generatebomb()
     {
         GameObject newBomb = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/Round_shot"));

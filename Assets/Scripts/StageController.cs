@@ -2,44 +2,59 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.iOS;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class StageController : MonoBehaviour
 {
-    private enum Stage {BEFORE_SELECT_ITEM, SELECT_ITEM, PLACE_ITEM, PLAY, SCOREBOARD};
+    private enum Stage {CHOOSE_STAGE, BEFORE_SELECT_ITEM, SELECT_ITEM, PLACE_ITEM, PLAY, SCOREBOARD};
 
     private string gameMode;
     private Stage stage;
-    private GameObject[] playerObjects;
-    private GameObject itemGenerator;
-    private GameObject[] cameraObjects;
     private GameObject scoreBoardObject;
     private GameObject LinBenObject;
+
     public List<GameObject> items;
+    public List<GameObject> playerObjects;
+
+    private bool isFirstChooseStage;
 
     void Start() {
         items = new();
         gameMode = PlayerPrefs.GetString("GameMode", "Party");
         if (gameMode == "Party") {
-            stage = Stage.BEFORE_SELECT_ITEM;
+            stage = Stage.CHOOSE_STAGE;
         } 
         // other mode initial stage not sure yet
 
-        playerObjects = GameObject.FindGameObjectsWithTag("Player");
-        itemGenerator = GameObject.FindGameObjectWithTag("ItemGenerator");
-        cameraObjects = GameObject.FindGameObjectsWithTag("Camera");
+        // playerObjects = GameObject.FindGameObjectsWithTag("Player");
         scoreBoardObject = GameObject.FindGameObjectWithTag("ScoreBoard");
         LinBenObject = GameObject.FindGameObjectWithTag("LinBen");
+        isFirstChooseStage = true;
     }
 
     void Update() {
         switch (stage) {
+        case Stage.CHOOSE_STAGE:
+            if (isFirstChooseStage) {
+                GetComponent<PlayerManager>().EnableJoinAction();
+                AdjustCamera(isFollow: true, isVirtual: false);
+                isFirstChooseStage = false;
+            }
+            if (Input.GetKey(KeyCode.Y) && playerObjects.Count >= 1) {
+                // TODO: change the condition to all player choose the stage
+                GetComponent<PlayerManager>().DisableJoinAction();
+                stage = Stage.BEFORE_SELECT_ITEM;
+                isFirstChooseStage = true;
+            }
+            break;
         case Stage.BEFORE_SELECT_ITEM:
-            ResetItems();
+            ResetItemsInStage();
             PlayerSelectItem();
-            EnableFollowCamera();
-            itemGenerator.GetComponent<ItemGenerator>().GenerateItems();
+            AdjustCamera(isFollow: true, isVirtual: false);
+            GetComponent<ItemGenerator>().GenerateItems();
             stage = Stage.SELECT_ITEM;
             break;
         case Stage.SELECT_ITEM:
@@ -47,7 +62,10 @@ public class StageController : MonoBehaviour
                 break;
             }
             ClearChoosingItems();
-            EnableVirtualCamera();
+            AdjustCamera(isFollow: false, isVirtual: true);
+            foreach (GameObject player in playerObjects) {
+                player.GetComponent<Player>().Disable(Player.State.STOP);
+            }
             stage = Stage.PLACE_ITEM;
             break;
         case Stage.PLACE_ITEM:
@@ -55,8 +73,8 @@ public class StageController : MonoBehaviour
                 break;
             }
             SetPlayersPlay();
-            EnableFollowCamera();
-            MemorizeItemsState();
+            AdjustCamera(isFollow: true, isVirtual: false);
+            MemorizeItemsStateInStage();
             stage = Stage.PLAY;
             break;
         case Stage.PLAY:
@@ -71,7 +89,7 @@ public class StageController : MonoBehaviour
     }
 
     private void PlayerSelectItem() {
-        for (int i = 0; i < playerObjects.Length; ++i) {
+        for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             player.Enable(Player.State.SELECT_ITEM);
             RandomPositionToSelectItem(player);
@@ -79,7 +97,7 @@ public class StageController : MonoBehaviour
     }
 
     private bool IsAllPlayersSelectItem() {
-        for (int i = 0; i < playerObjects.Length; ++i) {
+        for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.state != Player.State.STOP) {
                 return false;
@@ -89,7 +107,7 @@ public class StageController : MonoBehaviour
     }
 
     private bool IsAllPlayersPlaceItem() {
-        for (int i = 0; i < playerObjects.Length; ++i) {
+        for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.HaveItem()) {
                 return false;
@@ -99,76 +117,84 @@ public class StageController : MonoBehaviour
     }
 
     private void SetPlayersPlay() {
-        for (int i = 0; i < playerObjects.Length; ++i) {
+        for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             player.Enable(Player.State.GAME);
         }
     }
 
     private void ClearChoosingItems() {
-        GameObject[] items = GameObject.FindGameObjectsWithTag("ChoosingItem");
-        for (int i = 0; i < items.Length; ++i) {
-            Destroy(items[i]);
+        GameObject[] choosing_items = GameObject.FindGameObjectsWithTag("ChoosingItem");
+        for (int i = 0; i < choosing_items.Length; ++i) {
+            Destroy(choosing_items[i]);
         }
     }
 
     private void RandomPositionToSelectItem(Player player) {
-        Vector3 spawnArea = new(0, 3000, 0);
-        Vector3 size = new(20, 0, 20);
+        Vector3 spawnArea = GetComponent<ItemGenerator>().spawnArea;
+        spawnArea.y = 3;
+        Vector3 size = GetComponent<ItemGenerator>().size;
         float randomX = Random.Range(spawnArea.x - size.x / 2, spawnArea.x + size.x / 2);
         float randomY = Random.Range(spawnArea.y - size.y / 2, spawnArea.y + size.y / 2);
         float randomZ = Random.Range(spawnArea.z - size.z / 2, spawnArea.z + size.z / 2);
-        Vector3 randomPosition = new(randomX, randomY, randomZ);
-        player.ModifyPosition(randomPosition);
+        player.ModifyPosition(new Vector3(randomX, randomY, randomZ));
     }
 
-    private void EnableFollowCamera() {
-        for (int i = 0; i < cameraObjects.Length; ++i) {
-            EnableCamera virtualCameraEnable = cameraObjects[i].GetComponent<EnableCamera>();
-            if (cameraObjects[i].name == "FollowCamera") {
-                virtualCameraEnable.Enable();
-            } else if (cameraObjects[i].name == "VirtualCamera") {
-                virtualCameraEnable.Disable();
-            } 
-        }
-    }
-
-    private void EnableVirtualCamera() {
-        for (int i = 0; i < cameraObjects.Length; ++i) {
-            EnableCamera virtualCameraEnable = cameraObjects[i].GetComponent<EnableCamera>();
-            if (cameraObjects[i].name == "FollowCamera") {
-                virtualCameraEnable.Disable();
-            } else if (cameraObjects[i].name == "VirtualCamera") {
-                Vector3 position = new(0, 10, 0);
-                cameraObjects[i].transform.SetPositionAndRotation(position, Quaternion.Euler(0, 0, 0));
-                virtualCameraEnable.Enable();
-            } 
+    private void AdjustCamera(bool isFollow, bool isVirtual) {
+        for (int i = 0; i < playerObjects.Count; ++i) {
+            if (isFollow) {
+                playerObjects[i].transform.Find("Camera").GetComponent<MouseControlFollowCamera>().enabled = true;
+                playerObjects[i].transform.Find("Camera").GetComponent<MouseControlFollowCamera>().Enable();
+            } else {
+                playerObjects[i].transform.Find("Camera").GetComponent<MouseControlFollowCamera>().Disable();
+                playerObjects[i].transform.Find("Camera").GetComponent<MouseControlFollowCamera>().enabled = false;
+            }
+            if (isVirtual) {
+                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().enabled = true;
+                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().Enable();
+            } else {
+                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().Disable();
+                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().enabled = false;
+            }
         }
     }
 
     private void CheckPlayersState() {
-        for (int i = 0; i < playerObjects.Length; i++) {
+        for (int i = 0; i < playerObjects.Count; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.transform.position.y < -50) {
                 player.Disable(Player.State.LOSE);
+                SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
+            } else if (player.state == Player.State.LOSE) {
                 SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
             }
         }
     }
 
     private void CheckWin() {
-        for (int i = 0; i < playerObjects.Length; i++) {
+        WinnerMoving winnerMoving = scoreBoardObject.GetComponent<WinnerMoving>();
+        for (int i = 0; i < playerObjects.Count; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
             LinBenScript LinBen = LinBenObject.GetComponent<LinBenScript>();
             if (player.state == Player.State.WIN && LinBen.state == LinBenScript.State.FINISH_POINTING) {
                 stage = Stage.SCOREBOARD;
                 LinBen.state = LinBenScript.State.IDLE;
+                winnerMoving.winner = i;
+            }
+        }
+        if (winnerMoving.winner >= 0) {
+            for (int i = 0; i < playerObjects.Count; i++) {
+                Player player = playerObjects[i].GetComponent<Player>();
+                Vector3 position = winnerMoving.GetPlayerCubePosition(i);
+                position.y += 1;
+                player.ModifyPosition(position);
+                player.Enable(Player.State.GAME);
             }
         }
     }
 
     private void CheckAllLose() {
-        for (int i = 0; i < playerObjects.Length; i++) {
+        for (int i = 0; i < playerObjects.Count; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.state != Player.State.LOSE) {
                 return;
@@ -179,16 +205,6 @@ public class StageController : MonoBehaviour
 
     private void MoveWinner() {
         WinnerMoving winnerMoving = scoreBoardObject.GetComponent<WinnerMoving>();
-        for (int i = 0; i < playerObjects.Length; i++) {
-            Player player = playerObjects[i].GetComponent<Player>();
-            if (player.state == Player.State.WIN) {
-                Vector3 position = winnerMoving.GetPlayerCubePosition(i);
-                position.y += 1;
-                player.ModifyPosition(position);
-                player.Enable(Player.State.GAME);
-                winnerMoving.winner = i;
-            }
-        }
         // TODO: load video when really win
         // SceneManager.LoadScene("WIN", LoadSceneMode.Additive);
         if (winnerMoving.IsFinishMoving()) {
@@ -196,7 +212,7 @@ public class StageController : MonoBehaviour
         }
     }
 
-    private void MemorizeItemsState() {
+    private void MemorizeItemsStateInStage() {
         foreach (GameObject item in items) {
             if (item.TryGetComponent<BaseItem>(out var item_base)) {
                 item_base.Initialize();
@@ -204,7 +220,7 @@ public class StageController : MonoBehaviour
         }
     }
 
-    private void ResetItems() {
+    private void ResetItemsInStage() {
         foreach (GameObject item in items) {
             if (item.TryGetComponent<BaseItem>(out var item_base)) {
                 item_base.Reset();

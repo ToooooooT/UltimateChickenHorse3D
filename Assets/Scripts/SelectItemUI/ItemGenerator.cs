@@ -5,14 +5,15 @@ using UnityEngine;
 
 public class ItemGenerator : MonoBehaviour
 {
-    [SerializeField] private Vector3 spawnArea;
-    [SerializeField] private Vector3 size;
+    public Vector3 spawnArea { get; private set; }
+    public Vector3 size { get; private set; }
     [SerializeField] private int numberOfObjectsToGenerate;
     private const string FOLDERPATH = "Item";
     private const string ITEMTAG = "ChoosingItem";
 
     void Start() {
-
+        spawnArea = new(3000, 30, 3000);
+        size = new(70, 0, 70);
     }
 
     void Update() {
@@ -35,6 +36,7 @@ public class ItemGenerator : MonoBehaviour
             SetTag(generatedItem.transform);
             DisableIsTrigger(generatedItem.transform);
             AddRigidBody(generatedItem.transform);
+            AddBoxCollider(generatedItem.transform);
         }
     }
 
@@ -65,6 +67,16 @@ public class ItemGenerator : MonoBehaviour
         }
     }
 
+    private void AddBoxCollider(Transform parent) {
+        // Do we need to add rigidbody on all child object???
+        if (!parent.gameObject.TryGetComponent<BoxCollider>(out _)) {
+            parent.gameObject.AddComponent<BoxCollider>();
+        }
+        foreach (Transform child in parent) {
+            AddBoxCollider(child);
+        }
+    }
+
     private void DisableIsTrigger(Transform parent) {
         if (parent.gameObject.TryGetComponent<Collider>(out var collider)) {
             collider.isTrigger = false;
@@ -73,4 +85,5 @@ public class ItemGenerator : MonoBehaviour
             SetTag(child);
         }
     }
+
 }

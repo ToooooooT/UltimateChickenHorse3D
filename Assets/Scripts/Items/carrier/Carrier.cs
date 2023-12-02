@@ -10,27 +10,26 @@ public class Carrier : BaseItem
     public float countdown;
     public float countdownTime;
     private static readonly string[] airplaneType = { "Awacs" , "F18" , "F35" , "Hawkeye" , "Seahawk"};
-    // Start is called before the first frame update
-    void Start()
-    {
+
+    void Awake() {
         state = State.placing;
+    }
+
+    void Start() {
         countdownTime = 25;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         if (state != State.placing)
-            shootingMode();
+            ShootingMode();
     }
-    void shootingMode()
-    {
+
+    void ShootingMode() {
         if (state == State.shooting) {
             GenerateAirplane();
             state = State.idle;
             countdown = countdownTime;
-        }
-        else {
+        } else {
             countdown -= 0.1f;
             if (countdown <= 0) {
                 state = State.shooting;
@@ -42,17 +41,18 @@ public class Carrier : BaseItem
     {
         state = State.shooting;
     }
+
     public override void Reset()
     {
         state = State.placing;
     }
+
     public void GenerateAirplane()
     {
         string chooseType = airplaneType[(int)Random.Range(0, airplaneType.Length)];
         GameObject newAirplane = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/" + chooseType));
-        newAirplane.transform.position = transform.position + 1.6f * transform.up + 2f * transform.forward;
-        newAirplane.transform.rotation = transform.rotation;
-        if(chooseType == "Awacs")
+        newAirplane.transform.SetPositionAndRotation(transform.position + 1.6f * transform.up + 2f * transform.forward, transform.rotation);
+        if (chooseType == "Awacs")
             newAirplane.transform.localScale = new Vector3(0.002f, 0.002f, 0.002f);
         else
             newAirplane.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);

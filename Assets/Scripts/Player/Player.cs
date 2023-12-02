@@ -14,11 +14,16 @@ public class Player : MonoBehaviour {
    
     public enum State { GAME, SELECT_ITEM, STOP, WIN, LOSE };
 
+    public float jumpSpeed;
+    public bool isPressSpace = false;
+    public float verticalVelocity;
+    public State state;
+    public Vector3 exSpeed;
+
     [SerializeField] private float normalMoveSpeed;
     [SerializeField] private float accelerateMoveSpeed;
     [SerializeField] private float moveSpeedJumpWallratio;
     [SerializeField] private float rotateSpeed;
-    [SerializeField] public float jumpSpeed;
     [SerializeField] private float gravityMaxSpeedWithFriction;
     [SerializeField] private float gravityMaxSpeed;
     [SerializeField] private float gravity;
@@ -26,27 +31,25 @@ public class Player : MonoBehaviour {
     [SerializeField] private float resistanceRatio;
     [SerializeField] private float exSpeedThreshold;
 
-
     private bool isWalking = false;
     private bool isJumping = false;
-    public bool isPressSpace = false;
     private float buttonPressedTime;
-    public float verticalVelocity;
     private float velocity;
-    public Vector3 exSpeed;
-    private Vector3 lastExSpeed;
-    public State state;
+    public Vector3 lastExSpeed;
     private CharacterController controller;
-    private PlayerInputActions playerInputActions;
     private CinemachineVirtualCamera virtualCamera;
+    private InputActionMap playerInputActionMap;
+    private InputActionMap placeObjectInputActionMap;
     private string item;
-    Vector3 followObjectMove;
+    private Vector3 followObjectMove;
     
 
     private void Awake() {
-        playerInputActions = new PlayerInputActions();
-        virtualCamera = transform.Find("FollowCamera").GetComponent<CinemachineVirtualCamera>();
+        // playerInputActions = new PlayerInputActions();
+        virtualCamera = transform.Find("Camera").GetComponent<CinemachineVirtualCamera>();
         controller = GetComponent<CharacterController>();
+        playerInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("Player");
+        placeObjectInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("PlaceObject");
     }
 
     private void Start() {
@@ -62,9 +65,9 @@ public class Player : MonoBehaviour {
         buttonPressedWindow = .3f;
         item = null;
         exSpeed = Vector3.zero;
+        Enable(State.GAME);
         resistanceRatio = 0.7f;
         exSpeedThreshold = 55f;
-        state = State.STOP;
     }
 
     private void Update() {
@@ -77,15 +80,23 @@ public class Player : MonoBehaviour {
 
     public void Enable(State new_state) {
         state = new_state;
-        playerInputActions.Player.Enable();
-        playerInputActions.Player.Jump.started += DoJump;
-        playerInputActions.Player.Jump.canceled += CancelJump;
-        playerInputActions.Player.Accelerate.started += DoAccelerate;
-        playerInputActions.Player.Accelerate.canceled += NoAccelerate;
+        playerInputActionMap.Enable();
+        InputAction jump = playerInputActionMap.FindAction("Jump");
+        jump.started += DoJump;
+        jump.canceled += CancelJump;
+        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+        accelerate.started += DoAccelerate;
+        accelerate.canceled += NoAccelerate;
     }
 
     public void Disable(State new_state) {
-        playerInputActions.Player.Disable();
+        playerInputActionMap.Disable();
+        InputAction jump = playerInputActionMap.FindAction("Jump");
+        jump.started -= DoJump;
+        jump.canceled -= CancelJump;
+        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+        accelerate.started -= DoAccelerate;
+        accelerate.canceled -= NoAccelerate;
         state = new_state;
     }
 
@@ -94,7 +105,7 @@ public class Player : MonoBehaviour {
     }
 
     private Vector3 GetMoveDirNormalized() {
-        Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>().normalized;
+        Vector2 inputVector = playerInputActionMap.FindAction("Move").ReadValue<Vector2>().normalized;
         Vector3 dir = new(0,0,0);
         if (inputVector.y > 0) {
             dir += virtualCamera.transform.forward;
@@ -203,22 +214,20 @@ public class Player : MonoBehaviour {
 
     private void HandleFacement() {
         Vector3 dir = GetMoveDirNormalized();
-        transform.forward = Vector3.Slerp(transform.forward, dir, Time.deltaTime * rotateSpeed);
+        if (dir.magnitude > 0f) {
+            transform.forward = Vector3.Slerp(transform.forward, dir, Time.deltaTime * rotateSpeed);
+        }
     }
 
     public void ModifyPosition(Vector3 newPosition) {
-        bool origin = controller.enabled;
         controller.enabled = false;
         transform.position = newPosition;
-        controller.enabled = origin;
+        controller.enabled = true;
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit) {
         if (state == State.SELECT_ITEM && hit.gameObject.CompareTag("ChoosingItem")) {
-            item = GetTopParentObjectName(hit.gameObject.transform);
-            // Remove the odd name ending
-            item = item.Replace("(Clone)", "");
-            Destroy(hit.gameObject);
+            GetItem(hit.gameObject);
             // TODO: move to the start position of stage
             ModifyPosition(Vector3.zero);
             state = State.STOP;
@@ -226,6 +235,16 @@ public class Player : MonoBehaviour {
             // follow object move
             followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition();
         }
+    }
+
+    private void GetItem(GameObject obj) {
+        item = GetTopParentObjectName(obj.transform);
+        // Remove the odd name ending
+        item = item.Replace("(Clone)", "");
+        while (obj.transform.parent) {
+            obj = obj.transform.parent.gameObject;
+        }
+        Destroy(obj);
     }
 
     private string GetTopParentObjectName(Transform obj) {
@@ -251,5 +270,13 @@ public class Player : MonoBehaviour {
         return collider.CompareTag("Airplane") ||
             collider.CompareTag("Wall") ||
             collider.CompareTag("CannonPipe");
+    }
+
+    public InputActionMap GetPlayerInputActionMap() {
+        return playerInputActionMap;
+    }
+
+    public InputActionMap GetPlaceObjectInputActionMap() {
+        return placeObjectInputActionMap;
     }
 }

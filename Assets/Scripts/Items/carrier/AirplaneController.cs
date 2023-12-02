@@ -21,28 +21,25 @@ public class AirplaneController : MonoBehaviour
             CheckOutOfBound(airplanes[i]);
         }
     }
+
     void CheckOutOfBound(GameObject airplane)
     {
         if (airplane.transform.position.x < -100 || airplane.transform.position.x > 100 || airplane.transform.position.y < -100 || airplane.transform.position.y > 100 || airplane.transform.position.z < -100 || airplane.transform.position.z > 100) {
-            DestroyAirplane(airplane);
+            Destroy(airplane);
         }
     }
+
     void CheckCollision(GameObject airplane)
     {
-        Collider airCollider = airplane.GetComponent<Collider>();
-        if (airCollider != null) {
-            RaycastHit hitInfo;
-            if (Physics.Raycast(new Ray(airplane.transform.position, airplane.transform.forward), out hitInfo, 1f)) {
+        if (airplane.TryGetComponent<Collider>(out _)) {
+            if (Physics.Raycast(new Ray(airplane.transform.position, airplane.transform.forward), out RaycastHit hitInfo, 1f)) {
                 GameObject collidedObject = hitInfo.collider.gameObject;
                 Airplane airplaneScript = airplane.GetComponent<Airplane>();
                 if (collidedObject != airplaneScript.parentCarrier && collidedObject.CompareTag("Wall")) {
-                    DestroyAirplane(airplane);
+                    Destroy(airplane);
                 }
             }
         }
     }
-    void DestroyAirplane(GameObject airplane)
-    {
-        Destroy(airplane);
-    }
+
 }
