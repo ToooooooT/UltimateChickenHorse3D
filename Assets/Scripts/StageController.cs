@@ -36,6 +36,7 @@ public class StageController : MonoBehaviour
         switch (stage) {
         case Stage.CHOOSE_STAGE:
             if (Input.GetKey(KeyCode.Y) && playerObjects.Count >= 1) {
+                // TODO: change the condition to all player choose the stage
                 GetComponent<PlayerManager>().DisableJoinAction();
                 stage = Stage.BEFORE_SELECT_ITEM;
             }
@@ -133,14 +134,18 @@ public class StageController : MonoBehaviour
     private void AdjustCamera(bool isFollow, bool isVirtual) {
         for (int i = 0; i < playerObjects.Count; ++i) {
             if (isFollow) {
-                playerObjects[i].transform.Find("FollowCamera").GetComponent<MouseControlFollowCamera>().Enable();
+                playerObjects[i].transform.Find("Camera").GetComponent<MouseControlFollowCamera>().enabled = true;
+                playerObjects[i].transform.Find("Camera").GetComponent<MouseControlFollowCamera>().Enable();
             } else {
-                playerObjects[i].transform.Find("FollowCamera").GetComponent<MouseControlFollowCamera>().Disable();
+                playerObjects[i].transform.Find("Camera").GetComponent<MouseControlFollowCamera>().Disable();
+                playerObjects[i].transform.Find("Camera").GetComponent<MouseControlFollowCamera>().enabled = false;
             }
             if (isVirtual) {
-                playerObjects[i].transform.Find("VirtualCamera").GetComponent<CameraMovement>().Enable();
+                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().enabled = true;
+                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().Enable();
             } else {
-                playerObjects[i].transform.Find("VirtualCamera").GetComponent<CameraMovement>().Disable();
+                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().Disable();
+                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().enabled = false;
             }
         }
     }

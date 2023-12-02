@@ -19,8 +19,6 @@ public class CameraMovement : MonoBehaviour
     private Color validColor = new(0.0f, 1.0f, 0.0f, 0.05f);
     private Dictionary<string, GameObject> name2object;
     private InputActionMap placeObjectInputActionMap;
-    private CinemachineVirtualCamera virtualCamera;
-    private Camera camera_;
     private StageController stageController;
     private float rotationX = 0;
     private float rotationY = 0;
@@ -32,9 +30,12 @@ public class CameraMovement : MonoBehaviour
 
     private const string FOLDERPATH = "Item";
 
+    void Awake() {
+        placeObjectInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlaceObjectInputActionMap();
+    }
+
     void Start() {
         stageController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageController>();
-        placeObjectInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlaceObjectInputActionMap();
         playerObject = transform.parent.gameObject;
         transparentObject = null;
         sensitive_rotate_camera = 1.0f;
@@ -46,21 +47,16 @@ public class CameraMovement : MonoBehaviour
         pressRotateVertical = false;
         // load prefab for creating object
         name2object = new Dictionary<string, GameObject>();
-        virtualCamera = GetComponent<CinemachineVirtualCamera>();
-        camera_ = GetComponent<Camera>();
         LoadAllPrefabsInFolder();
-        Disable();
     }
 
     void Update() {
-        if (camera_.enabled && virtualCamera.enabled) {
-            MoveCamera();
-            ZoomCamera();
-            if (transparentObject == null) {
-                TransparentObject();
-            }
-            AddingObject();
+        MoveCamera();
+        ZoomCamera();
+        if (transparentObject == null) {
+            TransparentObject();
         }
+        AddingObject();
     }
 
     private void RotateCamera() {
@@ -135,14 +131,10 @@ public class CameraMovement : MonoBehaviour
         InputAction rotateObjectVerticalAction = placeObjectInputActionMap.FindAction("rotateObjectVertical");
         rotateObjectVerticalAction.performed += ctx => pressRotateVertical = true;
         rotateObjectVerticalAction.canceled += ctx => pressRotateVertical = false;
-        virtualCamera.enabled = true;
-        camera_.enabled = true;
     }
 
     public void Disable() {
         placeObjectInputActionMap.Disable();
-        virtualCamera.enabled = false;
-        camera_.enabled = false;
     }
 
     private void PlaceObject(InputAction.CallbackContext context) {
@@ -165,6 +157,9 @@ public class CameraMovement : MonoBehaviour
         Destroy(transparentObject);
         transparentObject = null;
         playerObject.GetComponent<Player>().RemoveItem();
+        // after create object this script should be disable
+        Disable();
+        enabled = false;
     }
 
     private bool PlacingIsValid() {

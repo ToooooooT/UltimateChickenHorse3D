@@ -14,23 +14,25 @@ public class MouseControlFollowCamera : MonoBehaviour
     private float rotationX = 0;
     private float rotationY = 0;
     private CinemachineVirtualCamera virtualCamera;
-    private Camera camera_;
     private InputActionMap playerInputActionMap;
     private Transform playerTransform;
     private bool FPS;
     private float distance;
 
+    void Awake() {
+        playerInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlayerInputActionMap();
+    }
+
     void Start() {
         playerTransform = transform.parent;
-        playerInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlayerInputActionMap();
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
-        camera_ = GetComponent<Camera>();
         sensitive_rotate = 1.0f;
         sensitive_zoom = 0.5f;
         FPS = false;
         distance = 25.0f;
         rotationX = 0;
         rotationY = 0;
+        Enable();
     }
 
     private void Update() {
@@ -40,14 +42,10 @@ public class MouseControlFollowCamera : MonoBehaviour
 
     public void Enable() {
         playerInputActionMap.FindAction("FPS2TPS").started += FPS2TPS;
-        virtualCamera.enabled = true;
-        camera_.enabled = true;
     }
 
     public void Disable() {
         playerInputActionMap.FindAction("FPS2TPS").started -= FPS2TPS;
-        virtualCamera.enabled = false;
-        camera_.enabled = false;
     }
 
 

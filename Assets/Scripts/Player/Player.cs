@@ -45,7 +45,7 @@ public class Player : MonoBehaviour {
 
     private void Awake() {
         // playerInputActions = new PlayerInputActions();
-        virtualCamera = transform.Find("FollowCamera").GetComponent<CinemachineVirtualCamera>();
+        virtualCamera = transform.Find("Camera").GetComponent<CinemachineVirtualCamera>();
         controller = GetComponent<CharacterController>();
         playerInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("Player");
         placeObjectInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("PlaceObject");
