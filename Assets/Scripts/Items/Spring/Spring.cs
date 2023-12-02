@@ -45,18 +45,15 @@ public class Spring : BaseItem
         if (topScript.TouchPlayer() && !triggerVibration) {
             triggerVibration = true;
             player = topScript.Player();
-            Vector3 velocity = new Vector3(0, -player.verticalVelocity, 0) + player.jumpSpeed * (float)Math.Sqrt(2) * transform.up.normalized;
-            Debug.Log(velocity);
-            player.exSpeed += velocity;
+            Vector3 bounceVelocity = new Vector3(0, -player.verticalVelocity, 0) + player.jumpSpeed * 100 * transform.up.normalized;
+            player.exSpeed += bounceVelocity;
             player = null;
         }
     }
 
-    int counter = 0;
     private void Vibration() {
         if (triggerVibration) {
             startTime = Time.time;
-            Debug.Log("step on spring" + counter++);
             triggerVibration = false;
         } else if (startTime == -1) {
             return;
