@@ -65,6 +65,7 @@ public class Player : MonoBehaviour {
         resistanceRatio = 0.7f;
         exSpeedThreshold = 55f;
         state = State.STOP;
+        Enable(State.GAME);
     }
 
     private void Update() {
