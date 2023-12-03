@@ -47,6 +47,7 @@ public class SpringTop : MonoBehaviour
 
     private void OnTriggerExit(Collider other) {
         if (other.gameObject.CompareTag("Player")) {
+            touchPlayer = false;
             stay = false;
         }
     }

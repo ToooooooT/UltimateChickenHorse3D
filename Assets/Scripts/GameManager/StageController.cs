@@ -9,12 +9,12 @@ using UnityEngine.UIElements;
 
 public class StageController : MonoBehaviour
 {
-    private enum PartyStage {CHOOSE_STAGE, BEFORE_SELECT_ITEM, SELECT_ITEM, PLACE_ITEM, PLAY, SCOREBOARD};
-    private enum CreateStage {CHOOSE_STAGE, PLAY};
+    public enum PartyStage {CHOOSE_STAGE, BEFORE_SELECT_ITEM, SELECT_ITEM, PLACE_ITEM, PLAY, SCOREBOARD};
+    public enum CreateStage {CHOOSE_STAGE, PLAY};
 
-    private string gameMode;
-    private PartyStage partyStage;
-    private CreateStage createStage;
+    public string gameMode;
+    public PartyStage partyStage;
+    public CreateStage createStage;
     private GameObject scoreBoardObject;
     private GameObject LinBenObject;
 

@@ -20,7 +20,7 @@ public class Rocket : BaseItem
         lastState = State.Idle;
         FireTransform = transform.Find("Fire");
         player = null;
-        exSpeedRatio = 0.018f;
+        exSpeedRatio = 0.025f;
         InitFire();
     }
 
