@@ -381,6 +381,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FanObject
       objectReference: {fileID: 0}
+    - target: {fileID: 1204688966453134, guid: 38207d04a92209e43b41fa581bf6cf30, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 4592005943409636, guid: 38207d04a92209e43b41fa581bf6cf30, type: 3}
       propertyPath: m_RootOrder
       value: 2

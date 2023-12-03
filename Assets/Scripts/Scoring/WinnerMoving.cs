@@ -17,7 +17,6 @@ public class WinnerMoving : MonoBehaviour
 
     void Update() {
         if (winner >= 0 && winner <= 3) {
-            finishMoving = false;
             if (winnerPosition == new Vector3(0, 0, 0))
                 winnerPosition = playersCube[winner].transform.position;
             playersCube[winner].transform.position = playersCube[winner].transform.position + new Vector3(0, 0, 0.005f);
@@ -36,6 +35,10 @@ public class WinnerMoving : MonoBehaviour
     }
 
     public bool IsFinishMoving() {
-        return finishMoving;
+        if (finishMoving) {
+            finishMoving = false;
+            return true;
+        }
+        return false;
     }
 }

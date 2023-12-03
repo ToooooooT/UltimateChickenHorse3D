@@ -2,18 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FerrisWheel : MonoBehaviour
+public class FerrisWheel : BaseItem
 {
+    private enum State { IDLE, ROTATE };
+
     [SerializeField] private float rotateSpeed;
 
-    // Start is called before the first frame update
+    private State state;
+
+    void Awake() {
+        state = State.IDLE;
+    }
+
     void Start() {
         rotateSpeed = 10.0f;
     }
 
-    // Update is called once per frame
     void Update() {
-        Rotate();
+        if (state == State.ROTATE) {
+            Rotate();
+        }
     }
 
     void Rotate() {
@@ -29,6 +37,14 @@ public class FerrisWheel : MonoBehaviour
             rotation.z -= Time.deltaTime * rotateSpeed;
             cube_transform.rotation = Quaternion.Euler(rotation);
         }
+    }
+
+    public override void Initialize() {
+        state = State.ROTATE;
+    }
+
+    public override void Reset() {
+        state = State.IDLE;
     }
 }
 

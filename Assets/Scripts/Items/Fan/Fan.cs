@@ -15,17 +15,18 @@ public class Fan : BaseItem
     private float windDistance;
     [SerializeField] private float speedRatio;
 
-    // Start is called before the first frame update
-    void Start() {
+    void Awake() {
         fanCenter = transform.Find("FanCenter");
         wind = transform.Find("FanCenter/CFXR4 Wind Trails");
+    }
+
+    void Start() {
         windDirection = transform.rotation * originalWindDirection;
         windSpeed = wind.GetComponent<ParticleSystem>().main.startSpeed.constant;
         windDistance = windSpeed * wind.GetComponent<ParticleSystem>().main.startLifetime.constant;
         speedRatio = 0.04f;
     }
 
-    // Update is called once per frame
     void Update() {
         UpdateWindDirection();
         Blow();
