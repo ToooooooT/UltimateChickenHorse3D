@@ -35,7 +35,7 @@ public class Player : MonoBehaviour {
     private bool isJumping = false;
     private float buttonPressedTime;
     private float velocity;
-    public Vector3 lastExSpeed;
+    private Vector3 lastExSpeed;
     private CharacterController controller;
     private CinemachineVirtualCamera virtualCamera;
     private InputActionMap playerInputActionMap;
