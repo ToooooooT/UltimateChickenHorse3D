@@ -32,7 +32,9 @@ public class CannonBombController : MonoBehaviour
                     if (collidedObject.TryGetComponent<Player>(out var player) && player.state == Player.State.GAME) {
                         player.state = Player.State.LOSE;
                     }
-                    Destroy(bomb);
+                    if (collidedObject.CompareTag("Wall")) {
+                        Destroy(bomb);
+                    }
                 }
             }
         }
