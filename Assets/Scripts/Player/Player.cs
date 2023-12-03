@@ -30,6 +30,7 @@ public class Player : MonoBehaviour {
     [SerializeField] private float buttonPressedWindow;
     [SerializeField] private float resistanceRatio;
     [SerializeField] private float exSpeedThreshold;
+    [SerializeField] private GameObject pauseMenu;
 
     private bool isWalking = false;
     private bool isJumping = false;
@@ -45,11 +46,11 @@ public class Player : MonoBehaviour {
     
 
     private void Awake() {
-        // playerInputActions = new PlayerInputActions();
         virtualCamera = transform.Find("Camera").GetComponent<CinemachineVirtualCamera>();
         controller = GetComponent<CharacterController>();
         playerInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("Player");
         placeObjectInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("PlaceObject");
+        pauseMenu = GameObject.Find("Canvas").transform.Find("PauseMenu").gameObject;
     }
 
     private void Start() {
@@ -87,6 +88,10 @@ public class Player : MonoBehaviour {
         InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
         accelerate.started += DoAccelerate;
         accelerate.canceled += NoAccelerate;
+        InputAction giveup = playerInputActionMap.FindAction("GiveUp");
+        giveup.performed += GiveUp;
+        InputAction pause = playerInputActionMap.FindAction("Pause");
+        pause.started += Pause;
     }
 
     public void Disable(State new_state) {
@@ -161,6 +166,16 @@ public class Player : MonoBehaviour {
                                         float.PositiveInfinity);
         moveVector.y = verticalVelocity;
         controller.Move(moveVector * Time.deltaTime);
+    }
+
+    private void Pause(InputAction.CallbackContext context) {
+        pauseMenu.GetComponent<PauseMenu>().Pause();
+    }
+
+    private void GiveUp(InputAction.CallbackContext context) {
+        if (state == State.GAME) {
+            Disable(State.LOSE);
+        }
     }
 
     private void DoAccelerate(InputAction.CallbackContext context) {
