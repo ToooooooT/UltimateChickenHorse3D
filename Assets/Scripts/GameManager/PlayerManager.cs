@@ -11,8 +11,9 @@ public class PlayerManager : MonoBehaviour
     private StageController stageController;
     private GameObject canvas;
 
-    private static readonly int[] slidersPosx = new int[] { 960, 500, 350, 300 };
-    private static readonly int[] slidersGridSpace = new int[] { 300, 800, 500, 330 };
+    private static readonly int[] slidersPosX = new int[] { 880, 500, 350, 300 };
+    private static readonly int[] slidersGridSpace = new int[] { 300, 700, 500, 330 };
+    private static readonly int[] slidersCellSizeX = new int[] { 300, 300, 200, 150 };
 
     public List<PlayerInput> playerList = new();
     public event System.Action<PlayerInput> PlayerJoinedGame;
@@ -49,7 +50,7 @@ public class PlayerManager : MonoBehaviour
         GameObject sliders = canvas.transform.Find("SettingMenu").Find("Sliders").gameObject;
         int n = playerList.Count;
         Vector3 pos = sliders.GetComponent<RectTransform>().position;
-        pos.x = slidersPosx[n - 1];
+        pos.x = slidersPosX[n - 1];
         sliders.GetComponent<RectTransform>().position = pos;
         Vector2 spacing = sliders.GetComponent<GridLayoutGroup>().spacing;
         spacing.x = slidersGridSpace[n - 1];
@@ -57,6 +58,9 @@ public class PlayerManager : MonoBehaviour
         // attach new slider to sliders
         GameObject newSlider = Instantiate(Resources.Load<GameObject>("Canvas/Slider"));
         newSlider.transform.parent = sliders.transform;
+        Vector2 cellSize = newSlider.GetComponent<GridLayoutGroup>().cellSize;
+        cellSize.x = slidersCellSizeX[n - 1];
+        newSlider.GetComponent<GridLayoutGroup>().cellSize = cellSize;
         newSlider.GetComponent<CameraSlider>().SetCamera(playerInput.gameObject);
     }
 
