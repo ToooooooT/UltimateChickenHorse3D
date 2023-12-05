@@ -30,7 +30,6 @@ public class Player : MonoBehaviour {
     [SerializeField] private float buttonPressedWindow;
     [SerializeField] private float resistanceRatio;
     [SerializeField] private float exSpeedThreshold;
-    [SerializeField] private GameObject pauseMenu;
 
     private bool isWalking = false;
     private bool isJumping = false;
@@ -43,7 +42,7 @@ public class Player : MonoBehaviour {
     private InputActionMap placeObjectInputActionMap;
     private string item;
     private Vector3 followObjectMove;
-    
+    private GameObject pauseMenu;
 
     private void Awake() {
         virtualCamera = transform.Find("Camera").GetComponent<CinemachineVirtualCamera>();
@@ -102,6 +101,8 @@ public class Player : MonoBehaviour {
         InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
         accelerate.started -= DoAccelerate;
         accelerate.canceled -= NoAccelerate;
+        InputAction pause = playerInputActionMap.FindAction("Pause");
+        pause.started -= Pause;
         state = new_state;
     }
 
