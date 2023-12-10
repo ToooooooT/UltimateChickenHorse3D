@@ -29,6 +29,7 @@ public class PauseMenu : MonoBehaviour
     public void Exit() {
         // back to choose stage
         Time.timeScale = 1;
+        gameObject.SetActive(false);
         StageController stageController = gameController.GetComponent<StageController>();
         if (stageController.gameMode == "Party") {
             switch (stageController.partyStage) {
@@ -38,7 +39,6 @@ public class PauseMenu : MonoBehaviour
                 break;
             default:
                 stageController.partyStage = StageController.PartyStage.CHOOSE_STAGE;
-                //Destory all items and stage
                 break;
             }
         } else if (stageController.gameMode == "Create") {

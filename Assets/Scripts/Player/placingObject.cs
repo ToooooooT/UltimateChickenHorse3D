@@ -42,7 +42,7 @@ public class CameraMovement : MonoBehaviour
 
     void Awake() {
         placeObjectInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlaceObjectInputActionMap();
-        pauseMenu = GameObject.Find("Canvas").transform.Find("PauseMenu").gameObject;
+        pauseMenu = GameObject.Find("PauseCanvas").transform.Find("PauseMenu").gameObject;
     }
 
     void Start() {

@@ -25,7 +25,7 @@ public class PlayerManager : MonoBehaviour
     private void Awake() {
         playerManager = GetComponent<PlayerInputManager>();
         stageController = GetComponent<StageController>();
-        canvas = GameObject.Find("Canvas");
+        canvas = GameObject.Find("PauseCanvas");
 
         joinAction.Enable();
         joinAction.performed += context => JoinAction(context);
@@ -57,7 +57,7 @@ public class PlayerManager : MonoBehaviour
         sliders.GetComponent<GridLayoutGroup>().spacing = spacing;
         // attach new slider to sliders
         GameObject newSlider = Instantiate(Resources.Load<GameObject>("Canvas/Slider"));
-        newSlider.transform.parent = sliders.transform;
+        newSlider.transform.SetParent(sliders.transform);
         Vector2 cellSize = newSlider.GetComponent<GridLayoutGroup>().cellSize;
         cellSize.x = slidersCellSizeX[n - 1];
         newSlider.GetComponent<GridLayoutGroup>().cellSize = cellSize;

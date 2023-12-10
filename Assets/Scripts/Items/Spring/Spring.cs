@@ -43,7 +43,6 @@ public class Spring : BaseItem
 
     private void HandleStep() {
         if (topScript.TouchPlayer() && !triggerVibration) {
-            Debug.Log("handle step");
             triggerVibration = true;
             player = topScript.Player();
             Vector3 bounceVelocity = new Vector3(0, -player.verticalVelocity, 0) + player.jumpSpeed * 100 * transform.up.normalized;

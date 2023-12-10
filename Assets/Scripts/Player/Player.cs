@@ -49,7 +49,7 @@ public class Player : MonoBehaviour {
         controller = GetComponent<CharacterController>();
         playerInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("Player");
         placeObjectInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("PlaceObject");
-        pauseMenu = GameObject.Find("Canvas").transform.Find("PauseMenu").gameObject;
+        pauseMenu = GameObject.Find("PauseCanvas").transform.Find("PauseMenu").gameObject;
     }
 
     private void Start() {
@@ -68,7 +68,6 @@ public class Player : MonoBehaviour {
         Enable(State.MOVE);
         resistanceRatio = 0.7f;
         exSpeedThreshold = 55f;
-        state = State.STOP;
     }
 
     private void Update() {

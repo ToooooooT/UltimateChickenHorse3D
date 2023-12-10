@@ -1,5 +1,8 @@
+// using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO.IsolatedStorage;
+using System.Runtime.Versioning;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,6 +20,10 @@ public class StageController : MonoBehaviour
     public CreateStage createStage;
     private GameObject scoreBoardObject;
     private GameObject LinBenObject;
+    private GameObject selectStageController;
+    private GameObject selectStageMenu;
+    private string stageName;
+    private GameObject stage;
 
     public List<GameObject> items;
     public List<GameObject> playerObjects;
@@ -35,8 +42,11 @@ public class StageController : MonoBehaviour
 
         // playerObjects = GameObject.FindGameObjectsWithTag("Player");
         scoreBoardObject = GameObject.FindGameObjectWithTag("ScoreBoard");
-        LinBenObject = GameObject.FindGameObjectWithTag("LinBen");
+        selectStageMenu = GameObject.Find("SelectStageMenu").gameObject;
+        selectStageController = GameObject.Find("SelectStageMenu").gameObject.
+                                    transform.Find("StagesController").gameObject;
         isFirstChoosePartyStage = true;
+        stage = null;
     }
 
     void Update() {
@@ -74,12 +84,21 @@ public class StageController : MonoBehaviour
         switch (partyStage) {
         case PartyStage.CHOOSE_STAGE:
             if (isFirstChoosePartyStage) {
+                DestroyItemsAndStages();
                 GetComponent<PlayerManager>().EnableJoinAction();
                 AdjustCamera(isFollow: true, isVirtual: false);
                 isFirstChoosePartyStage = false;
+                selectStageMenu.SetActive(true);
+                foreach (GameObject player in playerObjects) {
+                    player.GetComponent<Player>().Enable(Player.State.MOVE);
+                }
             }
-            if (Input.GetKey(KeyCode.Y) && playerObjects.Count >= 1) {
+            if (selectStageController.GetComponent<JumpToStage>().flag) {
                 // TODO: change the condition to all player choose the stage
+                selectStageController.GetComponent<JumpToStage>().flag = false;
+                stageName = selectStageController.GetComponent<JumpToStage>().GetChoosenStageName();
+                stage = Instantiate(Resources.Load<GameObject>("Stages/" + stageName));
+                LinBenObject = GameObject.FindGameObjectWithTag("LinBen");
                 GetComponent<PlayerManager>().DisableJoinAction();
                 partyStage = PartyStage.BEFORE_SELECT_ITEM;
                 isFirstChoosePartyStage = true;
@@ -260,6 +279,17 @@ public class StageController : MonoBehaviour
             if (item.TryGetComponent<BaseItem>(out var item_base)) {
                 item_base.Reset();
             }
+        }
+    }
+
+    private void DestroyItemsAndStages() {
+        while (items.Count > 0) {
+            Destroy(items[0]);
+            items.Remove(items[0]);
+        }
+        if (stage != null) {
+            Destroy(stage);
+            stage = null;
         }
     }
 }
