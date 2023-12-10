@@ -27,6 +27,7 @@ public class JumpToStage : MonoBehaviour
         if (!flag && countdown.flgNextStage == true) {
             playersInPavilion = countdown.playersInPavilion;
             GetNextStageId();
+            nextStageText.enabled = true;
             nextStageText.text = stageNames[nextStageId];
             StartCoroutine(FadeInOut());
         }
