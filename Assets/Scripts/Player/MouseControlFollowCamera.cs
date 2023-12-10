@@ -62,11 +62,13 @@ public class MouseControlFollowCamera : MonoBehaviour
         float scrollWheelInput = playerInputActionMap.FindAction("ZoomCamera").ReadValue<float>();
         if (scrollWheelInput != 0) {
             if (scrollWheelInput > 0) {
-                distance -= sensitive_zoom;
-                distance = Mathf.Max(distance, 2.0f);
+                TPSdistance -= sensitive_zoom;
+                TPSdistance = Mathf.Max(TPSdistance, 2.0f);
             } else if (scrollWheelInput < 0) {
-                distance += sensitive_zoom;
+                TPSdistance += sensitive_zoom;
             }
+            BackObjectDistance(distance);
+            distance = TPSdistance;
         }
     }
 
