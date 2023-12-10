@@ -24,10 +24,8 @@ public class JumpToStage : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        if (countdown && countdown.flgNextStage == true) {
+        if (!flag && countdown.flgNextStage == true) {
             playersInPavilion = countdown.playersInPavilion;
-            // countdown.enabled = false;
-            countdown = null;
             GetNextStageId();
             nextStageText.text = stageNames[nextStageId];
             StartCoroutine(FadeInOut());
@@ -44,6 +42,7 @@ public class JumpToStage : MonoBehaviour
         }
 
         // TeleportPlayers();
+        countdown.ResetState();
         flag = true;
         yield return new WaitForSeconds(2.0f);
 
@@ -54,6 +53,7 @@ public class JumpToStage : MonoBehaviour
         }
 
         nextStageText.enabled = false;
+        flag = false;
         transform.parent.gameObject.SetActive(false);
     }
 

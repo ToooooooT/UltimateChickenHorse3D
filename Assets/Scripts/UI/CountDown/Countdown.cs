@@ -12,11 +12,7 @@ public class Countdown : MonoBehaviour
     public bool flgNextStage;
 
     void Start() {
-        playersInPavilion = new int[transform.childCount];
-        countdownTimer = countdownDuration;
-        countdownText.enabled = false;
-        flgNextStage = false;
-        UpdateCountdownText();
+        ResetState();
     }
 
     void Update() {
@@ -37,6 +33,14 @@ public class Countdown : MonoBehaviour
             countdownText.enabled = false;
             countdownTimer = 5f;
         }
+    }
+
+    public void ResetState() {
+        playersInPavilion = new int[transform.childCount];
+        countdownTimer = countdownDuration;
+        countdownText.enabled = false;
+        flgNextStage = false;
+        UpdateCountdownText();
     }
 
 
