@@ -247,7 +247,7 @@ public class Player : MonoBehaviour {
             // TODO: move to the start position of stage
             ModifyPosition(Vector3.zero);
             state = State.STOP;
-        } else if (state == State.GAME && hit.gameObject.TryGetComponent<PlayerFollowObject>(out var playerFollow)) {
+        } else if ((state == State.GAME || state == State.MOVE ) && hit.gameObject.TryGetComponent<PlayerFollowObject>(out var playerFollow)) {
             // follow object move
             followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition();
         }

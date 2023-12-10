@@ -199,9 +199,9 @@ public class StageController : MonoBehaviour
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.transform.position.y < -50) {
                 player.Disable(Player.State.LOSE);
-                SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
+                // SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
             } else if (player.state == Player.State.LOSE) {
-                SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
+                // SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
             }
         }
     }
