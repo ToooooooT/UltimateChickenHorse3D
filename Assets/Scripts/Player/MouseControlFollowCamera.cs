@@ -28,6 +28,7 @@ public class MouseControlFollowCamera : MonoBehaviour
     void Start() {
         playerInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlayerInputActionMap();
         playerTransform = transform.parent;
+        playerInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlayerInputActionMap();
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
         FPS = false;
         sensitive_rotate = 1.0f;
