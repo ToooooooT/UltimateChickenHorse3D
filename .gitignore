@@ -10,3 +10,5 @@ Temp/
 *.dwlt
 obj/
 UserSettings/
+*/TextMesh Pro/
+TextMesh Pro.meta

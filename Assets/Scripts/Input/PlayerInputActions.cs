@@ -80,6 +80,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""GiveUp"",
+                    ""type"": ""Button"",
+                    ""id"": ""5237e800-4d70-459e-9852-ab5e8626c56c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold(duration=3,pressPoint=0.5)"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""f0c64e1c-30f9-493f-85cf-20225aa2a3e1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -467,6 +485,50 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""MoveCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""652f85aa-40ef-4152-b7af-661bc4ac479f"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard_mouse"",
+                    ""action"": ""GiveUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7eda0d17-fdf8-4483-b57a-6a117b9afb62"",
+                    ""path"": ""<XInputController>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Xbox_controller"",
+                    ""action"": ""GiveUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fae7e51c-d630-49e1-8c3e-98ce6984789b"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard_mouse"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d7787bf5-d622-4dc4-9cb8-5c2707af5246"",
+                    ""path"": ""<XInputController>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Xbox_controller"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -478,6 +540,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""name"": ""Place"",
                     ""type"": ""Button"",
                     ""id"": ""ea3be14a-f9b0-4aba-b40a-b35ec49b2e6a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""d7ee3da6-c686-47da-8962-070b8cc5ba5b"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -934,6 +1005,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""rotateObjectVertical"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b30f4361-f760-4dc4-802b-a6bb56053fa2"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard_mouse"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2275aec2-4874-4937-9c09-db31c8fac4ac"",
+                    ""path"": ""<XInputController>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Xbox_controller"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -976,9 +1069,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_FPS2TPS = m_Player.FindAction("FPS2TPS", throwIfNotFound: true);
         m_Player_ZoomCamera = m_Player.FindAction("ZoomCamera", throwIfNotFound: true);
         m_Player_MoveCamera = m_Player.FindAction("MoveCamera", throwIfNotFound: true);
+        m_Player_GiveUp = m_Player.FindAction("GiveUp", throwIfNotFound: true);
+        m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         // PlaceObject
         m_PlaceObject = asset.FindActionMap("PlaceObject", throwIfNotFound: true);
         m_PlaceObject_Place = m_PlaceObject.FindAction("Place", throwIfNotFound: true);
+        m_PlaceObject_Pause = m_PlaceObject.FindAction("Pause", throwIfNotFound: true);
         m_PlaceObject_RotateCamera = m_PlaceObject.FindAction("RotateCamera", throwIfNotFound: true);
         m_PlaceObject_MoveCamera = m_PlaceObject.FindAction("MoveCamera", throwIfNotFound: true);
         m_PlaceObject_MoveCameraUpDown = m_PlaceObject.FindAction("MoveCameraUpDown", throwIfNotFound: true);
@@ -1052,6 +1148,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_FPS2TPS;
     private readonly InputAction m_Player_ZoomCamera;
     private readonly InputAction m_Player_MoveCamera;
+    private readonly InputAction m_Player_GiveUp;
+    private readonly InputAction m_Player_Pause;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -1062,6 +1160,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @FPS2TPS => m_Wrapper.m_Player_FPS2TPS;
         public InputAction @ZoomCamera => m_Wrapper.m_Player_ZoomCamera;
         public InputAction @MoveCamera => m_Wrapper.m_Player_MoveCamera;
+        public InputAction @GiveUp => m_Wrapper.m_Player_GiveUp;
+        public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1089,6 +1189,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @MoveCamera.started += instance.OnMoveCamera;
             @MoveCamera.performed += instance.OnMoveCamera;
             @MoveCamera.canceled += instance.OnMoveCamera;
+            @GiveUp.started += instance.OnGiveUp;
+            @GiveUp.performed += instance.OnGiveUp;
+            @GiveUp.canceled += instance.OnGiveUp;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1111,6 +1217,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @MoveCamera.started -= instance.OnMoveCamera;
             @MoveCamera.performed -= instance.OnMoveCamera;
             @MoveCamera.canceled -= instance.OnMoveCamera;
+            @GiveUp.started -= instance.OnGiveUp;
+            @GiveUp.performed -= instance.OnGiveUp;
+            @GiveUp.canceled -= instance.OnGiveUp;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1133,6 +1245,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_PlaceObject;
     private List<IPlaceObjectActions> m_PlaceObjectActionsCallbackInterfaces = new List<IPlaceObjectActions>();
     private readonly InputAction m_PlaceObject_Place;
+    private readonly InputAction m_PlaceObject_Pause;
     private readonly InputAction m_PlaceObject_RotateCamera;
     private readonly InputAction m_PlaceObject_MoveCamera;
     private readonly InputAction m_PlaceObject_MoveCameraUpDown;
@@ -1144,6 +1257,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         private @PlayerInputActions m_Wrapper;
         public PlaceObjectActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Place => m_Wrapper.m_PlaceObject_Place;
+        public InputAction @Pause => m_Wrapper.m_PlaceObject_Pause;
         public InputAction @RotateCamera => m_Wrapper.m_PlaceObject_RotateCamera;
         public InputAction @MoveCamera => m_Wrapper.m_PlaceObject_MoveCamera;
         public InputAction @MoveCameraUpDown => m_Wrapper.m_PlaceObject_MoveCameraUpDown;
@@ -1162,6 +1276,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Place.started += instance.OnPlace;
             @Place.performed += instance.OnPlace;
             @Place.canceled += instance.OnPlace;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
             @RotateCamera.started += instance.OnRotateCamera;
             @RotateCamera.performed += instance.OnRotateCamera;
             @RotateCamera.canceled += instance.OnRotateCamera;
@@ -1187,6 +1304,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Place.started -= instance.OnPlace;
             @Place.performed -= instance.OnPlace;
             @Place.canceled -= instance.OnPlace;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
             @RotateCamera.started -= instance.OnRotateCamera;
             @RotateCamera.performed -= instance.OnRotateCamera;
             @RotateCamera.canceled -= instance.OnRotateCamera;
@@ -1248,10 +1368,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnFPS2TPS(InputAction.CallbackContext context);
         void OnZoomCamera(InputAction.CallbackContext context);
         void OnMoveCamera(InputAction.CallbackContext context);
+        void OnGiveUp(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
     public interface IPlaceObjectActions
     {
         void OnPlace(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
         void OnRotateCamera(InputAction.CallbackContext context);
         void OnMoveCamera(InputAction.CallbackContext context);
         void OnMoveCameraUpDown(InputAction.CallbackContext context);

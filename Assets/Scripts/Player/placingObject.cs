@@ -20,6 +20,7 @@ public class CameraMovement : MonoBehaviour
     private Dictionary<string, GameObject> name2object;
     private InputActionMap placeObjectInputActionMap;
     private StageController stageController;
+    private GameObject pauseMenu;
     private float rotationX = 0;
     private float rotationY = 0;
     private float diviateX = 0;
@@ -30,12 +31,22 @@ public class CameraMovement : MonoBehaviour
 
     private const string FOLDERPATH = "Item";
 
+    private const float MIN_SENSITIVE_ROTATE_CAMERA = 0.5f;
+    private const float MAX_SENSITIVE_ROTATE_CAMERA = 3f;
+    private const float MIN_SENSITIVE_ROTATE_OBJECT = 0.5f;
+    private const float MAX_SENSITIVE_ROTATE_OBJECT = 3f;
+    private const float MIN_SENSITIVE_MOVE = 0.3f;
+    private const float MAX_SENSITIVE_MOVE = 3f;
+    private const float MIN_SENSITIVE_ZOOM = 0.3f;
+    private const float MAX_SENSITIVE_ZOOM = 3f;
+
     void Awake() {
         placeObjectInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlaceObjectInputActionMap();
+        pauseMenu = GameObject.Find("PauseCanvas").transform.Find("PauseMenu").gameObject;
     }
 
     void Start() {
-        stageController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageController>();
+        stageController = GameObject.Find("GameController").GetComponent<StageController>();
         playerObject = transform.parent.gameObject;
         transparentObject = null;
         sensitive_rotate_camera = 1.0f;
@@ -131,6 +142,8 @@ public class CameraMovement : MonoBehaviour
         InputAction rotateObjectVerticalAction = placeObjectInputActionMap.FindAction("rotateObjectVertical");
         rotateObjectVerticalAction.performed += ctx => pressRotateVertical = true;
         rotateObjectVerticalAction.canceled += ctx => pressRotateVertical = false;
+        InputAction pause = placeObjectInputActionMap.FindAction("Pause");
+        pause.started += ctx => pauseMenu.GetComponent<PauseMenu>().Pause();
     }
 
     public void Disable() {
@@ -276,4 +289,21 @@ public class CameraMovement : MonoBehaviour
             }
         }
     }
+
+    public void AdjustSensitiveRotateCamera(float ratio) {
+        sensitive_rotate_camera = (1 - ratio) * MIN_SENSITIVE_ROTATE_CAMERA + ratio * MAX_SENSITIVE_ROTATE_CAMERA;
+    }
+
+    public void AdjustSensitiveRotateObject(float ratio) {
+        sensitive_rotate_object = (1 - ratio) * MIN_SENSITIVE_ROTATE_OBJECT + ratio * MAX_SENSITIVE_ROTATE_OBJECT;
+    }
+
+    public void AdjustSensitiveZoomCamera(float ratio) {
+        sensitive_zoom = (1 - ratio) * MIN_SENSITIVE_ZOOM + ratio * MAX_SENSITIVE_ZOOM;
+    }
+
+    public void AdjustSensitiveMoveCamera(float ratio) {
+        sensitive_move = (1 - ratio) * MIN_SENSITIVE_MOVE + ratio * MAX_SENSITIVE_MOVE;
+    }
 }
+
