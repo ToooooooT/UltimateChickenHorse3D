@@ -19,6 +19,7 @@ public class MouseControlFollowCamera : MonoBehaviour
     private Transform playerTransform;
     private bool FPS;
     private float distance;
+    private float TPSdistance;
 
     private const float MIN_SENSITIVE_ROTATE = 0.5f;
     private const float MAX_SENSITIVE_ROTATE = 4f;
@@ -80,11 +81,25 @@ public class MouseControlFollowCamera : MonoBehaviour
             if (FPS) {
                 transform.position = playerTransform.position + new Vector3(0,3,0);
             } else {
-                transform.position = playerTransform.position - distance * transform.forward;
+                
+                if (inputVector.x != 0 || inputVector.y != 0) {
+                    TPSdistance = BackObjectDistance(distance);
+                }
+                transform.position = playerTransform.position - TPSdistance * transform.forward;
             }
         }
     }
-
+    private float BackObjectDistance(float distance)
+    {
+        float distanceToHitPoint = distance;
+        Collider bombCollider = playerTransform.gameObject.GetComponent<Collider>();
+        if (bombCollider != null) {
+            if (Physics.SphereCast(playerTransform.position + new Vector3(0,3,0), 1.1f, -transform.forward, out RaycastHit hitInfo, float.MaxValue)) {
+                distanceToHitPoint = Vector3.Distance(playerTransform.position, hitInfo.point);
+            }
+        }
+        return Math.Min(distance, distanceToHitPoint);
+    }
     public void AdjustSensitiveRotate(float ratio) {
         sensitive_rotate = (1 - ratio) * MIN_SENSITIVE_ROTATE + ratio * MAX_SENSITIVE_ROTATE;
     }
