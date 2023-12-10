@@ -37,7 +37,6 @@ public class ChangeSkin : MonoBehaviour
         int randomIndex = Random.Range(0, hatsToGenerate.Length);
         GameObject hat = Instantiate(hatsToGenerate[randomIndex], Vector3.zero, Quaternion.identity);
         hat.transform.parent = playerHead;
-        Debug.Log("Hat attached to player: " + player.name);
         hat.name = "Hat";
         hat.transform.localPosition = new Vector3(0, 0.38f, 0);
         hat.transform.localRotation = Quaternion.identity;
