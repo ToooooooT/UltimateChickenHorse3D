@@ -546,6 +546,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""d7ee3da6-c686-47da-8962-070b8cc5ba5b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""RotateCamera"",
                     ""type"": ""Button"",
                     ""id"": ""5e606643-e5da-4716-9a31-6f3f903c6680"",
@@ -996,6 +1005,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""rotateObjectVertical"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b30f4361-f760-4dc4-802b-a6bb56053fa2"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard_mouse"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2275aec2-4874-4937-9c09-db31c8fac4ac"",
+                    ""path"": ""<XInputController>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Xbox_controller"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1043,6 +1074,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         // PlaceObject
         m_PlaceObject = asset.FindActionMap("PlaceObject", throwIfNotFound: true);
         m_PlaceObject_Place = m_PlaceObject.FindAction("Place", throwIfNotFound: true);
+        m_PlaceObject_Pause = m_PlaceObject.FindAction("Pause", throwIfNotFound: true);
         m_PlaceObject_RotateCamera = m_PlaceObject.FindAction("RotateCamera", throwIfNotFound: true);
         m_PlaceObject_MoveCamera = m_PlaceObject.FindAction("MoveCamera", throwIfNotFound: true);
         m_PlaceObject_MoveCameraUpDown = m_PlaceObject.FindAction("MoveCameraUpDown", throwIfNotFound: true);
@@ -1213,6 +1245,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_PlaceObject;
     private List<IPlaceObjectActions> m_PlaceObjectActionsCallbackInterfaces = new List<IPlaceObjectActions>();
     private readonly InputAction m_PlaceObject_Place;
+    private readonly InputAction m_PlaceObject_Pause;
     private readonly InputAction m_PlaceObject_RotateCamera;
     private readonly InputAction m_PlaceObject_MoveCamera;
     private readonly InputAction m_PlaceObject_MoveCameraUpDown;
@@ -1224,6 +1257,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         private @PlayerInputActions m_Wrapper;
         public PlaceObjectActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Place => m_Wrapper.m_PlaceObject_Place;
+        public InputAction @Pause => m_Wrapper.m_PlaceObject_Pause;
         public InputAction @RotateCamera => m_Wrapper.m_PlaceObject_RotateCamera;
         public InputAction @MoveCamera => m_Wrapper.m_PlaceObject_MoveCamera;
         public InputAction @MoveCameraUpDown => m_Wrapper.m_PlaceObject_MoveCameraUpDown;
@@ -1242,6 +1276,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Place.started += instance.OnPlace;
             @Place.performed += instance.OnPlace;
             @Place.canceled += instance.OnPlace;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
             @RotateCamera.started += instance.OnRotateCamera;
             @RotateCamera.performed += instance.OnRotateCamera;
             @RotateCamera.canceled += instance.OnRotateCamera;
@@ -1267,6 +1304,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Place.started -= instance.OnPlace;
             @Place.performed -= instance.OnPlace;
             @Place.canceled -= instance.OnPlace;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
             @RotateCamera.started -= instance.OnRotateCamera;
             @RotateCamera.performed -= instance.OnRotateCamera;
             @RotateCamera.canceled -= instance.OnRotateCamera;
@@ -1334,6 +1374,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     public interface IPlaceObjectActions
     {
         void OnPlace(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
         void OnRotateCamera(InputAction.CallbackContext context);
         void OnMoveCamera(InputAction.CallbackContext context);
         void OnMoveCameraUpDown(InputAction.CallbackContext context);

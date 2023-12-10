@@ -524,6 +524,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "d7ee3da6-c686-47da-8962-070b8cc5ba5b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "RotateCamera",
                     "type": "Button",
                     "id": "5e606643-e5da-4716-9a31-6f3f903c6680",
@@ -972,6 +981,28 @@
                     "processors": "",
                     "groups": "Xbox_controller",
                     "action": "rotateObjectVertical",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b30f4361-f760-4dc4-802b-a6bb56053fa2",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard_mouse",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2275aec2-4874-4937-9c09-db31c8fac4ac",
+                    "path": "<XInputController>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Xbox_controller",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

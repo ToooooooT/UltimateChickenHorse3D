@@ -70,7 +70,6 @@ public class ButtonAnimation : MonoBehaviour
     }
 
     private void CheckLeave() {
-        Debug.Log("dis = " + (player.position - transform.position).magnitude);
         if (player.position.y >= transform.position.y + 2
             || (player.position - transform.position).magnitude >= largestDistance) {
             state = State.RELEASE;

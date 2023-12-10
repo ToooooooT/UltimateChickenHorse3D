@@ -5,11 +5,12 @@ using Cinemachine;
 using UnityEngine.InputSystem;
 using System;
 using Unity.VisualScripting;
+using UnityEditor.Build.Player;
 
 public class MouseControlFollowCamera : MonoBehaviour
 {
-    [SerializeField] private float sensitive_rotate;
-    [SerializeField] private float sensitive_zoom;
+    [SerializeField] private float sensitive_rotate = 1.0f;
+    [SerializeField] private float sensitive_zoom = 0.5f;
 
     private float rotationX = 0;
     private float rotationY = 0;
@@ -19,16 +20,19 @@ public class MouseControlFollowCamera : MonoBehaviour
     private bool FPS;
     private float distance;
 
-    void Awake() {
-    }
+    private const float MIN_SENSITIVE_ROTATE = 0.5f;
+    private const float MAX_SENSITIVE_ROTATE = 4f;
+    private const float MIN_SENSITIVE_ZOOM = 0.3f;
+    private const float MAX_SENSITIVE_ZOOM = 3f;
 
     void Start() {
+        playerInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlayerInputActionMap();
         playerTransform = transform.parent;
         playerInputActionMap = transform.parent.gameObject.GetComponent<Player>().GetPlayerInputActionMap();
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
-        sensitive_rotate = 1.0f;
-        sensitive_zoom = 0.5f;
         FPS = false;
+        sensitive_rotate = 1.0f;
+        sensitive_zoom = 1.0f;
         distance = 25.0f;
         rotationX = 0;
         rotationY = 0;
@@ -79,5 +83,13 @@ public class MouseControlFollowCamera : MonoBehaviour
                 transform.position = playerTransform.position - distance * transform.forward;
             }
         }
+    }
+
+    public void AdjustSensitiveRotate(float ratio) {
+        sensitive_rotate = (1 - ratio) * MIN_SENSITIVE_ROTATE + ratio * MAX_SENSITIVE_ROTATE;
+    }
+
+    public void AdjustSensitiveZoom(float ratio) {
+        sensitive_zoom = (1 - ratio) * MIN_SENSITIVE_ZOOM + ratio * MAX_SENSITIVE_ZOOM;
     }
 }

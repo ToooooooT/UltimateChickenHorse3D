@@ -1,12 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
     private PlayerInputManager playerManager;
     private StageController stageController;
+    private GameObject canvas;
+
+    private static readonly int[] slidersPosX = new int[] { 880, 500, 350, 300 };
+    private static readonly int[] slidersGridSpace = new int[] { 300, 700, 500, 330 };
+    private static readonly int[] slidersCellSizeX = new int[] { 300, 300, 200, 150 };
 
     public List<PlayerInput> playerList = new();
     public event System.Action<PlayerInput> PlayerJoinedGame;
@@ -18,6 +25,7 @@ public class PlayerManager : MonoBehaviour
     private void Awake() {
         playerManager = GetComponent<PlayerInputManager>();
         stageController = GetComponent<StageController>();
+        canvas = GameObject.Find("PauseCanvas");
 
         joinAction.Enable();
         joinAction.performed += context => JoinAction(context);
@@ -38,6 +46,22 @@ public class PlayerManager : MonoBehaviour
         playerList.Add(playerInput);
         PlayerJoinedGame?.Invoke(playerInput);
         stageController.playerObjects.Add(playerInput.gameObject);
+        // modify sliders layout when adding player
+        GameObject sliders = canvas.transform.Find("SettingMenu").Find("Sliders").gameObject;
+        int n = playerList.Count;
+        Vector3 pos = sliders.GetComponent<RectTransform>().position;
+        pos.x = slidersPosX[n - 1];
+        sliders.GetComponent<RectTransform>().position = pos;
+        Vector2 spacing = sliders.GetComponent<GridLayoutGroup>().spacing;
+        spacing.x = slidersGridSpace[n - 1];
+        sliders.GetComponent<GridLayoutGroup>().spacing = spacing;
+        // attach new slider to sliders
+        GameObject newSlider = Instantiate(Resources.Load<GameObject>("Canvas/Slider"));
+        newSlider.transform.SetParent(sliders.transform);
+        Vector2 cellSize = newSlider.GetComponent<GridLayoutGroup>().cellSize;
+        cellSize.x = slidersCellSizeX[n - 1];
+        newSlider.GetComponent<GridLayoutGroup>().cellSize = cellSize;
+        newSlider.GetComponent<CameraSlider>().SetCamera(playerInput.gameObject);
     }
 
     void OnPlayerLeft(PlayerInput playerInput) {
@@ -61,7 +85,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    void Unregisterplayer(PlayerInput playerInput) {
+    public void Unregisterplayer(PlayerInput playerInput) {
         playerList.Remove(playerInput);
         stageController.playerObjects.Remove(playerInput.gameObject);
         CameraMovement virtualCamera = playerInput.gameObject.transform.Find("Camera").GetComponent<CameraMovement>();
@@ -71,6 +95,7 @@ public class PlayerManager : MonoBehaviour
         virtualCamera.Disable();
         virtualCamera.enabled = false;
         playerInput.gameObject.transform.Find("Camera").GetComponent<MouseControlFollowCamera>().enabled = false;
+        playerInput.gameObject.GetComponent<Player>().Disable(Player.State.STOP);
         Destroy(playerInput.gameObject);
     }
 

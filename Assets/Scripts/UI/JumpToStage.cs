@@ -11,6 +11,7 @@ public class JumpToStage : MonoBehaviour
     private int[] playersInPavilion;
     public CanvasGroup fadeCanvasGroup;
     public TextMeshProUGUI nextStageText;
+    public bool flag;
 
     // Start is called before the first frame update
     void Start() {
@@ -18,6 +19,7 @@ public class JumpToStage : MonoBehaviour
         GetStagesNames();
         nextStageId = 0;
         nextStageText.enabled = false;
+        flag = false;
     }
 
     // Update is called once per frame
@@ -27,8 +29,6 @@ public class JumpToStage : MonoBehaviour
             // countdown.enabled = false;
             countdown = null;
             GetNextStageId();
-            Debug.Log("nextStageId: " + nextStageId);
-            nextStageText.enabled = true;
             nextStageText.text = stageNames[nextStageId];
             StartCoroutine(FadeInOut());
         }
@@ -43,7 +43,8 @@ public class JumpToStage : MonoBehaviour
             yield return null;
         }
 
-        TeleportPlayers();
+        // TeleportPlayers();
+        flag = true;
         yield return new WaitForSeconds(2.0f);
 
         // fade in
@@ -53,15 +54,7 @@ public class JumpToStage : MonoBehaviour
         }
 
         nextStageText.enabled = false;
-        Destroy(transform.parent.gameObject);
-    }
-
-    private void TeleportPlayers() {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject player in players) {
-            player.GetComponent<Player>().ModifyPosition(new Vector3(0, 1000 * (nextStageId + 1), 0));
-            Debug.Log(player.name + " teleport to " + player.transform.position);
-        }
+        transform.parent.gameObject.SetActive(false);
     }
 
     private void GetStagesNames() {
@@ -102,5 +95,9 @@ public class JumpToStage : MonoBehaviour
 
         int randomIndex = maxIndices[Random.Range(0, maxIndices.Count)];
         return randomIndex;
+    }
+
+    public string GetChoosenStageName() {
+        return stageNames[nextStageId];
     }
 }
