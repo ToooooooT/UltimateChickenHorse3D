@@ -17,6 +17,6 @@ public class SpinningText : MonoBehaviour
     {
         Vector3 lookAtDirection = transform.position - mainCameraTransform.position;
         lookAtDirection.y = transform.position.y;
-        transform.rotation = Quaternion.LookRotation(lookAtDirection);
+        transform.LookAt(lookAtDirection);
     }
 }
