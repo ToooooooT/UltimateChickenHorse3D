@@ -263,7 +263,8 @@ MonoBehaviour:
   gravity: 60
   buttonPressedWindow: 0.3
   resistanceRatio: 0
-  lastExSpeed: {x: 0, y: 0, z: 0}
+  exSpeedThreshold: 0
+  pauseMenu: {fileID: 0}
 --- !u!143 &3995116485821713591
 CharacterController:
   m_ObjectHideFlags: 0

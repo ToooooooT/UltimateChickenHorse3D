@@ -12,7 +12,7 @@ using UnityEditor.Profiling;
 
 public class Player : MonoBehaviour {
    
-    public enum State { GAME, SELECT_ITEM, STOP, WIN, LOSE };
+    public enum State { MOVE, GAME, SELECT_ITEM, STOP, WIN, LOSE };
 
     public float jumpSpeed;
     public bool isPressSpace = false;
@@ -30,12 +30,13 @@ public class Player : MonoBehaviour {
     [SerializeField] private float buttonPressedWindow;
     [SerializeField] private float resistanceRatio;
     [SerializeField] private float exSpeedThreshold;
+    [SerializeField] private GameObject pauseMenu;
 
     private bool isWalking = false;
     private bool isJumping = false;
     private float buttonPressedTime;
     private float velocity;
-    public Vector3 lastExSpeed;
+    private Vector3 lastExSpeed;
     private CharacterController controller;
     private CinemachineVirtualCamera virtualCamera;
     private InputActionMap playerInputActionMap;
@@ -45,11 +46,11 @@ public class Player : MonoBehaviour {
     
 
     private void Awake() {
-        // playerInputActions = new PlayerInputActions();
         virtualCamera = transform.Find("Camera").GetComponent<CinemachineVirtualCamera>();
         controller = GetComponent<CharacterController>();
         playerInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("Player");
         placeObjectInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("PlaceObject");
+        pauseMenu = GameObject.Find("Canvas").transform.Find("PauseMenu").gameObject;
     }
 
     private void Start() {
@@ -65,14 +66,14 @@ public class Player : MonoBehaviour {
         buttonPressedWindow = .3f;
         item = null;
         exSpeed = Vector3.zero;
+        Enable(State.MOVE);
         resistanceRatio = 0.7f;
         exSpeedThreshold = 55f;
         state = State.STOP;
-        Enable(State.GAME);
     }
 
     private void Update() {
-        if (state == State.GAME || state == State.SELECT_ITEM) {
+        if (state == State.GAME || state == State.SELECT_ITEM || state == State.MOVE) {
             HandleMovement();
             HandleJump();
             HandleFacement();
@@ -88,6 +89,10 @@ public class Player : MonoBehaviour {
         InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
         accelerate.started += DoAccelerate;
         accelerate.canceled += NoAccelerate;
+        InputAction giveup = playerInputActionMap.FindAction("GiveUp");
+        giveup.performed += GiveUp;
+        InputAction pause = playerInputActionMap.FindAction("Pause");
+        pause.started += Pause;
     }
 
     public void Disable(State new_state) {
@@ -162,6 +167,16 @@ public class Player : MonoBehaviour {
                                         float.PositiveInfinity);
         moveVector.y = verticalVelocity;
         controller.Move(moveVector * Time.deltaTime);
+    }
+
+    private void Pause(InputAction.CallbackContext context) {
+        pauseMenu.GetComponent<PauseMenu>().Pause();
+    }
+
+    private void GiveUp(InputAction.CallbackContext context) {
+        if (state == State.GAME) {
+            Disable(State.LOSE);
+        }
     }
 
     private void DoAccelerate(InputAction.CallbackContext context) {
