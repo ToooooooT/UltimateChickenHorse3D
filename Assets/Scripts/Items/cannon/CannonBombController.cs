@@ -17,22 +17,24 @@ public class CannonBombController : MonoBehaviour
         for (int i = 0; i < cannonBombs.Length; i++) {
             CannonBomb cannonBombScript = cannonBombs[i].GetComponent<CannonBomb>();
             cannonBombs[i].transform.position = cannonBombs[i].transform.position + cannonBombScript.velocity;
-            CheckCollision(cannonBombs[i]);
+            CheckCollision(cannonBombs[i], cannonBombScript);
         }
     }
 
-    void CheckCollision(GameObject bomb)
+    void CheckCollision(GameObject bomb, CannonBomb cannonBombScript)
     {
         Collider bombCollider = bomb.GetComponent<Collider>();
         if (bombCollider != null) {
-            if (Physics.SphereCast(bomb.transform.position, 1.1f, transform.forward, out RaycastHit hitInfo, 1f)) {
+            if (Physics.SphereCast(bomb.transform.position, 1.1f, cannonBombScript.velocity, out RaycastHit hitInfo, 1f)) {
                 GameObject collidedObject = hitInfo.collider.gameObject;
                 CannonBomb bombScript = bomb.GetComponent<CannonBomb>();
                 if (collidedObject != bombScript.parentCannon) {
                     if (collidedObject.TryGetComponent<Player>(out var player) && player.state == Player.State.GAME) {
                         player.state = Player.State.LOSE;
                     }
-                    Destroy(bomb);
+                    if (collidedObject.CompareTag("Wall")) {
+                        Destroy(bomb);
+                    }
                 }
             }
         }
