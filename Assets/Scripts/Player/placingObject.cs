@@ -244,7 +244,7 @@ public class CameraMovement : MonoBehaviour
             newRotation.x -= diviateX;
             newRotation.z -= diviateZ;
             transparentObject.transform.rotation = Quaternion.Euler(newRotation);
-        } else if (pressRotateVertical) {
+        } else if (pressRotateVertical && !transparentObject.CompareTag("Pixace")) {
             mouseX = 0;
             Vector3 cameraForward = -transform.right;
 
