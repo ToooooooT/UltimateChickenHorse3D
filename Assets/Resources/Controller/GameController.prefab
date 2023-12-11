@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: -8156706939589918738}
   - component: {fileID: 5471086008944794980}
   - component: {fileID: 574143260042133791}
+  - component: {fileID: -2986321260823205993}
   m_Layer: 0
   m_Name: GameController
   m_TagString: GameController
@@ -50,6 +51,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d61c9e88b919400babe6345543a7051, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameMode: 
+  partyStage: 0
+  createStage: 0
   items: []
   playerObjects: []
 --- !u!114 &1085862376636657156
@@ -209,3 +213,15 @@ MonoBehaviour:
       m_Action: Leave
       m_Flags: 0
     m_Flags: 0
+--- !u!114 &-2986321260823205993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8597621969963225916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab9f8164d2bed76468f9013bd37b7c63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
