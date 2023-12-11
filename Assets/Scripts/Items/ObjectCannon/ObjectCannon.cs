@@ -25,24 +25,10 @@ public class ObjectCannon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (state == State.idle)
-            Rotate();
-        else if (state == State.shooting)
+        if (state == State.shooting)
             Shooting();
         else if (state == State.cooldown)
             Cooldown();
-    }
-    void Rotate()
-    {
-        Vector3 currentRotation = transform.eulerAngles;
-        currentRotation.y += 0.6f;
-        transform.eulerAngles = currentRotation;
-        cannon.transform.forward += new Vector3(0, cannonGoUp * 0.01f, 0);
-        if(cannon.transform.forward.y <= 0) {
-            cannonGoUp = 1f;
-        } else if(cannon.transform.forward.y >= 0.8) {
-            cannonGoUp = -1f;
-        }
     }
     void Shooting()
     {
