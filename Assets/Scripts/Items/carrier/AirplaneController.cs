@@ -16,7 +16,7 @@ public class AirplaneController : MonoBehaviour
         airplanes = GameObject.FindGameObjectsWithTag("Airplane");
         for (int i = 0; i < airplanes.Length; i++) {
             Airplane airplaneScript = airplanes[i].GetComponent<Airplane>();
-            airplanes[i].transform.position = airplanes[i].transform.position + airplaneScript.velocity;
+            airplanes[i].transform.position = airplanes[i].transform.position + Time.deltaTime * 40 * airplaneScript.velocity;
             CheckCollision(airplanes[i]);
             CheckOutOfBound(airplanes[i]);
         }
