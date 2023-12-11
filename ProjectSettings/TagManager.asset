@@ -14,6 +14,9 @@ TagManager:
   - CannonPipe
   - Airplane
   - SpringTop
+  - FireBall
+  - ArrowPosition
+  - Arrow
   layers:
   - Default
   - TransparentFX
