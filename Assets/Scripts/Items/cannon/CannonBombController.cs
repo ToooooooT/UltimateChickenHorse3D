@@ -16,7 +16,7 @@ public class CannonBombController : MonoBehaviour
         cannonBombs = GameObject.FindGameObjectsWithTag("CannonBomb");
         for (int i = 0; i < cannonBombs.Length; i++) {
             CannonBomb cannonBombScript = cannonBombs[i].GetComponent<CannonBomb>();
-            cannonBombs[i].transform.position = cannonBombs[i].transform.position + cannonBombScript.velocity;
+            cannonBombs[i].transform.position = cannonBombs[i].transform.position + Time.deltaTime * 40 * cannonBombScript.velocity;
             CheckCollision(cannonBombs[i], cannonBombScript);
         }
     }
