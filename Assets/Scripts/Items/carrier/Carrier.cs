@@ -30,7 +30,7 @@ public class Carrier : BaseItem
             state = State.idle;
             countdown = countdownTime;
         } else {
-            countdown -= 0.1f;
+            countdown -= 4 * Time.deltaTime;
             if (countdown <= 0) {
                 state = State.shooting;
             }

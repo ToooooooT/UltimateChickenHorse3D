@@ -37,7 +37,7 @@ public class Cannon : BaseItem
             state = State.idle;
             countdown = countdownTime;
         } else {
-            countdown -= 0.1f;
+            countdown -= 10 * Time.deltaTime;
             if (countdown <= 0) {
                 state = State.shooting;
             }
@@ -57,12 +57,14 @@ public class Cannon : BaseItem
 
     public void Generatebomb()
     {
-        GameObject newBomb = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/Round_shot"));
-        newBomb.transform.position = transform.position + 1.6f*transform.up + 2f*transform.forward;
-        newBomb.transform.localScale = new Vector3(10f,10f,10f);
-        CannonBomb BombScript = newBomb.GetComponent<CannonBomb>();
-        BombScript.velocity =  transform.forward * 0.5f;
-        BombScript.parentCannon = this.gameObject;
-        Destroy(newBomb, 5f);
+        for (int i = 0; i < transform.childCount; i++) {
+            GameObject newBomb = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/Round_shot"));
+            newBomb.transform.position = transform.GetChild(i).position + 1.6f * transform.GetChild(i).up + 2f * transform.GetChild(i).forward;
+            newBomb.transform.localScale = new Vector3(10f, 10f, 10f);
+            CannonBomb BombScript = newBomb.GetComponent<CannonBomb>();
+            BombScript.velocity = transform.GetChild(i).forward * 0.5f;
+            BombScript.parentCannon = this.gameObject;
+            Destroy(newBomb, 5f);
+        }
     }
 }
