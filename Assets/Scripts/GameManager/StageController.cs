@@ -89,9 +89,7 @@ public class StageController : MonoBehaviour
                 AdjustCamera(isFollow: true, isVirtual: false);
                 isFirstChoosePartyStage = false;
                 selectStageMenu.SetActive(true);
-                foreach (GameObject player in playerObjects) {
-                    player.GetComponent<Player>().Enable(Player.State.MOVE);
-                }
+                PlayerChooseStage();
             }
             if (selectStageController.GetComponent<JumpToStage>().flag) {
                 // TODO: change the condition to all player choose the stage
@@ -139,6 +137,14 @@ public class StageController : MonoBehaviour
         case PartyStage.SCOREBOARD:
             MoveWinner();
             break;
+        }
+    }
+
+    private void PlayerChooseStage() {
+        foreach (GameObject player in playerObjects) {
+            Player p = player.GetComponent<Player>();
+            p.Enable(Player.State.MOVE);
+            p.ModifyPosition(0.5f * Vector3.up);
         }
     }
 
