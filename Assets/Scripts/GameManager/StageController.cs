@@ -28,7 +28,7 @@ public class StageController : MonoBehaviour
     public List<GameObject> items;
     public List<GameObject> playerObjects;
 
-    private bool isFirstChoosePartyStage;
+    private bool isFirstChooseStage;
 
     void Start() {
         items = new();
@@ -45,7 +45,7 @@ public class StageController : MonoBehaviour
         selectStageMenu = GameObject.Find("SelectStageMenu").gameObject;
         selectStageController = GameObject.Find("SelectStageMenu").gameObject.
                                     transform.Find("StagesController").gameObject;
-        isFirstChoosePartyStage = true;
+        isFirstChooseStage = true;
         stage = null;
     }
 
@@ -63,17 +63,8 @@ public class StageController : MonoBehaviour
     private void CreateMode() {
         switch (createStage) {
         case CreateStage.CHOOSE_STAGE:
-            if (isFirstChoosePartyStage) {
-                GetComponent<PlayerManager>().EnableJoinAction();
-                AdjustCamera(isFollow: true, isVirtual: false);
-                isFirstChoosePartyStage = false;
-            }
-            if (Input.GetKey(KeyCode.Y) && playerObjects.Count >= 1) {
-                // TODO: change the condition to all player choose the stage
-                GetComponent<PlayerManager>().DisableJoinAction();
-                partyStage = PartyStage.BEFORE_SELECT_ITEM;
-                isFirstChoosePartyStage = true;
-            }
+            FirstChooseStage();
+            CheckAllPlayerSelectStage();   
             break;
         case CreateStage.PLAY:
             break;
@@ -83,24 +74,8 @@ public class StageController : MonoBehaviour
     private void PartyMode() {
         switch (partyStage) {
         case PartyStage.CHOOSE_STAGE:
-            if (isFirstChoosePartyStage) {
-                DestroyItemsAndStages();
-                GetComponent<PlayerManager>().EnableJoinAction();
-                AdjustCamera(isFollow: true, isVirtual: false);
-                isFirstChoosePartyStage = false;
-                selectStageMenu.SetActive(true);
-                PlayerChooseStage();
-            }
-            if (selectStageController.GetComponent<JumpToStage>().flag) {
-                // TODO: change the condition to all player choose the stage
-                selectStageController.GetComponent<JumpToStage>().flag = false;
-                stageName = selectStageController.GetComponent<JumpToStage>().GetChoosenStageName();
-                stage = Instantiate(Resources.Load<GameObject>("Stages/" + stageName));
-                LinBenObject = GameObject.FindGameObjectWithTag("LinBen");
-                GetComponent<PlayerManager>().DisableJoinAction();
-                partyStage = PartyStage.BEFORE_SELECT_ITEM;
-                isFirstChoosePartyStage = true;
-            }
+            FirstChooseStage();
+            CheckAllPlayerSelectStage();   
             break;
         case PartyStage.BEFORE_SELECT_ITEM:
             ResetItemsInStage();
@@ -137,6 +112,30 @@ public class StageController : MonoBehaviour
         case PartyStage.SCOREBOARD:
             MoveWinner();
             break;
+        }
+    }
+
+    private void FirstChooseStage() {
+        if (isFirstChooseStage) {
+            DestroyItemsAndStages();
+            GetComponent<PlayerManager>().EnableJoinAction();
+            AdjustCamera(isFollow: true, isVirtual: false);
+            isFirstChooseStage = false;
+            selectStageMenu.SetActive(true);
+            PlayerChooseStage();
+        }
+    }
+
+    private void CheckAllPlayerSelectStage() {
+        if (selectStageController.GetComponent<JumpToStage>().flag) {
+            selectStageController.GetComponent<JumpToStage>().flag = false;
+            stageName = selectStageController.GetComponent<JumpToStage>().GetChoosenStageName();
+            stage = Instantiate(Resources.Load<GameObject>("Stages/" + stageName));
+            LinBenObject = GameObject.FindGameObjectWithTag("LinBen");
+            GetComponent<PlayerManager>().DisableJoinAction();
+            partyStage = PartyStage.BEFORE_SELECT_ITEM;
+            createStage = CreateStage.PLAY;
+            isFirstChooseStage = true;
         }
     }
 
