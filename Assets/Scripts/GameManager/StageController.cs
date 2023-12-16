@@ -64,9 +64,40 @@ public class StageController : MonoBehaviour
         switch (createStage) {
         case CreateStage.CHOOSE_STAGE:
             FirstChooseStage();
-            CheckAllPlayerSelectStage();   
+            if (CheckAllPlayerSelectStage()) {
+                foreach (GameObject player in playerObjects) {
+                    player.GetComponent<Player>().ModifyPosition(Vector3.zero);
+                }
+            }   
             break;
         case CreateStage.PLAY:
+            foreach (GameObject player in playerObjects) {
+                Player p = player.GetComponent<Player>();
+                switch (p.state) {
+                case Player.State.LOSE:
+                    p.Enable(Player.State.GAME);
+                    AdjustCamera(isFollow: true, isVirtual: false, player);
+                    p.ModifyPosition(Vector3.zero);
+                    break;
+                case Player.State.WIN:
+                    LinBenScript LinBen = LinBenObject.GetComponent<LinBenScript>();
+                    if (LinBen.state == LinBenScript.State.FINISH_POINTING) {
+                        LinBen.state = LinBenScript.State.IDLE;
+                        p.Enable(Player.State.GAME);
+                        AdjustCamera(isFollow: true, isVirtual: false, player);
+                        p.ModifyPosition(Vector3.zero);
+                    }
+                    break;
+                case Player.State.STOP:
+                    if (!p.HaveItem() && !player.transform.GetComponent<PlayerInput>().actions.FindActionMap("Cursor").enabled) {
+                        AdjustCamera(isFollow: false, isVirtual: false, player);
+                        player.GetComponent<PlayerCursor>().Enable();
+                    } else if (p.HaveItem() && player.transform.GetComponent<PlayerInput>().actions.FindActionMap("Cursor").enabled) {
+                        player.GetComponent<PlayerCursor>().Disable();
+                    }
+                    break;
+                }
+            }
             break;
         }
     }
@@ -80,7 +111,6 @@ public class StageController : MonoBehaviour
         case PartyStage.BEFORE_SELECT_ITEM:
             ResetItemsInStage();
             PlayerSelectItem();
-            AdjustCamera(isFollow: true, isVirtual: false);
             GetComponent<ItemGenerator>().GenerateItems();
             partyStage = PartyStage.SELECT_ITEM;
             break;
@@ -89,9 +119,8 @@ public class StageController : MonoBehaviour
                 break;
             }
             ClearChoosingItems();
-            AdjustCamera(isFollow: false, isVirtual: true);
             foreach (GameObject player in playerObjects) {
-                player.GetComponent<Player>().Disable(Player.State.STOP);
+                AdjustCamera(isFollow: false, isVirtual: true, player);
             }
             partyStage = PartyStage.PLACE_ITEM;
             break;
@@ -100,7 +129,6 @@ public class StageController : MonoBehaviour
                 break;
             }
             SetPlayersPlay();
-            AdjustCamera(isFollow: true, isVirtual: false);
             MemorizeItemsStateInStage();
             partyStage = PartyStage.PLAY;
             break;
@@ -119,14 +147,18 @@ public class StageController : MonoBehaviour
         if (isFirstChooseStage) {
             DestroyItemsAndStages();
             GetComponent<PlayerManager>().EnableJoinAction();
-            AdjustCamera(isFollow: true, isVirtual: false);
+            foreach (GameObject player in playerObjects) {
+                Player p = player.GetComponent<Player>();
+                AdjustCamera(isFollow: true, isVirtual: false, player);
+                p.Enable(Player.State.MOVE);
+                p.ModifyPosition(0.5f * Vector3.up);
+            }
             isFirstChooseStage = false;
             selectStageMenu.SetActive(true);
-            PlayerChooseStage();
         }
     }
 
-    private void CheckAllPlayerSelectStage() {
+    private bool CheckAllPlayerSelectStage() {
         if (selectStageController.GetComponent<JumpToStage>().flag) {
             selectStageController.GetComponent<JumpToStage>().flag = false;
             stageName = selectStageController.GetComponent<JumpToStage>().GetChoosenStageName();
@@ -136,15 +168,9 @@ public class StageController : MonoBehaviour
             partyStage = PartyStage.BEFORE_SELECT_ITEM;
             createStage = CreateStage.PLAY;
             isFirstChooseStage = true;
+            return true;
         }
-    }
-
-    private void PlayerChooseStage() {
-        foreach (GameObject player in playerObjects) {
-            Player p = player.GetComponent<Player>();
-            p.Enable(Player.State.MOVE);
-            p.ModifyPosition(0.5f * Vector3.up);
-        }
+        return false;
     }
 
     private void PlayerSelectItem() {
@@ -152,33 +178,40 @@ public class StageController : MonoBehaviour
             Player player = playerObjects[i].GetComponent<Player>();
             player.Enable(Player.State.SELECT_ITEM);
             RandomPositionToSelectItem(player);
+            AdjustCamera(isFollow: true, isVirtual: false, playerObjects[i]);
         }
     }
 
     private bool IsAllPlayersSelectItem() {
+        bool ret = true;
         for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
-            if (player.state != Player.State.STOP) {
-                return false;
+            ret &= player.HaveItem();
+            if (player.HaveItem() && player.state != Player.State.STOP) {
+                player.ModifyPosition(Vector3.zero);
+                player.Disable(Player.State.STOP);
             }
         }
-        return true;
+        return ret;
     }
 
     private bool IsAllPlayersPlaceItem() {
+        bool ret = true;
         for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
-            if (player.HaveItem()) {
-                return false;
+            ret &= !player.HaveItem();
+            if (!player.HaveItem() && playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().enabled) {
+                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().Disable();
             }
         }
-        return true;
+        return ret;
     }
 
     private void SetPlayersPlay() {
         for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             player.Enable(Player.State.GAME);
+            AdjustCamera(isFollow: true, isVirtual: false, playerObjects[i]);
         }
     }
 
@@ -199,22 +232,16 @@ public class StageController : MonoBehaviour
         player.ModifyPosition(new Vector3(randomX, randomY, randomZ));
     }
 
-    private void AdjustCamera(bool isFollow, bool isVirtual) {
-        for (int i = 0; i < playerObjects.Count; ++i) {
-            if (isFollow) {
-                playerObjects[i].transform.Find("Camera").GetComponent<MouseControlFollowCamera>().enabled = true;
-                playerObjects[i].transform.Find("Camera").GetComponent<MouseControlFollowCamera>().Enable();
-            } else {
-                playerObjects[i].transform.Find("Camera").GetComponent<MouseControlFollowCamera>().Disable();
-                playerObjects[i].transform.Find("Camera").GetComponent<MouseControlFollowCamera>().enabled = false;
-            }
-            if (isVirtual) {
-                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().enabled = true;
-                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().Enable();
-            } else {
-                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().Disable();
-                playerObjects[i].transform.Find("Camera").GetComponent<CameraMovement>().enabled = false;
-            }
+    private void AdjustCamera(bool isFollow, bool isVirtual, GameObject player) {
+        if (isFollow) {
+            player.transform.Find("Camera").GetComponent<MouseControlFollowCamera>().Enable();
+        } else {
+            player.transform.Find("Camera").GetComponent<MouseControlFollowCamera>().Disable();
+        }
+        if (isVirtual) {
+            player.transform.Find("Camera").GetComponent<CameraMovement>().Enable();
+        } else {
+            player.transform.Find("Camera").GetComponent<CameraMovement>().Disable();
         }
     }
 

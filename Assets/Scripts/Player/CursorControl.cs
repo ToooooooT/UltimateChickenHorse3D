@@ -24,15 +24,13 @@ public class PlayerCursor : MonoBehaviour
     }
 
     void Update() {
-        if (cursor.activeSelf) {
-            Vector3 position = cursor.GetComponent<RectTransform>().position;
-            Vector2 moveVector2 = moveSpeed * cursorInputActionMap.FindAction("Move").ReadValue<Vector2>().normalized;
-            Vector3 moveVector3 = new(moveVector2.x, moveVector2.y, 0);
-            position += moveVector3;
-            position.x = Mathf.Clamp(position.x, 0, cursorMaxX);
-            position.y = Mathf.Clamp(position.y, 0, cursorMaxY);
-            cursor.GetComponent<RectTransform>().position = position;
-        }
+        Vector3 position = cursor.GetComponent<RectTransform>().position;
+        Vector2 moveVector2 = moveSpeed * cursorInputActionMap.FindAction("Move").ReadValue<Vector2>().normalized;
+        Vector3 moveVector3 = new(moveVector2.x, moveVector2.y, 0);
+        position += moveVector3;
+        position.x = Mathf.Clamp(position.x, 0, cursorMaxX);
+        position.y = Mathf.Clamp(position.y, 0, cursorMaxY);
+        cursor.GetComponent<RectTransform>().position = position;
     }
 
     private void RaycastUI(InputAction.CallbackContext context) {

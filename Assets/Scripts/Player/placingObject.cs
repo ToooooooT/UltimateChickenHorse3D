@@ -144,10 +144,12 @@ public class CameraMovement : MonoBehaviour
         rotateObjectVerticalAction.canceled += ctx => pressRotateVertical = false;
         InputAction pause = placeObjectInputActionMap.FindAction("Pause");
         pause.started += ctx => pauseMenu.GetComponent<PauseMenu>().Pause();
+        enabled = true;
     }
 
     public void Disable() {
         placeObjectInputActionMap.Disable();
+        enabled = false;
     }
 
     private void PlaceObject(InputAction.CallbackContext context) {
@@ -172,9 +174,6 @@ public class CameraMovement : MonoBehaviour
             transparentObject = null;
             playerObject.GetComponent<Player>().RemoveItem();
         }
-        // after create object this script should be disable
-        Disable();
-        enabled = false;
     }
 
     private bool PlacingIsValid() {

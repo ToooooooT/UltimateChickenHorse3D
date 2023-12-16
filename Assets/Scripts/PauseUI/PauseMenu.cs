@@ -25,9 +25,13 @@ public class PauseMenu : MonoBehaviour
             if (gameObject.activeSelf) {
                 EnablePlayerCursor();
                 DisablePlayer();
+                gameController.GetComponent<PlayerManager>().DisableJoinAction();
             } else {
                 DisablePlayerCursor();
                 EnablePlayer();
+                if (gameController.GetComponent<StageController>().partyStage == StageController.PartyStage.CHOOSE_STAGE ||
+                gameController.GetComponent<StageController>().createStage == StageController.CreateStage.CHOOSE_STAGE)
+                gameController.GetComponent<PlayerManager>().EnableJoinAction();
             }
         }
     }

@@ -244,9 +244,6 @@ public class Player : MonoBehaviour {
     private void OnControllerColliderHit(ControllerColliderHit hit) {
         if (state == State.SELECT_ITEM && hit.gameObject.CompareTag("ChoosingItem")) {
             GetItem(hit.gameObject);
-            // TODO: move to the start position of stage
-            ModifyPosition(Vector3.zero);
-            state = State.STOP;
         } else if ((state == State.GAME || state == State.MOVE ) && hit.gameObject.TryGetComponent<PlayerFollowObject>(out var playerFollow)) {
             // follow object move
             followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition();

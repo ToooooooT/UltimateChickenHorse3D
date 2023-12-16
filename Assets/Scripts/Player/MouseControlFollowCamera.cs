@@ -47,10 +47,12 @@ public class MouseControlFollowCamera : MonoBehaviour
 
     public void Enable() {
         playerInputActionMap.FindAction("FPS2TPS").started += FPS2TPS;
+        enabled = true;
     }
 
     public void Disable() {
         playerInputActionMap.FindAction("FPS2TPS").started -= FPS2TPS;
+        enabled = false;
     }
 
 
@@ -83,7 +85,6 @@ public class MouseControlFollowCamera : MonoBehaviour
             if (FPS) {
                 transform.position = playerTransform.position + new Vector3(0,3,0);
             } else {
-                
                 if (inputVector.x != 0 || inputVector.y != 0) {
                     TPSdistance = BackObjectDistance(distance);
                 }
