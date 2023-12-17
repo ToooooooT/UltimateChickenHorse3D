@@ -17,6 +17,7 @@ TagManager:
   - FireBall
   - ArrowPosition
   - Arrow
+  - ItemButton
   layers:
   - Default
   - TransparentFX

@@ -98,6 +98,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ChooseItemCreate"",
+                    ""type"": ""Button"",
+                    ""id"": ""9ebf4893-6e26-44cc-a373-fbc8d2c970f1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -529,6 +538,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7d9b0ea7-6798-493f-8d5b-b853391dc0c4"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChooseItemCreate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dec1f511-3b02-4217-953e-65ebc3af81bf"",
+                    ""path"": ""<XInputController>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChooseItemCreate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -910,7 +941,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""Positive"",
                     ""id"": ""5749dd46-2738-45e4-b24c-cbb86339c657"",
-                    ""path"": ""<XInputController>/buttonEast"",
+                    ""path"": ""<XInputController>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Xbox_controller"",
@@ -1229,6 +1260,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_MoveCamera = m_Player.FindAction("MoveCamera", throwIfNotFound: true);
         m_Player_GiveUp = m_Player.FindAction("GiveUp", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
+        m_Player_ChooseItemCreate = m_Player.FindAction("ChooseItemCreate", throwIfNotFound: true);
         // PlaceObject
         m_PlaceObject = asset.FindActionMap("PlaceObject", throwIfNotFound: true);
         m_PlaceObject_Place = m_PlaceObject.FindAction("Place", throwIfNotFound: true);
@@ -1312,6 +1344,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_MoveCamera;
     private readonly InputAction m_Player_GiveUp;
     private readonly InputAction m_Player_Pause;
+    private readonly InputAction m_Player_ChooseItemCreate;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -1324,6 +1357,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @MoveCamera => m_Wrapper.m_Player_MoveCamera;
         public InputAction @GiveUp => m_Wrapper.m_Player_GiveUp;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
+        public InputAction @ChooseItemCreate => m_Wrapper.m_Player_ChooseItemCreate;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1357,6 +1391,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
+            @ChooseItemCreate.started += instance.OnChooseItemCreate;
+            @ChooseItemCreate.performed += instance.OnChooseItemCreate;
+            @ChooseItemCreate.canceled += instance.OnChooseItemCreate;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1385,6 +1422,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
+            @ChooseItemCreate.started -= instance.OnChooseItemCreate;
+            @ChooseItemCreate.performed -= instance.OnChooseItemCreate;
+            @ChooseItemCreate.canceled -= instance.OnChooseItemCreate;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1586,6 +1626,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnMoveCamera(InputAction.CallbackContext context);
         void OnGiveUp(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
+        void OnChooseItemCreate(InputAction.CallbackContext context);
     }
     public interface IPlaceObjectActions
     {

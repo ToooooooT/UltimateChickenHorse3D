@@ -43,6 +43,8 @@ public class Player : MonoBehaviour {
     private string item;
     private Vector3 followObjectMove;
     private GameObject pauseMenu;
+    private GameObject chooseItemCanvas;
+    private string gameMode;
 
     private void Awake() {
         virtualCamera = transform.Find("Camera").GetComponent<CinemachineVirtualCamera>();
@@ -50,6 +52,7 @@ public class Player : MonoBehaviour {
         playerInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("Player");
         placeObjectInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("PlaceObject");
         pauseMenu = GameObject.Find("PauseCanvas").transform.Find("PauseMenu").gameObject;
+        chooseItemCanvas = GameObject.Find("ChooseItemCanvas").gameObject;
     }
 
     private void Start() {
@@ -65,9 +68,10 @@ public class Player : MonoBehaviour {
         buttonPressedWindow = .3f;
         item = null;
         exSpeed = Vector3.zero;
-        Enable(State.MOVE);
         resistanceRatio = 0.7f;
         exSpeedThreshold = 55f;
+        gameMode = PlayerPrefs.GetString("GameMode", "Party");
+        Enable(State.MOVE);
     }
 
     private void Update() {
@@ -87,13 +91,22 @@ public class Player : MonoBehaviour {
         InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
         accelerate.started += DoAccelerate;
         accelerate.canceled += NoAccelerate;
-        InputAction giveup = playerInputActionMap.FindAction("GiveUp");
-        giveup.performed += GiveUp;
         InputAction pause = playerInputActionMap.FindAction("Pause");
         pause.started += Pause;
+        switch (gameMode) {
+        case "Party":
+            InputAction giveup = playerInputActionMap.FindAction("GiveUp");
+            giveup.performed += GiveUp;
+            break;
+        case "Create":
+            InputAction chooseItemCreate = playerInputActionMap.FindAction("ChooseItemCreate");
+            chooseItemCreate.performed += ChooseItemCreate;
+            break;
+        }
     }
 
     public void Disable(State new_state) {
+        state = new_state;
         playerInputActionMap.Disable();
         InputAction jump = playerInputActionMap.FindAction("Jump");
         jump.started -= DoJump;
@@ -103,7 +116,16 @@ public class Player : MonoBehaviour {
         accelerate.canceled -= NoAccelerate;
         InputAction pause = playerInputActionMap.FindAction("Pause");
         pause.started -= Pause;
-        state = new_state;
+        switch (gameMode) {
+        case "Party":
+            InputAction giveup = playerInputActionMap.FindAction("GiveUp");
+            giveup.performed -= GiveUp;
+            break;
+        case "Create":
+            InputAction chooseItemCreate = playerInputActionMap.FindAction("ChooseItemCreate");
+            chooseItemCreate.performed -= ChooseItemCreate;
+            break;
+        }
     }
 
     public bool IsWalking() {
@@ -167,6 +189,33 @@ public class Player : MonoBehaviour {
                                         float.PositiveInfinity);
         moveVector.y = verticalVelocity;
         controller.Move(moveVector * Time.deltaTime);
+    }
+
+    private void ChooseItemCreate(InputAction.CallbackContext context) {
+        if (state != State.MOVE) {
+            PlayerCursor cursor = GetComponent<PlayerCursor>();
+            if (transform.Find("Canvas").Find("Cursor").gameObject.activeSelf || 
+                transform.Find("Camera").gameObject.GetComponent<CameraMovement>().enabled) {
+                // Disable Choose Item if no player is choosing, disable mouse cursor 
+                // and disable virtual camera and enable follow camera
+                item = null;
+                chooseItemCanvas.GetComponent<ChooseItemCanvasController>().Disable();
+                cursor.Disable();
+                Enable(State.GAME);
+                GameObject camera = transform.Find("Camera").gameObject;
+                camera.GetComponent<MouseControlFollowCamera>().Enable();
+                camera.GetComponent<CameraMovement>().Disable();
+            } else {
+                // Enable Choose Item if it is not enable, enable mouse cursor 
+                // and disable all camera
+                chooseItemCanvas.GetComponent<ChooseItemCanvasController>().Enable();
+                Enable(State.STOP);
+                cursor.Enable();
+                GameObject camera = transform.Find("Camera").gameObject;
+                camera.GetComponent<MouseControlFollowCamera>().Disable();
+                camera.GetComponent<CameraMovement>().Disable();
+            }
+        }
     }
 
     private void Pause(InputAction.CallbackContext context) {
@@ -277,6 +326,10 @@ public class Player : MonoBehaviour {
 
     public bool HaveItem() {
         return item != null;
+    }
+
+    public void SetItem(string newItem) {
+        item = newItem;
     }
 
     private bool TagCanJump(Collider collider) {

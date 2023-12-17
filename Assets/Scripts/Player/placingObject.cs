@@ -148,6 +148,10 @@ public class CameraMovement : MonoBehaviour
     }
 
     public void Disable() {
+        if (transparentObject != null) {
+            Destroy(transparentObject);
+            transparentObject = null;
+        }
         placeObjectInputActionMap.Disable();
         enabled = false;
     }

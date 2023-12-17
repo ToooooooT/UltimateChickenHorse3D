@@ -15,7 +15,7 @@ public class PlayerCursor : MonoBehaviour
     [SerializeField] private float moveSpeed;
 
     void Start() {
-        moveSpeed = 2f;
+        moveSpeed = 15f;
         cursorInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("Cursor");
         cursorMaxX = transform.Find("Canvas").GetComponent<RectTransform>().rect.width;
         cursorMaxY = transform.Find("Canvas").GetComponent<RectTransform>().rect.height;
@@ -42,8 +42,12 @@ public class PlayerCursor : MonoBehaviour
         EventSystem.current.RaycastAll(pointerEventData, results);
         if (results.Count > 0) {
             foreach (RaycastResult hit in results) {
-                if (hit.gameObject.GetComponent<UIBehaviour>()) {
-                    ExecuteEvents.Execute(hit.gameObject, pointerEventData, ExecuteEvents.pointerClickHandler);
+                GameObject obj = hit.gameObject;
+                if (obj.GetComponent<UIBehaviour>()) {
+                    if (obj.CompareTag("ItemButton")) {
+                        GetComponent<Player>().SetItem(obj.GetComponent<UnityEngine.UI.Image>().sprite.name);
+                    }
+                    ExecuteEvents.Execute(obj, pointerEventData, ExecuteEvents.pointerClickHandler);
                 }
             }
         }

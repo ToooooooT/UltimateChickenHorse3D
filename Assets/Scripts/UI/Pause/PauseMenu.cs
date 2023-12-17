@@ -9,13 +9,24 @@ using UnityEngine.XR;
 public class PauseMenu : MonoBehaviour
 {
     private GameObject gameController;
+    private GameObject chooseItemCanvas;
     private List<GameObject> players;
     private Player.State[] playersState;
+    private bool[] playersFollowCamera;
+    private bool[] playersVirtualCamera;
+    private bool[] playersCursor;
+    private bool chooseItemCanvasActive;
+    private string gameMode;
 
     private void Awake() {
         gameController = GameObject.Find("GameController");
         players = gameController.GetComponent<StageController>().playerObjects;
         playersState = new Player.State[4];
+        playersFollowCamera = new bool[4];
+        playersVirtualCamera = new bool[4];
+        playersCursor = new bool[4];
+        gameMode = PlayerPrefs.GetString("GameMode", "Party");
+        chooseItemCanvas = GameObject.Find("ChooseItemCanvas");
     }
 
     public void Pause() {
@@ -23,15 +34,14 @@ public class PauseMenu : MonoBehaviour
             gameObject.SetActive(!gameObject.activeSelf);
             Time.timeScale = (int) Time.timeScale ^ 1;
             if (gameObject.activeSelf) {
-                EnablePlayerCursor();
                 DisablePlayer();
                 gameController.GetComponent<PlayerManager>().DisableJoinAction();
             } else {
-                DisablePlayerCursor();
                 EnablePlayer();
                 if (gameController.GetComponent<StageController>().partyStage == StageController.PartyStage.CHOOSE_STAGE ||
-                gameController.GetComponent<StageController>().createStage == StageController.CreateStage.CHOOSE_STAGE)
-                gameController.GetComponent<PlayerManager>().EnableJoinAction();
+                gameController.GetComponent<StageController>().createStage == StageController.CreateStage.CHOOSE_STAGE) {
+                    gameController.GetComponent<PlayerManager>().EnableJoinAction();
+                }
             }
         }
     }
@@ -42,13 +52,11 @@ public class PauseMenu : MonoBehaviour
     }
 
     public void Exit() {
-        // back to choose stage
         Time.timeScale = 1;
         gameObject.SetActive(false);
-        DisablePlayerCursor();
         EnablePlayer();
         StageController stageController = gameController.GetComponent<StageController>();
-        if (stageController.gameMode == "Party") {
+        if (gameMode == "Party") {
             switch (stageController.partyStage) {
             case StageController.PartyStage.CHOOSE_STAGE:
                 DestoryPlayer();
@@ -58,7 +66,7 @@ public class PauseMenu : MonoBehaviour
                 stageController.partyStage = StageController.PartyStage.CHOOSE_STAGE;
                 break;
             }
-        } else if (stageController.gameMode == "Create") {
+        } else if (gameMode == "Create") {
             switch (stageController.createStage) {
             case StageController.CreateStage.CHOOSE_STAGE:
                 DestoryPlayer();
@@ -78,29 +86,38 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-    private void EnablePlayerCursor() {
-        foreach (GameObject player in players) {
-            player.GetComponent<PlayerCursor>().Enable();
-        }
-    }
-
-    private void DisablePlayerCursor() {
-        foreach (GameObject player in players) {
-            player.GetComponent<PlayerCursor>().Disable();
-        }
-    }
-
     private void EnablePlayer() {
         for (int i = 0; i < players.Count; ++i) {
             players[i].GetComponent<Player>().Enable(playersState[i]);
+            Transform camera = players[i].transform.Find("Camera");
+            if (playersFollowCamera[i]) {
+                camera.GetComponent<MouseControlFollowCamera>().Enable();
+            }
+            if (playersVirtualCamera[i]) {
+                camera.GetComponent<CameraMovement>().Enable();
+            }
+            if (!playersCursor[i]) {
+                players[i].GetComponent<PlayerCursor>().Disable();
+            }
+        }
+        if (chooseItemCanvasActive) {
+            chooseItemCanvas.GetComponent<ChooseItemCanvasController>().SetActiveAllChild(true);
         }
     }
 
     private void DisablePlayer() {
         for (int i = 0; i < players.Count; ++i) {
+            Transform camera = players[i].transform.Find("Camera");
             playersState[i] = players[i].GetComponent<Player>().state;
+            playersFollowCamera[i] = camera.GetComponent<MouseControlFollowCamera>().enabled;
+            playersVirtualCamera[i] = camera.GetComponent<CameraMovement>().enabled;
+            playersCursor[i] = players[i].transform.Find("Canvas").Find("Cursor").gameObject.activeSelf;
+            chooseItemCanvasActive = chooseItemCanvas.transform.Find("NextButton").gameObject.activeSelf;
+            chooseItemCanvas.GetComponent<ChooseItemCanvasController>().SetActiveAllChild(false);
             players[i].GetComponent<Player>().Disable(Player.State.STOP);
+            players[i].GetComponent<PlayerCursor>().Enable();
+            camera.GetComponent<CameraMovement>().Disable();
+            camera.GetComponent<MouseControlFollowCamera>().Disable();
         }
     }
-
 }

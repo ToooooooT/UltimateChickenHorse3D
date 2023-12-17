@@ -15,24 +15,25 @@ public class StageController : MonoBehaviour
     public enum PartyStage {CHOOSE_STAGE, BEFORE_SELECT_ITEM, SELECT_ITEM, PLACE_ITEM, PLAY, SCOREBOARD};
     public enum CreateStage {CHOOSE_STAGE, PLAY};
 
-    public string gameMode;
     public PartyStage partyStage;
     public CreateStage createStage;
+    public List<GameObject> items;
+    public List<GameObject> playerObjects;
+
+    private string gameMode;
     private GameObject scoreBoardObject;
     private GameObject LinBenObject;
     private GameObject selectStageController;
     private GameObject selectStageMenu;
+    private GameObject pauseMenu;
     private string stageName;
     private GameObject stage;
-
-    public List<GameObject> items;
-    public List<GameObject> playerObjects;
-
     private bool isFirstChooseStage;
 
     void Start() {
         items = new();
-        gameMode = PlayerPrefs.GetString("GameMode", "Party");
+        // remember to change to party
+        gameMode = PlayerPrefs.GetString("GameMode", "Create");
         if (gameMode == "Party") {
             partyStage = PartyStage.CHOOSE_STAGE;
         } else if (gameMode == "Create") {
@@ -40,11 +41,11 @@ public class StageController : MonoBehaviour
         }
         // other mode initial stage not sure yet
 
-        // playerObjects = GameObject.FindGameObjectsWithTag("Player");
         scoreBoardObject = GameObject.FindGameObjectWithTag("ScoreBoard");
         selectStageMenu = GameObject.Find("SelectStageMenu").gameObject;
         selectStageController = GameObject.Find("SelectStageMenu").gameObject.
                                     transform.Find("StagesController").gameObject;
+        pauseMenu = GameObject.Find("PauseCanvas").gameObject;
         isFirstChooseStage = true;
         stage = null;
     }
@@ -66,7 +67,10 @@ public class StageController : MonoBehaviour
             FirstChooseStage();
             if (CheckAllPlayerSelectStage()) {
                 foreach (GameObject player in playerObjects) {
-                    player.GetComponent<Player>().ModifyPosition(Vector3.zero);
+                    Player p = player.GetComponent<Player>();
+                    p.Enable(Player.State.GAME); 
+                    AdjustCamera(isFollow: true, isVirtual: false, player);
+                    p.ModifyPosition(Vector3.zero);
                 }
             }   
             break;
@@ -89,12 +93,19 @@ public class StageController : MonoBehaviour
                     }
                     break;
                 case Player.State.STOP:
-                    if (!p.HaveItem() && !player.transform.GetComponent<PlayerInput>().actions.FindActionMap("Cursor").enabled) {
-                        AdjustCamera(isFollow: false, isVirtual: false, player);
-                        player.GetComponent<PlayerCursor>().Enable();
-                    } else if (p.HaveItem() && player.transform.GetComponent<PlayerInput>().actions.FindActionMap("Cursor").enabled) {
-                        player.GetComponent<PlayerCursor>().Disable();
+                    if (!pauseMenu.transform.Find("PauseMenu").gameObject.activeSelf && 
+                            !pauseMenu.transform.Find("SettingMenu").gameObject.activeSelf) {
+                        if (!p.HaveItem() && 
+                                !player.transform.GetComponent<PlayerInput>().actions.FindActionMap("Cursor").enabled) {
+                            AdjustCamera(isFollow: false, isVirtual: false, player);
+                            player.GetComponent<PlayerCursor>().Enable();
+                        } else if (p.HaveItem() && 
+                                player.transform.GetComponent<PlayerInput>().actions.FindActionMap("Cursor").enabled) {
+                            AdjustCamera(isFollow: false, isVirtual: true, player);
+                            player.GetComponent<PlayerCursor>().Disable();
+                        }
                     }
+                    
                     break;
                 }
             }
@@ -233,15 +244,16 @@ public class StageController : MonoBehaviour
     }
 
     private void AdjustCamera(bool isFollow, bool isVirtual, GameObject player) {
+        Transform camera = player.transform.Find("Camera");
         if (isFollow) {
-            player.transform.Find("Camera").GetComponent<MouseControlFollowCamera>().Enable();
+            camera.GetComponent<MouseControlFollowCamera>().Enable();
         } else {
-            player.transform.Find("Camera").GetComponent<MouseControlFollowCamera>().Disable();
+            camera.GetComponent<MouseControlFollowCamera>().Disable();
         }
         if (isVirtual) {
-            player.transform.Find("Camera").GetComponent<CameraMovement>().Enable();
+            camera.GetComponent<CameraMovement>().Enable();
         } else {
-            player.transform.Find("Camera").GetComponent<CameraMovement>().Disable();
+            camera.GetComponent<CameraMovement>().Disable();
         }
     }
 
