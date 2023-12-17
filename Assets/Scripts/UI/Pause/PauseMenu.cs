@@ -112,12 +112,12 @@ public class PauseMenu : MonoBehaviour
             playersFollowCamera[i] = camera.GetComponent<MouseControlFollowCamera>().enabled;
             playersVirtualCamera[i] = camera.GetComponent<CameraMovement>().enabled;
             playersCursor[i] = players[i].transform.Find("Canvas").Find("Cursor").gameObject.activeSelf;
-            chooseItemCanvasActive = chooseItemCanvas.transform.Find("NextButton").gameObject.activeSelf;
-            chooseItemCanvas.GetComponent<ChooseItemCanvasController>().SetActiveAllChild(false);
             players[i].GetComponent<Player>().Disable(Player.State.STOP);
             players[i].GetComponent<PlayerCursor>().Enable();
             camera.GetComponent<CameraMovement>().Disable();
             camera.GetComponent<MouseControlFollowCamera>().Disable();
         }
+        chooseItemCanvasActive = chooseItemCanvas.transform.Find("NextButton").gameObject.activeSelf;
+        chooseItemCanvas.GetComponent<ChooseItemCanvasController>().SetActiveAllChild(false);
     }
 }
