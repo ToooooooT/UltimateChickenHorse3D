@@ -11,7 +11,7 @@ public class StartCursorControl : MonoBehaviour
     void Update() {
         if (Input.GetMouseButtonDown(1)) {
             Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = true;
+            Cursor.visible = false;
         }
 
         if (Input.GetKeyDown(KeyCode.Escape)) {
