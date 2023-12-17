@@ -192,7 +192,7 @@ public class Player : MonoBehaviour {
     }
 
     private void ChooseItemCreate(InputAction.CallbackContext context) {
-        if (state != State.MOVE) {
+        if (state == State.GAME || state == State.STOP) {
             PlayerCursor cursor = GetComponent<PlayerCursor>();
             if (transform.Find("Canvas").Find("Cursor").gameObject.activeSelf || 
                 transform.Find("Camera").gameObject.GetComponent<CameraMovement>().enabled) {

@@ -29,6 +29,7 @@ public class StageController : MonoBehaviour
     private string stageName;
     private GameObject stage;
     private bool isFirstChooseStage;
+    private int createItemCounter;
 
     void Start() {
         items = new();
@@ -38,6 +39,7 @@ public class StageController : MonoBehaviour
             partyStage = PartyStage.CHOOSE_STAGE;
         } else if (gameMode == "Create") {
             createStage = CreateStage.CHOOSE_STAGE;
+            createItemCounter = 0;
         }
         // other mode initial stage not sure yet
 
@@ -105,7 +107,17 @@ public class StageController : MonoBehaviour
                             player.GetComponent<PlayerCursor>().Disable();
                         }
                     }
-                    
+                    for (; createItemCounter < items.Count; ++createItemCounter) {
+                        if (items[createItemCounter].TryGetComponent<BaseItem>(out var item_base)) {
+                            item_base.Initialize();
+                        }
+                    }
+                    break;
+                case Player.State.GAME:
+                    // check lose 
+                    if (player.transform.position.y < -50) {
+                        player.GetComponent<Player>().Disable(Player.State.LOSE);
+                    }
                     break;
                 }
             }
