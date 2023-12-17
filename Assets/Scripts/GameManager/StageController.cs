@@ -34,7 +34,7 @@ public class StageController : MonoBehaviour
     void Start() {
         items = new();
         // remember to change to party
-        gameMode = PlayerPrefs.GetString("GameMode", "Create");
+        gameMode = PlayerPrefs.GetString("GameMode", "Party");
         if (gameMode == "Party") {
             partyStage = PartyStage.CHOOSE_STAGE;
         } else if (gameMode == "Create") {
@@ -107,11 +107,6 @@ public class StageController : MonoBehaviour
                             player.GetComponent<PlayerCursor>().Disable();
                         }
                     }
-                    for (; createItemCounter < items.Count; ++createItemCounter) {
-                        if (items[createItemCounter].TryGetComponent<BaseItem>(out var item_base)) {
-                            item_base.Initialize();
-                        }
-                    }
                     break;
                 case Player.State.GAME:
                     // check lose 
@@ -119,6 +114,11 @@ public class StageController : MonoBehaviour
                         player.GetComponent<Player>().Disable(Player.State.LOSE);
                     }
                     break;
+                }
+            }
+            for (; createItemCounter < items.Count; ++createItemCounter) {
+                if (items[createItemCounter].TryGetComponent<BaseItem>(out var item_base)) {
+                    item_base.Initialize();
                 }
             }
             break;

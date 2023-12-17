@@ -28,6 +28,7 @@ public class CameraMovement : MonoBehaviour
     private float distance;
     private bool pressRotateHorizontal;
     private bool pressRotateVertical;
+    private string gameMode;
 
     private const string FOLDERPATH = "Item";
 
@@ -56,6 +57,7 @@ public class CameraMovement : MonoBehaviour
         distance = 25.0f;
         pressRotateHorizontal = false;
         pressRotateVertical = false;
+        gameMode = PlayerPrefs.GetString("GameMode", "Party");
         // load prefab for creating object
         name2object = new Dictionary<string, GameObject>();
         LoadAllPrefabsInFolder();
@@ -151,6 +153,7 @@ public class CameraMovement : MonoBehaviour
         if (transparentObject != null) {
             Destroy(transparentObject);
             transparentObject = null;
+            playerObject.GetComponent<Player>().RemoveItem();
         }
         placeObjectInputActionMap.Disable();
         enabled = false;
@@ -159,7 +162,6 @@ public class CameraMovement : MonoBehaviour
     private void PlaceObject(InputAction.CallbackContext context) {
         if (PlacingIsValid()) {
             CreateObject(); 
-            Disable();
         }
     }
 
@@ -176,7 +178,9 @@ public class CameraMovement : MonoBehaviour
             stageController.items.Add(obj);
             Destroy(transparentObject);
             transparentObject = null;
-            playerObject.GetComponent<Player>().RemoveItem();
+            if (gameMode == "Party") {
+                playerObject.GetComponent<Player>().RemoveItem();
+            }
         }
     }
 

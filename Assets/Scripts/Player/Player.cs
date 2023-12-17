@@ -194,24 +194,26 @@ public class Player : MonoBehaviour {
     private void ChooseItemCreate(InputAction.CallbackContext context) {
         if (state == State.GAME || state == State.STOP) {
             PlayerCursor cursor = GetComponent<PlayerCursor>();
-            if (transform.Find("Canvas").Find("Cursor").gameObject.activeSelf || 
-                transform.Find("Camera").gameObject.GetComponent<CameraMovement>().enabled) {
-                // Disable Choose Item if no player is choosing, disable mouse cursor 
-                // and disable virtual camera and enable follow camera
+            GameObject camera = transform.Find("Camera").gameObject;
+            if (transform.Find("Camera").gameObject.GetComponent<CameraMovement>().enabled) {
+                // back to use cursor to choose item
+                item = null;
+                cursor.Enable();
+                camera.GetComponent<MouseControlFollowCamera>().Disable();
+                camera.GetComponent<CameraMovement>().Disable();
+            } else if (transform.Find("Canvas").Find("Cursor").gameObject.activeSelf) {
+                // back to play
                 item = null;
                 chooseItemCanvas.GetComponent<ChooseItemCanvasController>().Disable();
                 cursor.Disable();
                 Enable(State.GAME);
-                GameObject camera = transform.Find("Camera").gameObject;
                 camera.GetComponent<MouseControlFollowCamera>().Enable();
                 camera.GetComponent<CameraMovement>().Disable();
             } else {
-                // Enable Choose Item if it is not enable, enable mouse cursor 
-                // and disable all camera
+                // choose item with cursor
                 chooseItemCanvas.GetComponent<ChooseItemCanvasController>().Enable();
                 Enable(State.STOP);
                 cursor.Enable();
-                GameObject camera = transform.Find("Camera").gameObject;
                 camera.GetComponent<MouseControlFollowCamera>().Disable();
                 camera.GetComponent<CameraMovement>().Disable();
             }
