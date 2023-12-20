@@ -19,7 +19,7 @@ TagManager:
   - Arrow
   - ItemButton
   - Camera
-  - Pixace
+  - OnlyHorizontalRotate
   layers:
   - Default
   - TransparentFX

@@ -12,7 +12,7 @@ public class ItemGenerator : MonoBehaviour
     private const string ITEMTAG = "ChoosingItem";
 
     void Start() {
-        spawnArea = new(3000, 30, 3000);
+        spawnArea = new(3000, 20, 3000);
         size = new(70, 0, 70);
     }
 
@@ -32,7 +32,13 @@ public class ItemGenerator : MonoBehaviour
             float randomZ = Random.Range(spawnArea.z - size.z / 2, spawnArea.z + size.z / 2);
             Vector3 randomPosition = new(randomX, randomY, randomZ);
 
-            GameObject generatedItem = Instantiate(objectToGenerate, randomPosition, Quaternion.identity);
+            // Generate random rotation around each axis
+            randomX = Random.Range(0f, 360f);
+            randomY = Random.Range(0f, 360f);
+            randomZ = Random.Range(0f, 360f);
+            Quaternion randomRotation = Quaternion.Euler(randomX, randomY, randomZ);
+
+            GameObject generatedItem = Instantiate(objectToGenerate, randomPosition, randomRotation);
             SetTag(generatedItem.transform);
             DisableIsTrigger(generatedItem.transform);
             AddRigidBody(generatedItem.transform);
