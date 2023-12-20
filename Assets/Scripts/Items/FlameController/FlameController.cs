@@ -7,16 +7,28 @@ public class FlameController : BaseItem
 {
     private enum State { IDLE, FIRE };
 
-    [SerializeField] private float period = 5.0f;       
+    [SerializeField] private float period = 3.0f;       
 
     private GameObject fire;
     private float timeCounter;
     private State state;
+    private CapsuleCollider fireCollider;
 
-    void Start() {
+    void Awake() {
         fire = transform.Find("Fire").gameObject;
         fire.SetActive(false);
         timeCounter = 0;
+        CapsuleCollider[] capsuleColliders = GetComponents<CapsuleCollider>();
+        foreach (CapsuleCollider capsuleCollider in capsuleColliders) {
+            if (capsuleCollider.isTrigger) {
+                fireCollider = capsuleCollider;
+                fireCollider.enabled = false;
+            }
+        }
+    }
+
+    void Start() {
+        
     }
 
     void Update() {
@@ -25,6 +37,7 @@ public class FlameController : BaseItem
             if (timeCounter > period) {
                 timeCounter = 0;
                 fire.SetActive(!fire.activeSelf);
+                fireCollider.enabled = fire.activeSelf;
             }
         }
     }
@@ -41,10 +54,13 @@ public class FlameController : BaseItem
     public override void Initialize() {
         state = State.FIRE;
         timeCounter = 0;
+        fire.SetActive(false);
+        fireCollider.enabled = fire.activeSelf;
     }
 
     public override void Reset() {
         state = State.IDLE;
         fire.SetActive(false);
+        fireCollider.enabled = fire.activeSelf;
     }
 }

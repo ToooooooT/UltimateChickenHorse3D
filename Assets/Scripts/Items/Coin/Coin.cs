@@ -25,7 +25,6 @@ public class Coin : BaseItem
     void Update() {
         if (state == State.ROTATE) {
             Rotate();
-            Debug.Log(transform.position);
         }
     }
 
