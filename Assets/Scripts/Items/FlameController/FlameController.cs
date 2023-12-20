@@ -29,7 +29,7 @@ public class FlameController : BaseItem
         }
     }
 
-    private void OnTriggerEnter(Collider other) {
+    private void OnTriggerStay(Collider other) {
         if (other.gameObject.CompareTag("Player") && state == State.FIRE && fire.activeSelf) {
             Player player = other.gameObject.GetComponent<Player>();
             if (player.state == Player.State.GAME) {

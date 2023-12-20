@@ -16,6 +16,7 @@ public class PauseMenu : MonoBehaviour
     private bool[] playersVirtualCamera;
     private bool[] playersCursor;
     private bool chooseItemCanvasActive;
+    private float timeScale;
     private string gameMode;
 
     private void Awake() {
@@ -32,7 +33,12 @@ public class PauseMenu : MonoBehaviour
     public void Pause() {
         if (!transform.parent.Find("SettingMenu").gameObject.activeSelf) {
             gameObject.SetActive(!gameObject.activeSelf);
-            Time.timeScale = (int) Time.timeScale ^ 1;
+            if (gameObject.activeSelf) {
+                timeScale = Time.timeScale;
+                Time.timeScale = 0f;
+            } else {
+                Time.timeScale = timeScale;
+            }
             if (gameObject.activeSelf) {
                 DisablePlayer();
                 gameController.GetComponent<PlayerManager>().DisableJoinAction();
