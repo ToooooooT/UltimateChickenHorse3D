@@ -168,8 +168,18 @@ public class CameraMovement : MonoBehaviour
     private void TransparentObject() {
         string name = playerObject.GetComponent<Player>().GetItemName();
         transparentObject = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/" + name));
+        DisableCollidersRecursively(transparentObject);
     }
-    
+    private void DisableCollidersRecursively(GameObject obj)
+    {
+        Collider[] colliders = obj.GetComponents<Collider>();
+        foreach (Collider collider in colliders) {
+            collider.enabled = false;
+        }
+        foreach (Transform child in obj.transform) {
+            DisableCollidersRecursively(child.gameObject);
+        }
+    }
     private void CreateObject() {
         if (playerObject != null) {
             string name = playerObject.GetComponent<Player>().GetItemName();
