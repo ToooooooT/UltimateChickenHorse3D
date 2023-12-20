@@ -332,7 +332,7 @@ public class StageController : MonoBehaviour
 
     private void ResetItemsInStage() {
         foreach (GameObject item in items) {
-            if (item.TryGetComponent<BaseItem>(out var item_base)) {
+            if (item != null && item.TryGetComponent<BaseItem>(out var item_base)) {
                 item_base.Reset();
             }
         }
