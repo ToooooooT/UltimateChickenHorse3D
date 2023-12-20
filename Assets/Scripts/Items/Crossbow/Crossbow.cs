@@ -22,10 +22,10 @@ public class Crossbow : BaseItem
     // Start is called before the first frame update
     void Start()
     {
-        countdownTime = 10;
+        countdownTime = 30;
         changeAimingCountdown = 0;
         changeAimingCountdownTime = 100;
-        rotateSpeed = 0.2f;
+        rotateSpeed = 0.5f;
     }
 
     // Update is called once per frame
@@ -112,6 +112,9 @@ public class Crossbow : BaseItem
                 Arrow ArrowScript = newArrow.GetComponent<Arrow>();
                 ArrowScript.velocity = transform.forward * 0.5f;
                 ArrowScript.parentCrossbow = this.gameObject;
+                GameObject gameController = GameObject.Find("GameController");
+                StageController stageController = gameController.GetComponent<StageController>();
+                stageController.items.Add(newArrow);
                 Destroy(newArrow, 15f);
                 return;
             }
