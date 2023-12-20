@@ -31,4 +31,8 @@ public class ChooseItemCanvasController : MonoBehaviour
             }
         }
     }
+
+    public void Reset() {
+        counter = 0;
+    }
 }

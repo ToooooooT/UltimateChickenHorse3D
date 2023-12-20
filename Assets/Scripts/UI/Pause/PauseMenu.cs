@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -60,7 +61,12 @@ public class PauseMenu : MonoBehaviour
     public void Exit() {
         Time.timeScale = 1;
         gameObject.SetActive(false);
+        chooseItemCanvasActive = false;
+        for (int i = 0; i < playersCursor.Length; ++i) {
+            playersCursor[i] = false;
+        }
         EnablePlayer();
+        chooseItemCanvas.GetComponent<ChooseItemCanvasController>().Reset();
         StageController stageController = gameController.GetComponent<StageController>();
         if (gameMode == "Party") {
             switch (stageController.partyStage) {
