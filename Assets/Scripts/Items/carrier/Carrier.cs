@@ -59,5 +59,8 @@ public class Carrier : BaseItem
         Airplane airplaneScript = newAirplane.GetComponent<Airplane>();
         airplaneScript.velocity = 0.2f * transform.forward;
         airplaneScript.parentCarrier = this.gameObject;
+        GameObject gameController = GameObject.Find("GameController");
+        StageController stageController = gameController.GetComponent<StageController>();
+        stageController.items.Add(newAirplane);
     }
 }
