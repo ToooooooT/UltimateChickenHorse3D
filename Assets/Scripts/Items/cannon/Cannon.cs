@@ -64,6 +64,9 @@ public class Cannon : BaseItem
             CannonBomb BombScript = newBomb.GetComponent<CannonBomb>();
             BombScript.velocity = transform.GetChild(i).forward * 0.5f;
             BombScript.parentCannon = this.gameObject;
+            GameObject gameController = GameObject.Find("GameController");
+            StageController stageController = gameController.GetComponent<StageController>();
+            stageController.items.Add(newBomb);
             Destroy(newBomb, 5f);
         }
     }

@@ -65,6 +65,9 @@ public class FireBallShooter : BaseItem
         FireBall FireBallScript = newFireball.GetComponent<FireBall>();
         FireBallScript.velocity = transform.right * 0.5f;
         FireBallScript.parentFireBallShooter = this.gameObject;
+        GameObject gameController = GameObject.Find("GameController");
+        StageController stageController = gameController.GetComponent<StageController>();
+        stageController.items.Add(newFireball);
         Destroy(newFireball, 5f);
     }
 }
