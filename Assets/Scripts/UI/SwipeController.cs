@@ -11,12 +11,18 @@ public class SwipeController : MonoBehaviour
     [SerializeField] private float tweenTime;
     [SerializeField] private LeanTweenType tweenType;
 
+    private GameObject prevButton;
+    private GameObject nextButton;
+
     private int currentPage;
     private Vector3 targetPos;
 
     private void Awake() {
         currentPage = 1;
         targetPos = ItemPagesRect.localPosition;
+        Transform chooseItemCanvas = GameObject.Find("ChooseItemCanvas").transform;
+        prevButton = chooseItemCanvas.Find("PrevButton").gameObject;
+        nextButton = chooseItemCanvas.Find("NextButton").gameObject;
     }
 
     public void Next() {
@@ -24,6 +30,11 @@ public class SwipeController : MonoBehaviour
             currentPage++;
             targetPos += pageStep;
             MovePage();
+            if (currentPage == 2) {
+                prevButton.SetActive(true);
+            } else if (currentPage == maxPage) {
+                nextButton.SetActive(false);
+            }
         }
     }
 
@@ -32,6 +43,11 @@ public class SwipeController : MonoBehaviour
             currentPage--;
             targetPos -= pageStep;
             MovePage();
+            if (currentPage == 1) {
+                prevButton.SetActive(false);
+            } else if (currentPage == maxPage - 1) {
+                nextButton.SetActive(true);
+            }
         }
     }
 
