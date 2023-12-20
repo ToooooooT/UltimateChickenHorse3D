@@ -12,7 +12,7 @@ public class ItemGenerator : MonoBehaviour
     private const string ITEMTAG = "ChoosingItem";
 
     void Start() {
-        spawnArea = new(3000, 30, 3000);
+        spawnArea = new(3000, 10, 3000);
         size = new(70, 0, 70);
     }
 
@@ -30,13 +30,19 @@ public class ItemGenerator : MonoBehaviour
             float randomX = Random.Range(spawnArea.x - size.x / 2, spawnArea.x + size.x / 2);
             float randomY = Random.Range(spawnArea.y - size.y / 2, spawnArea.y + size.y / 2);
             float randomZ = Random.Range(spawnArea.z - size.z / 2, spawnArea.z + size.z / 2);
-            Vector3 randomPosition = new(randomX, randomY, randomZ);
+            Vector3 randomPosition = new(randomX, 0.5f, randomZ);
 
-            GameObject generatedItem = Instantiate(objectToGenerate, randomPosition, Quaternion.identity);
+            // Generate random rotation around each axis
+            randomX = Random.Range(0f, 360f);
+            randomY = Random.Range(0f, 360f);
+            randomZ = Random.Range(0f, 360f);
+            Quaternion randomRotation = Quaternion.Euler(randomX, randomY, randomZ);
+
+            GameObject generatedItem = Instantiate(objectToGenerate, randomPosition, randomRotation);
             SetTag(generatedItem.transform);
             DisableIsTrigger(generatedItem.transform);
             AddRigidBody(generatedItem.transform);
-            AddBoxCollider(generatedItem.transform);
+            AddCapsuleCollider(generatedItem.transform);
         }
     }
 
@@ -67,13 +73,13 @@ public class ItemGenerator : MonoBehaviour
         }
     }
 
-    private void AddBoxCollider(Transform parent) {
-        // Do we need to add rigidbody on all child object???
-        if (!parent.gameObject.TryGetComponent<BoxCollider>(out _)) {
-            parent.gameObject.AddComponent<BoxCollider>();
-        }
-        foreach (Transform child in parent) {
-            AddBoxCollider(child);
+    private void AddCapsuleCollider(Transform parent) {
+        // Do we need to add capsule on all child object???
+        if (!parent.gameObject.TryGetComponent<BoxCollider>(out _) &&
+            !parent.gameObject.TryGetComponent<CapsuleCollider>(out _) &&
+            !parent.gameObject.TryGetComponent<MeshCollider>(out _) && 
+            !parent.gameObject.TryGetComponent<SphereCollider>(out _)) {
+            parent.gameObject.AddComponent<CapsuleCollider>();
         }
     }
 

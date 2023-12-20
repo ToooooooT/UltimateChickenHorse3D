@@ -18,6 +18,8 @@ TagManager:
   - ArrowPosition
   - Arrow
   - ItemButton
+  - Camera
+  - OnlyHorizontalRotate
   layers:
   - Default
   - TransparentFX

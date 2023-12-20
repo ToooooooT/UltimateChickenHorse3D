@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1307826186297554313}
   m_Layer: 0
   m_Name: Pixace
-  m_TagString: Pixace
+  m_TagString: OnlyHorizontalRotate
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

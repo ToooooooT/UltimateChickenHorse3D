@@ -150,11 +150,6 @@ public class CameraMovement : MonoBehaviour
     }
 
     public void Disable() {
-        if (transparentObject != null) {
-            Destroy(transparentObject);
-            transparentObject = null;
-            playerObject.GetComponent<Player>().RemoveItem();
-        }
         placeObjectInputActionMap.Disable();
         enabled = false;
     }
@@ -261,7 +256,7 @@ public class CameraMovement : MonoBehaviour
             newRotation.x -= diviateX;
             newRotation.z -= diviateZ;
             transparentObject.transform.rotation = Quaternion.Euler(newRotation);
-        } else if (pressRotateVertical && !transparentObject.CompareTag("Pixace")) {
+        } else if (pressRotateVertical && !transparentObject.CompareTag("OnlyHorizontalRotate")) {
             mouseX = 0;
             Vector3 cameraForward = -transform.right;
 
