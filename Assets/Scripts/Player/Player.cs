@@ -201,6 +201,7 @@ public class Player : MonoBehaviour {
                 cursor.Enable();
                 camera.GetComponent<MouseControlFollowCamera>().Disable();
                 camera.GetComponent<CameraMovement>().Disable();
+                camera.GetComponent<CameraMovement>().DestoryTransparentObject();
             } else if (transform.Find("Canvas").Find("Cursor").gameObject.activeSelf) {
                 // back to play
                 item = null;

@@ -165,8 +165,8 @@ public class CameraMovement : MonoBehaviour
         transparentObject = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/" + name));
         DisableCollidersRecursively(transparentObject);
     }
-    private void DisableCollidersRecursively(GameObject obj)
-    {
+
+    private void DisableCollidersRecursively(GameObject obj) {
         Collider[] colliders = obj.GetComponents<Collider>();
         foreach (Collider collider in colliders) {
             collider.enabled = false;
@@ -175,6 +175,7 @@ public class CameraMovement : MonoBehaviour
             DisableCollidersRecursively(child.gameObject);
         }
     }
+
     private void CreateObject() {
         if (playerObject != null) {
             string name = playerObject.GetComponent<Player>().GetItemName();
@@ -316,6 +317,13 @@ public class CameraMovement : MonoBehaviour
 
     public void AdjustSensitiveMoveCamera(float ratio) {
         sensitive_move = (1 - ratio) * MIN_SENSITIVE_MOVE + ratio * MAX_SENSITIVE_MOVE;
+    }
+
+    public void DestoryTransparentObject() {
+        if (transparentObject != null) {
+            Destroy(transparentObject);
+            transparentObject = null;
+        }
     }
 }
 
