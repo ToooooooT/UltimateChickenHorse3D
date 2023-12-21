@@ -23,6 +23,9 @@ public class TimeSlower : BaseItem
     // Update is called once per frame
     void Update() {
         if (state == State.SLOW) {
+            if (gameObject.TryGetComponent<Renderer>(out var renderer) && renderer.enabled) {
+                renderer.enabled = false;
+            }
             slowCounter += Time.deltaTime;
             if (slowCounter > period) {
                 gameObject.SetActive(false);
@@ -39,12 +42,21 @@ public class TimeSlower : BaseItem
     }
 
     public override void Initialize() {
+        if (gameObject.TryGetComponent<Renderer>(out var renderer)) {
+            renderer.enabled = true;
+        }
+        slowCounter = 0;
         gameObject.SetActive(true);
         state = State.IDLE;
     }
 
 
     public override void Reset() {
+        if (gameObject.TryGetComponent<Renderer>(out var renderer)) {
+            renderer.enabled = true;
+        }
+        Time.timeScale = 1f;
+        slowCounter = 0;
         gameObject.SetActive(true);
         state = State.IDLE;
     }

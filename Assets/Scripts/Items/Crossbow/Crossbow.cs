@@ -25,7 +25,7 @@ public class Crossbow : BaseItem
         countdownTime = 30;
         changeAimingCountdown = 0;
         changeAimingCountdownTime = 100;
-        rotateSpeed = 0.5f;
+        rotateSpeed = 5f;
     }
 
     // Update is called once per frame

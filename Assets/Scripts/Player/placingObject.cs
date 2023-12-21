@@ -285,8 +285,9 @@ public class CameraMovement : MonoBehaviour
     private void ItemVisible(GameObject item, bool visible) {
 
         Transform parentTransform = item.transform;
-        if (item.TryGetComponent<Renderer>(out var renderer))
+        if (item.TryGetComponent<Renderer>(out var renderer)) {
             renderer.enabled = visible;
+        }
         for (int i = 0; i < parentTransform.childCount; i++) {
             Transform childTransform = parentTransform.GetChild(i);
             GameObject childObject = childTransform.gameObject;
