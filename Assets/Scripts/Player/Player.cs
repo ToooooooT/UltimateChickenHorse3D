@@ -298,7 +298,7 @@ public class Player : MonoBehaviour {
             GetItem(hit.gameObject);
         } else if ((state == State.GAME || state == State.MOVE ) && hit.gameObject.TryGetComponent<PlayerFollowObject>(out var playerFollow)) {
             // follow object move
-            followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition();
+            followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition(gameObject);
         }
     }
 
