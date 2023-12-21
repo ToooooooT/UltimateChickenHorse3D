@@ -17,7 +17,7 @@ public class PlayerFollowObject : MonoBehaviour
         lastPosition = transform.position;
     }
 
-    public Vector3 GetDiffPosition() {
+    public virtual Vector3 GetDiffPosition(GameObject gameObject) {
         Vector3 ret = lastPosition - lastlastPosition;
         ret.y = 0;
         return ret;

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Velocity : MonoBehaviour
+public class Velocity : BaseItem
 {
     public Vector3 velocity;
     // Start is called before the first frame update

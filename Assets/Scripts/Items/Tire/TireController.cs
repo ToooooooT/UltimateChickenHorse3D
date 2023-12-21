@@ -8,16 +8,19 @@ public class TireController : BaseItem
 
     [SerializeField] private float rotateSpeed;
 
-    private Transform tire;
+    private Transform tireTransform;
     private State state;
+    public float theta;
 
     void Awake() {
         state = State.IDLE;
-        tire = transform.Find("tire");
+        tireTransform = transform.Find("tire");
+        theta = 0;
     }
 
     void Start() {
-        rotateSpeed = 30.0f;
+        rotateSpeed = 80.0f;
+        theta = 0;
     }
 
     void Update() {
@@ -25,9 +28,10 @@ public class TireController : BaseItem
             Rotate();
         }
     }
-
     private void Rotate() {
-        tire.Rotate(Vector3.right, rotateSpeed * Time.deltaTime);
+        theta = rotateSpeed * Time.deltaTime;
+        
+        tireTransform.Rotate(Vector3.right, rotateSpeed * Time.deltaTime);
     }
 
     public override void Initialize() {
@@ -37,4 +41,19 @@ public class TireController : BaseItem
     public override void Reset() {
         state = State.IDLE;
     }
+    /*
+    private void OnTriggerStay(Collider collision)
+    {
+        Vector3 objectPosition = collision.gameObject.transform.position;
+        Vector3 datumPoint = tireTransform.position + Vector3.Dot(tireTransform.right, (objectPosition - tireTransform.position)) * tireTransform.right;
+        Vector3 lookAt = objectPosition - datumPoint;
+        Vector3 movingPosition = datumPoint + lookAt + lookAt.magnitude * (Mathf.Tan(theta) * lookAt.magnitude * Vector3.Cross(tireTransform.right, lookAt).normalized).normalized;
+        if (collision.gameObject.transform.CompareTag("Player")) {
+            collision.gameObject.GetComponent<Player>().ModifyPosition(movingPosition);
+        }
+        else {
+            collision.gameObject.transform.position = movingPosition;
+        }
+    }
+    */
 }
