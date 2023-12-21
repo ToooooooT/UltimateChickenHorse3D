@@ -323,18 +323,30 @@ public class StageController : MonoBehaviour
     }
 
     private void MemorizeItemsStateInStage() {
+        List<GameObject> nullItems = new();       
         foreach (GameObject item in items) {
-            if (item != null && item.TryGetComponent<BaseItem>(out var item_base)) {
+            if (item == null) {
+                nullItems.Add(item);
+            } else if (item.TryGetComponent<BaseItem>(out var item_base)) {
                 item_base.Initialize();
             }
+        }
+        foreach (GameObject nullItem in nullItems) {
+            items.Remove(nullItem);
         }
     }
 
     private void ResetItemsInStage() {
+        List<GameObject> nullItems = new();       
         foreach (GameObject item in items) {
-            if (item != null && item.TryGetComponent<BaseItem>(out var item_base)) {
+            if (item == null) {
+                nullItems.Add(item);
+            } else if (item.TryGetComponent<BaseItem>(out var item_base)) {
                 item_base.Reset();
             }
+        }
+        foreach (GameObject nullItem in nullItems) {
+            items.Remove(nullItem);
         }
     }
 
