@@ -12,10 +12,12 @@ public class Coin : BaseItem
     private Quaternion origin_rotation;
     private State state;
     private Transform pirateCoin;
+    private Vector3 localScale;
 
     void Awake() {
         state = State.IDLE;
         pirateCoin = transform.Find("PirateCoin");
+        pirateCoin.GetComponent<MeshCollider>().enabled = false;
     }
 
     void Start() {
@@ -36,11 +38,15 @@ public class Coin : BaseItem
 
     public override void Initialize() {
         state = State.ROTATE;
+        pirateCoin.GetComponent<MeshCollider>().enabled = true;
+        localScale = transform.localScale;
         origin_position = transform.position;
         origin_rotation = transform.rotation;
     }
 
     public override void Reset() {
+        state = State.IDLE;
+        transform.localScale = localScale;
         transform.parent = null;
         pirateCoin.GetComponent<MeshCollider>().enabled = true;
         transform.SetPositionAndRotation(origin_position, origin_rotation);

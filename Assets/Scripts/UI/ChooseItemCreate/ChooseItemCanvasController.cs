@@ -26,7 +26,13 @@ public class ChooseItemCanvasController : MonoBehaviour
 
     public void SetActiveAllChild(bool active) {
         foreach (Transform child in transform) {
-            child.gameObject.SetActive(active);
+            if (!active || child.gameObject.name != "PrevButton") {
+                child.gameObject.SetActive(active);
+            }
         }
+    }
+
+    public void Reset() {
+        counter = 0;
     }
 }
