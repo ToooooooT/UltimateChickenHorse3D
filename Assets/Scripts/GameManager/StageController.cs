@@ -32,9 +32,16 @@ public class StageController : MonoBehaviour
     private int createItemCounter;
     private List<int> winnerIndexs;
 
+    private Vector3[] selectItemPositions;
+
     void Start() {
         items = new();
         winnerIndexs = new();
+        selectItemPositions = new Vector3[4];
+        selectItemPositions[0] = new Vector3(3000 - 38, 1, 3000 - 38);
+        selectItemPositions[1] = new Vector3(3000 + 38, 1, 3000 + 38);
+        selectItemPositions[2] = new Vector3(3000 + 38, 1, 3000 - 38);
+        selectItemPositions[3] = new Vector3(3000 - 38, 1, 3000 + 38);
         // remember to change to party
         gameMode = PlayerPrefs.GetString("GameMode", "Party");
         if (gameMode == "Party") {
@@ -202,7 +209,7 @@ public class StageController : MonoBehaviour
         for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             player.Enable(Player.State.SELECT_ITEM);
-            RandomPositionToSelectItem(player);
+            player.ModifyPosition(selectItemPositions[i]);
             AdjustCamera(isFollow: true, isVirtual: false, playerObjects[i]);
         }
     }
@@ -245,16 +252,6 @@ public class StageController : MonoBehaviour
         for (int i = 0; i < choosing_items.Length; ++i) {
             Destroy(choosing_items[i]);
         }
-    }
-
-    private void RandomPositionToSelectItem(Player player) {
-        Vector3 spawnArea = GetComponent<ItemGenerator>().spawnArea;
-        spawnArea.y = 3;
-        Vector3 size = GetComponent<ItemGenerator>().size;
-        float randomX = Random.Range(spawnArea.x - size.x / 2, spawnArea.x + size.x / 2);
-        float randomY = Random.Range(spawnArea.y - size.y / 2, spawnArea.y + size.y / 2);
-        float randomZ = Random.Range(spawnArea.z - size.z / 2, spawnArea.z + size.z / 2);
-        player.ModifyPosition(new Vector3(randomX, randomY, randomZ));
     }
 
     private void AdjustCamera(bool isFollow, bool isVirtual, GameObject player) {
