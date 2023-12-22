@@ -163,13 +163,15 @@ public class CameraMovement : MonoBehaviour
     private void TransparentObject() {
         string name = playerObject.GetComponent<Player>().GetItemName();
         transparentObject = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/" + name));
+        Transform zone = transparentObject.transform.Find("Zone");
+        zone?.gameObject.SetActive(true);
         DisableCollidersRecursively(transparentObject);
     }
 
     private void DisableCollidersRecursively(GameObject obj) {
         Collider[] colliders = obj.GetComponents<Collider>();
         foreach (Collider collider in colliders) {
-            collider.enabled = false;
+            collider.enabled = collider.isTrigger;
         }
         foreach (Transform child in obj.transform) {
             DisableCollidersRecursively(child.gameObject);
@@ -179,8 +181,15 @@ public class CameraMovement : MonoBehaviour
     private void CreateObject() {
         if (playerObject != null) {
             string name = playerObject.GetComponent<Player>().GetItemName();
+            Transform zone = transparentObject.transform.Find("Zone");
+            // if item is bomb, then destroy items
+            zone?.GetComponent<DestroyDetecter>().DestroyItems();
             GameObject obj = Instantiate(name2object[name], transparentObject.transform.position, transparentObject.transform.rotation);
             obj.name = name;
+            if (zone != null) {
+                obj.transform.Find("Bomb").gameObject.SetActive(false);
+                obj.transform.Find("Explode").gameObject.SetActive(true);
+            }
             stageController.items.Add(obj);
             Destroy(transparentObject);
             transparentObject = null;
