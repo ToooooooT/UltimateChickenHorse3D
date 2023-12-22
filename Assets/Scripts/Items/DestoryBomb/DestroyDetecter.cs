@@ -16,7 +16,7 @@ public class DestroyDetecter : MonoBehaviour
     }
 
     void Detect() {
-        hitColliders = Physics.OverlapBox(gameObject.transform.position, transform.localScale / 2, Quaternion.identity);
+        hitColliders = Physics.OverlapBox(gameObject.transform.position, Vector3.Scale(transform.parent.localScale, transform.localScale) / 2, Quaternion.identity);
     }
 
     private GameObject GetTopParentObject(GameObject obj) {
