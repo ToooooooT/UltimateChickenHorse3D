@@ -30,9 +30,11 @@ public class StageController : MonoBehaviour
     private GameObject stage;
     private bool isFirstChooseStage;
     private int createItemCounter;
+    private List<int> winnerIndexs;
 
     void Start() {
         items = new();
+        winnerIndexs = new();
         // remember to change to party
         gameMode = PlayerPrefs.GetString("GameMode", "Party");
         if (gameMode == "Party") {
@@ -290,6 +292,7 @@ public class StageController : MonoBehaviour
                 partyStage = PartyStage.SCOREBOARD;
                 LinBen.state = LinBenScript.State.IDLE;
                 winnerMoving.winner = i;
+                winnerIndexs.Add(i);
             }
         }
         if (winnerMoving.winner >= 0) {
@@ -319,6 +322,13 @@ public class StageController : MonoBehaviour
         // SceneManager.LoadScene("WIN", LoadSceneMode.Additive);
         if (winnerMoving.IsFinishMoving()) {
             partyStage = PartyStage.BEFORE_SELECT_ITEM;
+            // if winner take the coin, the coin should be destroy
+            foreach (int index in winnerIndexs) {
+                Transform t = playerObjects[index].transform.Find("Coin");
+                if (t != null) {
+                    Destroy(playerObjects[index].transform.Find("Coin").gameObject);
+                }
+            }
         }
     }
 

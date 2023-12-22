@@ -129,7 +129,7 @@ public class PauseMenu : MonoBehaviour
             camera.GetComponent<CameraMovement>().Disable();
             camera.GetComponent<MouseControlFollowCamera>().Disable();
         }
-        chooseItemCanvasActive = chooseItemCanvas.transform.Find("NextButton").gameObject.activeSelf;
+        chooseItemCanvasActive = chooseItemCanvas.transform.Find("ScrollView").gameObject.activeSelf;
         chooseItemCanvas.GetComponent<ChooseItemCanvasController>().SetActiveAllChild(false);
     }
 }

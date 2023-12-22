@@ -7,7 +7,7 @@ public class FlameController : BaseItem
 {
     private enum State { IDLE, FIRE };
 
-    [SerializeField] private float period = 3.0f;       
+    [SerializeField] private float period;       
 
     private GameObject fire;
     private float timeCounter;
@@ -28,7 +28,7 @@ public class FlameController : BaseItem
     }
 
     void Start() {
-        
+        period = 5.0f;
     }
 
     void Update() {

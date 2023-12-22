@@ -12,7 +12,11 @@ public class PlayerCursor : MonoBehaviour
     private InputActionMap cursorInputActionMap;
     private float cursorMaxX;
     private float cursorMaxY;
+
     [SerializeField] private float moveSpeed;
+
+    private const float MIN_MOVE_SPEED = 3f;
+    private const float MAX_MOVE_SPEED = 25f;
 
     void Start() {
         moveSpeed = 15f;
@@ -65,5 +69,9 @@ public class PlayerCursor : MonoBehaviour
         cursorInputActionMap.Disable();
         InputAction click = cursorInputActionMap.FindAction("Click");
         click.performed -= RaycastUI;
+    }
+
+    public void AdjustMoveSpeed(float ratio) {
+        moveSpeed = (1 - ratio) * MIN_MOVE_SPEED + ratio * MAX_MOVE_SPEED;
     }
 }

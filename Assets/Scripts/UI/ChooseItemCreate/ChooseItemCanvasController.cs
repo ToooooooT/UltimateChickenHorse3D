@@ -25,10 +25,19 @@ public class ChooseItemCanvasController : MonoBehaviour
     }
 
     public void SetActiveAllChild(bool active) {
-        foreach (Transform child in transform) {
-            if (!active || child.gameObject.name != "PrevButton") {
-                child.gameObject.SetActive(active);
-            }
+        SwipeController swipeController = transform.Find("ScrollView").GetComponent<SwipeController>();
+        transform.Find("ScrollView").gameObject.SetActive(active);
+        GameObject nextButton = transform.Find("NextButton").gameObject;
+        GameObject prevButton = transform.Find("PrevButton").gameObject;
+        if (active && swipeController.IsNextButtonActive()) {
+            nextButton.SetActive(true);
+        } else {
+            nextButton.SetActive(false);
+        }
+        if (active && swipeController.IsPrevButtonActive()) {
+            prevButton.SetActive(true);
+        } else {
+            prevButton.SetActive(false);
         }
     }
 
