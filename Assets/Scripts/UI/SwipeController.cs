@@ -14,7 +14,7 @@ public class SwipeController : MonoBehaviour
     private GameObject prevButton;
     private GameObject nextButton;
 
-    private int currentPage;
+    [SerializeField] private int currentPage;
     private Vector3 targetPos;
 
     private void Awake() {
@@ -53,5 +53,13 @@ public class SwipeController : MonoBehaviour
 
     private void MovePage() {
         ItemPagesRect.LeanMoveLocal(targetPos, tweenTime).setEase(tweenType);
+    }
+
+    public bool IsNextButtonActive() {
+        return currentPage < maxPage;
+    }
+
+    public bool IsPrevButtonActive() {
+        return currentPage > 1;
     }
 }
