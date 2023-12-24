@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class SkyscraperSkyboxLoader : MonoBehaviour
 {
-    private string skyboxFolder = "Skybox/Cubemaps/Classic";
-    private string skyboxName = "FS000_Day_04";
+    private string skyboxPath = "Skybox/Cubemaps/FS013/FS013_Night_Cubemap";
 
     // Start is called before the first frame update
     void Start() {
-        Material skyboxMaterial = Resources.Load<Material>(skyboxFolder + "/" + skyboxName);
+        Material skyboxMaterial = Resources.Load<Material>(skyboxPath);
 
         RenderSettings.skybox = skyboxMaterial;
     }
