@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class SkyboxLoaderTemplate : MonoBehaviour
 {
-    private string skyboxFolder = "Skybox/Cubemaps/Classic";
-    private string skyboxName = "FS000_Day_04";
+    private string skyboxPath = "Skybox/Cubemaps/Classic/FS000_Day_04";
 
     void Start() {
-        Material skyboxMaterial = Resources.Load<Material>(skyboxFolder + "/" + skyboxName);
+        Material skyboxMaterial = Resources.Load<Material>(skyboxPath);
 
         RenderSettings.skybox = skyboxMaterial;
     }
