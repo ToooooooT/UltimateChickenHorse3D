@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Rocket : BaseItem  
 {
-    [SerializeField] float exSpeedRatio;
+    [SerializeField] private float exSpeedRatio;
     public enum State { Idle, Equipped, Flying };
     public State state;
     private State lastState;
@@ -20,7 +20,7 @@ public class Rocket : BaseItem
         lastState = State.Idle;
         FireTransform = transform.Find("Fire");
         player = null;
-        exSpeedRatio = 0.025f;
+        exSpeedRatio = 0.055f;
         InitFire();
     }
 

@@ -201,8 +201,9 @@ public class CameraMovement : MonoBehaviour
 
     private bool PlacingIsValid() {
         // not finished
+        /*
         if (transparentObject.transform.position.x > 0)
-            return false;
+            return false;*/
         return true;
     }
 
@@ -223,7 +224,7 @@ public class CameraMovement : MonoBehaviour
     private void MoveObject(float x1=-100, float x2=100, float y1=-20, float y2=100, float z1=-100, float z2=100) {
         Transform transparentObjectTransform = transparentObject.transform;
         Vector3 forward = transform.forward;
-        transparentObjectTransform.position = transform.position + distance * transform.forward;
+        transparentObjectTransform.position = transform.position + distance * transform.forward;/*
         if (transparentObjectTransform.position.x < x1) {
             transparentObjectTransform.position -= Math.Abs((x1 - transparentObjectTransform.position.x) / forward.x) * forward;
         }
@@ -241,7 +242,7 @@ public class CameraMovement : MonoBehaviour
         }
         if (transparentObjectTransform.position.z > z2) {
             transparentObjectTransform.position -= Math.Abs((z2 - transparentObjectTransform.position.z) / forward.z) * forward;
-        }
+        }*/
     }
 
     private void RotateObjectOrCamera() {

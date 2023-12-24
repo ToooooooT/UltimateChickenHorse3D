@@ -30,7 +30,7 @@ public class CannonBombController : MonoBehaviour
                 CannonBomb bombScript = bomb.GetComponent<CannonBomb>();
                 if (collidedObject != bombScript.parentCannon) {
                     if (collidedObject.TryGetComponent<Player>(out var player) && 
-                    player.state == Player.State.GAME) {
+                    player.GetState() == Player.State.GAME) {
                         player.SetDead();
                     }
                     if (collidedObject.CompareTag("Wall")) {
