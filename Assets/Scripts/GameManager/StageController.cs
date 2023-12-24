@@ -199,6 +199,7 @@ public class StageController : MonoBehaviour
                 p.ModifyPosition(0.5f * Vector3.up);
             }
             isFirstChooseStage = false;
+            selectStageMenu.transform.Find("VisableObjects").transform.position = Vector3.zero;
             selectStageMenu.transform.Find("VisableObjects").gameObject.SetActive(true);
         }
     }

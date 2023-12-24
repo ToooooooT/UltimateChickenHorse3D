@@ -94,10 +94,11 @@ public class PauseMenu : MonoBehaviour
     }
 
     private void ChangeSkybox() {
-        string skyboxPath = "Skybox/Classic/FS000/FS000_Day_02";
+        string skyboxPath = "Skybox/Cubemaps/Classic/FS000_Day_02";
         Material skyboxMaterial = Resources.Load<Material>(skyboxPath);
 
         RenderSettings.skybox = skyboxMaterial;
+        Debug.Log("Change skybox to " + skyboxPath);
     }
 
     private void DestoryPlayer() {
