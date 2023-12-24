@@ -6,6 +6,7 @@ public class BombMan : Velocity
 {
     private enum State { idle, walking, bombing}
     private State state;
+    private const string FOLDERPATH = "BombMan";
     private GameObject aimingPlayer;
     private float rotateSpeed;
     private float changeAimingCountdown;
@@ -14,6 +15,7 @@ public class BombMan : Velocity
     private Animator animator;
     private float Acceleration;
     private bool walking;
+    private bool alreadySplit;
     // Start is called before the first frame update
     void Start()
     {
@@ -63,17 +65,32 @@ public class BombMan : Velocity
     {
         float clipTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("attack01") && clipTime > 0.48) {
-            float expansion = 1.5f;
-            transform.localScale = expansion * new Vector3(4, 4, 4);
+            if(!alreadySplit && transform.localScale.x > 1) {
+                alreadySplit = true;
+                GenerateSmallBombs(4);
+            }
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             for(int i = 0; i < players.Length; i++) {
-                if((players[i].transform.position - transform.position).magnitude <= expansion * 4.5f) {
+                if((players[i].transform.position - transform.position).magnitude <= transform.localScale.x * 1.25f) {
                     players[i].GetComponent<Player>().state = Player.State.LOSE;
                 }
             }
         }
         if(animator.GetCurrentAnimatorStateInfo(0).IsName("attack01") && clipTime > 0.95) {
             Destroy(gameObject);
+        }
+    }
+    void GenerateSmallBombs(int num)
+    {
+        for(int i = 0; i < num; i++) {
+            GameObject newBombMan = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/Mon_00"));
+            newBombMan.transform.position = transform.position;
+            newBombMan.GetComponent<BombMan>().velocity = 5 * new Vector3(20 * Mathf.Cos(2 * Mathf.PI * (i / num)), 1, 20 * Mathf.Cos(2 * Mathf.PI * (i / num)));
+            newBombMan.GetComponent<BombMan>().alreadySplit = true;
+            newBombMan.transform.localScale = newBombMan.transform.localScale / 2;
+            GameObject gameController = GameObject.Find("GameController");
+            StageController stageController = gameController.GetComponent<StageController>();
+            stageController.items.Add(newBombMan);
         }
     }
     void AimingPlayer()
