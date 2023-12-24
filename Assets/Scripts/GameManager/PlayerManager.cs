@@ -16,12 +16,16 @@ public class PlayerManager : MonoBehaviour
     private static readonly int[] slidersGridSpace = new int[] { 300, 700, 500, 330 };
     private static readonly int[] slidersCellSizeX = new int[] { 300, 300, 200, 150 };
 
+    private Material[] playerMaterials = new Material[4];
+
     public List<PlayerInput> playerList = new();
     public event System.Action<PlayerInput> PlayerJoinedGame;
     public event System.Action<PlayerInput> PlayerLeftGame;
 
     [SerializeField] InputAction joinAction;
     [SerializeField] InputAction leaveAction;
+
+    private const string FOLDER = "Materials";
 
     private void Awake() {
         playerManager = GetComponent<PlayerInputManager>();
@@ -34,6 +38,11 @@ public class PlayerManager : MonoBehaviour
 
         leaveAction.Enable();
         leaveAction.performed += context => LeaveAction(context);
+
+        playerMaterials[0] = Resources.Load<Material>(FOLDER + "/PlayerBody");
+        playerMaterials[1] = Resources.Load<Material>(FOLDER + "/PlayerBody_Blue");
+        playerMaterials[2] = Resources.Load<Material>(FOLDER + "/PlayerBody_Red");
+        playerMaterials[3] = Resources.Load<Material>(FOLDER + "/PlayerBody_Green");
     }
 
     void Start() {
@@ -47,7 +56,15 @@ public class PlayerManager : MonoBehaviour
     void OnPlayerJoined(PlayerInput playerInput) {
         playerList.Add(playerInput);
         PlayerJoinedGame?.Invoke(playerInput);
-        stageController.playerObjects.Add(playerInput.gameObject);
+        GameObject player = playerInput.gameObject;
+        stageController.playerObjects.Add(player);
+        // set player materials
+        List<Material> materialList = new()
+        {
+            playerMaterials[playerList.Count - 1]
+        };
+        player.transform.Find("PlayerVisual").Find("Head").GetComponent<MeshRenderer>().SetMaterials(materialList);
+        player.transform.Find("PlayerVisual").Find("Body").GetComponent<MeshRenderer>().SetMaterials(materialList);
         // modify sliders layout when adding player
         GameObject sliders = pauseCanvas.transform.Find("SettingMenu").Find("Sliders").gameObject;
         int n = playerList.Count;
