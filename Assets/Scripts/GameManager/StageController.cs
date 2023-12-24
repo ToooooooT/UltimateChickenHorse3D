@@ -93,6 +93,11 @@ public class StageController : MonoBehaviour
                     p.Enable(Player.State.GAME);
                     AdjustCamera(isFollow: true, isVirtual: false, player);
                     p.ModifyPosition(Vector3.zero);
+                    // reset items
+                    Transform rocket = player.transform.Find("Rocket");
+                    rocket?.GetComponent<Rocket>().Reset();
+                    Transform coin = player.transform.Find("Coin");
+                    coin?.GetComponent<Coin>().Reset();
                     break;
                 case Player.State.WIN:
                     LinBenScript LinBen = LinBenObject.GetComponent<LinBenScript>();
@@ -101,6 +106,13 @@ public class StageController : MonoBehaviour
                         p.Enable(Player.State.GAME);
                         AdjustCamera(isFollow: true, isVirtual: false, player);
                         p.ModifyPosition(Vector3.zero);
+                        // destroy items
+                        if (player.transform.Find("Rocket") != null) {
+                            Destroy(player.transform.Find("Rocket").gameObject);
+                        }
+                        if (player.transform.Find("Coin") != null) {
+                            Destroy(player.transform.Find("Coin").gameObject);
+                        }
                     }
                     break;
                 case Player.State.STOP:
@@ -120,7 +132,7 @@ public class StageController : MonoBehaviour
                 case Player.State.GAME:
                     // check lose 
                     if (player.transform.position.y < -50) {
-                        player.GetComponent<Player>().Disable(Player.State.LOSE);
+                        player.transform.Find("PlayerVisual").GetComponent<PlayerAnimator>().SetDead();
                     }
                     break;
                 }
