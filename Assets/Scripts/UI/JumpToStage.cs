@@ -45,6 +45,7 @@ public class JumpToStage : MonoBehaviour
         // TeleportPlayers();
         countdown.ResetState();
         flag = true;
+        transform.parent.position = new Vector3(0, -1000, 0);
         yield return new WaitForSeconds(2.0f);
 
         // fade in
@@ -53,9 +54,9 @@ public class JumpToStage : MonoBehaviour
             yield return null;
         }
 
+        transform.parent.gameObject.SetActive(false);
         nextStageText.enabled = false;
         flag = false;
-        transform.parent.gameObject.SetActive(false);
     }
 
     private void GetStagesNames() {

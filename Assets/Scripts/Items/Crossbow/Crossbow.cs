@@ -59,7 +59,7 @@ public class Crossbow : BaseItem
         ShuffleList(playerList);
         foreach (GameObject player in playerList) {
             Player playerScript = player.GetComponent<Player>();
-            if(playerScript.state != Player.State.LOSE) {
+            if(playerScript.GetState() != Player.State.LOSE) {
                 aimingPlayer = player;
                 return;
             }

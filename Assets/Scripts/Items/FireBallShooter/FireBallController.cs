@@ -31,7 +31,7 @@ public class FireBallController : MonoBehaviour
                 FireBall FireBall = Fireball.GetComponent<FireBall>();
                 if (collidedObject != FireBall.parentFireBallShooter) {
                     if (collidedObject.TryGetComponent<Player>(out var player) && 
-                    player.state == Player.State.GAME) {
+                    player.GetState() == Player.State.GAME) {
                         player.SetDead();
                     }
                     if (collidedObject.CompareTag("Wall")) {

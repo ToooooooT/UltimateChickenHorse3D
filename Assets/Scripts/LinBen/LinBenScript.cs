@@ -28,7 +28,7 @@ public class LinBenScript : MonoBehaviour
             transform.LookAt(targetPosition);
 
             myEvents?.Invoke();
-            other.GetComponent<Player>().state = Player.State.WIN;
+            other.GetComponent<Player>().SetWin();
         }
     }
 

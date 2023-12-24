@@ -7,7 +7,7 @@ public class TriggerFan : MonoBehaviour
     private void OnTriggerStay(Collider other) {
         if (other.CompareTag("Player")) {
             Player player = other.GetComponent<Player>();
-            if (player.state == Player.State.GAME) {
+            if (player.GetState() == Player.State.GAME) {
                 player.SetDead();
             }
         }
