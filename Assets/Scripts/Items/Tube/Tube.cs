@@ -16,7 +16,7 @@ public class Tube : BaseItem
     // Start is called before the first frame update
     void Start()
     {
-        countdownTime = 1.5f;
+        countdownTime = 4f;
     }
     void Update()
     {
