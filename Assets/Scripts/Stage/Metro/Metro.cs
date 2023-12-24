@@ -10,7 +10,6 @@ public class Metro : MonoBehaviour
     private float minWaitTime = 0f;
     private float maxWaitTime = 20f;
     public Vector3 direction = new Vector3(0, 0, 1);
-    private bool isMoving = false;
     private Vector3 startPosition;
     private float currentDistance = 0;
     private float totalDistance = 235f;
