@@ -44,8 +44,8 @@ public class Metro : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
-        if (other.CompareTag("Player") && other.GetComponent<Player>().state == Player.State.GAME) {
-            other.GetComponent<Player>().state = Player.State.LOSE;
+        if (other.CompareTag("Player") && other.GetComponent<Player>().GetState() == Player.State.GAME) {
+            other.GetComponent<Player>().SetDead(); 
         }
     }
 }

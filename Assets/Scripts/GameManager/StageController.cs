@@ -89,7 +89,7 @@ public class StageController : MonoBehaviour
         case CreateStage.PLAY:
             foreach (GameObject player in playerObjects) {
                 Player p = player.GetComponent<Player>();
-                switch (p.state) {
+                switch (p.GetState()) {
                 case Player.State.LOSE:
                     p.Enable(Player.State.GAME);
                     AdjustCamera(isFollow: true, isVirtual: false, player);
@@ -232,7 +232,7 @@ public class StageController : MonoBehaviour
         for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             ret &= player.HaveItem();
-            if (player.HaveItem() && player.state != Player.State.STOP) {
+            if (player.HaveItem() && player.GetState() != Player.State.STOP) {
                 player.ModifyPosition(Vector3.zero);
                 player.Disable(Player.State.STOP);
             }
@@ -287,7 +287,7 @@ public class StageController : MonoBehaviour
             if (player.transform.position.y < -50) {
                 player.SetDead();
                 // SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
-            } else if (player.state == Player.State.LOSE) {
+            } else if (player.GetState() == Player.State.LOSE) {
                 // SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
             }
         }
@@ -298,7 +298,7 @@ public class StageController : MonoBehaviour
         for (int i = 0; i < playerObjects.Count; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
             LinBenScript LinBen = LinBenObject.GetComponent<LinBenScript>();
-            if (player.state == Player.State.WIN && LinBen.state == LinBenScript.State.FINISH_POINTING) {
+            if (player.GetState() == Player.State.WIN && LinBen.state == LinBenScript.State.FINISH_POINTING) {
                 partyStage = PartyStage.SCOREBOARD;
                 LinBen.state = LinBenScript.State.IDLE;
                 winnerMoving.winner = i;
@@ -319,7 +319,7 @@ public class StageController : MonoBehaviour
     private void CheckAllLose() {
         for (int i = 0; i < playerObjects.Count; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
-            if (player.state != Player.State.LOSE) {
+            if (player.GetState() != Player.State.LOSE) {
                 return;
             }
         }

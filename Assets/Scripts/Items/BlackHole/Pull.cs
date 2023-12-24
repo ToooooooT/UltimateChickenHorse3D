@@ -38,9 +38,9 @@ public class Pull : BaseItem
                 Vector3 forceDirection = transform.position - allGameObjects[i].transform.position;
                 float distence = forceDirection.magnitude;
                 Player playerScript = allGameObjects[i].GetComponent<Player>();
-                if (distence < 3 && playerScript.state == Player.State.GAME) {
+                if (distence < 3 && playerScript.GetState() == Player.State.GAME) {
                     playerScript.SetDead();
-                } else if (distence < 15 && playerScript.state == Player.State.GAME) {
+                } else if (distence < 15 && playerScript.GetState() == Player.State.GAME) {
                     playerScript.exSpeed += forceDirection * (FORCE * 500 / (distence * distence * distence));
                 }
             }

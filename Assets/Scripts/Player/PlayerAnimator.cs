@@ -24,7 +24,7 @@ public class PlayerAnimator : MonoBehaviour {
         animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f) {
             isAnimationFinished = true;
             animator.SetBool(IS_DEAD, false);
-            player.state = Player.State.LOSE;
+            player.SetLose();
         }
         if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Dead")) {
             isAnimationFinished = false;
@@ -32,7 +32,7 @@ public class PlayerAnimator : MonoBehaviour {
     }
 
     public void SetDead() {
-        if (player.state == Player.State.GAME) {
+        if (player.GetState() == Player.State.GAME) {
             isAnimationFinished = false;
             animator.SetBool(IS_DEAD, true);
         }

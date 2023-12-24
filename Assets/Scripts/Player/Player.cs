@@ -17,9 +17,9 @@ public class Player : MonoBehaviour {
     public float jumpSpeed;
     public bool isPressSpace = false;
     public float verticalVelocity;
-    public State state;
     public Vector3 exSpeed;
 
+    [SerializeField] private State state;
     [SerializeField] private float normalMoveSpeed;
     [SerializeField] private float accelerateMoveSpeed;
     [SerializeField] private float moveSpeedJumpWallratio;
@@ -138,6 +138,18 @@ public class Player : MonoBehaviour {
 
     public void SetDead() {
         state = State.DEAD_ANIMATION;
+    }
+
+    public void SetLose() {
+        state = State.LOSE;
+    }
+
+    public State GetState() {
+        return state;
+    }
+
+    public void SetWin() {
+        state = State.WIN;
     }
 
     private Vector3 GetMoveDirNormalized() {

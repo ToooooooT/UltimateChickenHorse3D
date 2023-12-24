@@ -29,7 +29,7 @@ public class Coin : BaseItem
             Rotate();
         }
         if (transform.parent != null && 
-        transform.parent.GetComponent<Player>().state == Player.State.WIN) {
+        transform.parent.GetComponent<Player>().GetState() == Player.State.WIN) {
             transform.Find("Explode").gameObject.SetActive(true);
             transform.Find("PirateCoin").gameObject.SetActive(false);
         }

@@ -45,7 +45,7 @@ public class FlameController : BaseItem
     private void OnTriggerStay(Collider other) {
         if (other.CompareTag("Player") && state == State.FIRE && fire.activeSelf) {
             Player player = other.GetComponent<Player>();
-            if (player.state == Player.State.GAME) {
+            if (player.GetState() == Player.State.GAME) {
                 player.SetDead();
             }
         }
