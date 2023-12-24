@@ -29,6 +29,8 @@ public class Pull : BaseItem
                 Vector3 forceDirection = transform.position - allGameObjects[i].transform.position;
                 float distence = forceDirection.magnitude;
                 if (distence < 3) {
+                    if (allGameObjects[i].CompareTag("Frog"))
+                        allGameObjects[i].GetComponent<Frog>().getOff(false);
                     Destroy(allGameObjects[i]);
                 } else if (distence < 15) {
                     Velocity objectVelocityScript = allGameObjects[i].GetComponent<Velocity>();
