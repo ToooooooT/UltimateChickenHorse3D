@@ -60,7 +60,7 @@ public class Rocket : BaseItem
     }
 
     private void OnTriggerEnter(Collider other) {
-        if (other.gameObject.CompareTag("Player")) {
+        if (other.gameObject.CompareTag("Player") && !other.gameObject.transform.Find("Rocket")) {
             state = State.Equipped;
             transform.SetParent(other.transform);
             transform.SetLocalPositionAndRotation(new Vector3(0f, 0f, -1f), Quaternion.Euler(0f, 0f, 0f));

@@ -48,6 +48,7 @@ public class StageController : MonoBehaviour
         scoreBoardObject = GameObject.FindGameObjectWithTag("ScoreBoard");
         selectStageMenu = GameObject.Find("SelectStageMenu").gameObject;
         selectStageController = GameObject.Find("SelectStageMenu").gameObject.
+                                    transform.Find("VisableObjects").gameObject.
                                     transform.Find("StagesController").gameObject;
         pauseMenu = GameObject.Find("PauseCanvas").gameObject;
         isFirstChooseStage = true;
@@ -179,7 +180,7 @@ public class StageController : MonoBehaviour
                 p.ModifyPosition(0.5f * Vector3.up);
             }
             isFirstChooseStage = false;
-            selectStageMenu.SetActive(true);
+            selectStageMenu.transform.Find("VisableObjects").gameObject.SetActive(true);
         }
     }
 
