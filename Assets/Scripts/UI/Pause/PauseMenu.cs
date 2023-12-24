@@ -76,6 +76,7 @@ public class PauseMenu : MonoBehaviour
                 break;
             default:
                 stageController.partyStage = StageController.PartyStage.CHOOSE_STAGE;
+                ChangeSkybox();
                 break;
             }
         } else if (gameMode == "Create") {
@@ -86,9 +87,17 @@ public class PauseMenu : MonoBehaviour
                 break;
             default:
                 stageController.createStage = StageController.CreateStage.CHOOSE_STAGE;
+                ChangeSkybox();
                 break;
             }
         }
+    }
+
+    private void ChangeSkybox() {
+        string skyboxPath = "Skybox/Classic/FS000/FS000_Day_02";
+        Material skyboxMaterial = Resources.Load<Material>(skyboxPath);
+
+        RenderSettings.skybox = skyboxMaterial;
     }
 
     private void DestoryPlayer() {
