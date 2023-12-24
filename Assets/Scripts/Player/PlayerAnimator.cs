@@ -30,15 +30,4 @@ public class PlayerAnimator : MonoBehaviour {
             isAnimationFinished = false;
         }
     }
-
-    public void SetDead() {
-        if (player.state == Player.State.GAME) {
-            isAnimationFinished = false;
-            animator.SetBool(IS_DEAD, true);
-        }
-    }
-
-    public bool IsDead() {
-        return animator.GetBool(IS_DEAD);
-    }
 }
