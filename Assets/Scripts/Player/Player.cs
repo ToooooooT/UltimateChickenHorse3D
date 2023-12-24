@@ -27,6 +27,7 @@ public class Player : MonoBehaviour {
     [SerializeField] private float gravityMaxSpeedWithFriction;
     [SerializeField] private float gravityMaxSpeed;
     [SerializeField] private float gravity;
+    [SerializeField] private float gravityCache;
     [SerializeField] private float buttonPressedWindow;
     [SerializeField] private float resistanceRatio;
     [SerializeField] private float exSpeedThreshold;
@@ -63,6 +64,7 @@ public class Player : MonoBehaviour {
         velocity = normalMoveSpeed;
         jumpSpeed = 25f;
         gravity = 60;
+        gravityCache = 60;
         gravityMaxSpeed = 20f;
         gravityMaxSpeedWithFriction = 5f;
         buttonPressedWindow = .3f;
@@ -85,6 +87,8 @@ public class Player : MonoBehaviour {
     public void Enable(State new_state) {
         state = new_state;
         playerInputActionMap.Enable();
+        InputAction move = playerInputActionMap.FindAction("Move");
+        move.Enable();
         InputAction jump = playerInputActionMap.FindAction("Jump");
         jump.started += DoJump;
         jump.canceled += CancelJump;
@@ -104,10 +108,35 @@ public class Player : MonoBehaviour {
             break;
         }
     }
-
+    public void FrogEnable()
+    {
+        InputAction move = playerInputActionMap.FindAction("Move");
+        move.Enable();
+        InputAction jump = playerInputActionMap.FindAction("Jump");
+        jump.started += DoJump;
+        jump.canceled += CancelJump;
+        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+        accelerate.started += DoAccelerate;
+        accelerate.canceled += NoAccelerate;
+        gravity = gravityCache;
+    }
+    public void FrogDisable()
+    {
+        InputAction move = playerInputActionMap.FindAction("Move");
+        move.Disable();
+        InputAction jump = playerInputActionMap.FindAction("Jump");
+        jump.started -= DoJump;
+        jump.canceled -= CancelJump;
+        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+        accelerate.started -= DoAccelerate;
+        accelerate.canceled -= NoAccelerate;
+        gravity = 0;
+    }
     public void Disable(State new_state) {
         state = new_state;
         playerInputActionMap.Disable();
+        InputAction move = playerInputActionMap.FindAction("Move");
+        move.Disable();
         InputAction jump = playerInputActionMap.FindAction("Jump");
         jump.started -= DoJump;
         jump.canceled -= CancelJump;

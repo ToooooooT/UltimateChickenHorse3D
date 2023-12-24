@@ -54,8 +54,19 @@ public class MouseControlFollowCamera : MonoBehaviour
         playerInputActionMap.FindAction("FPS2TPS").started -= FPS2TPS;
         enabled = false;
     }
+    public void SetFPS(bool isFPS)
+    {
+        FPS = isFPS;
+    }
+    public void EnableButton()
+    {
+        playerInputActionMap.FindAction("FPS2TPS").started += FPS2TPS;
+    }
 
-
+    public void DisableButton()
+    {
+        playerInputActionMap.FindAction("FPS2TPS").started -= FPS2TPS;
+    }
     private void FPS2TPS(InputAction.CallbackContext context) {
         FPS = !FPS;
     }
