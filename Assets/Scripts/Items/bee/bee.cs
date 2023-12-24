@@ -35,7 +35,7 @@ public class Bee : BaseItem
     }
 
     private void OnTriggerEnter(Collider other) {
-        if (other.gameObject.CompareTag("Player")) {
+        if (other.CompareTag("Player")) {
             if (state == State.Idle) {
                 animator.SetTrigger("Move");
                 state = State.Move;
@@ -44,7 +44,7 @@ public class Bee : BaseItem
                 if (player2follow.GetComponent<Player>().state == Player.State.GAME) {
                     animator.SetTrigger("Attack");
                     state = State.Attack;
-                    player2follow.GetComponent<Player>().state = Player.State.LOSE;
+                    other.transform.Find("PlayerVisual").GetComponent<PlayerAnimator>().SetDead(); 
                 }
             }
         }

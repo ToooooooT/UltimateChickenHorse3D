@@ -55,7 +55,7 @@ public class Crossbow : BaseItem
     void ChangeAimingPlayer()
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        List<GameObject> playerList = new List<GameObject>(players);
+        List<GameObject> playerList = new(players);
         ShuffleList(playerList);
         foreach (GameObject player in playerList) {
             Player playerScript = player.GetComponent<Player>();

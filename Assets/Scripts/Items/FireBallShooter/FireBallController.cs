@@ -30,8 +30,9 @@ public class FireBallController : MonoBehaviour
                 GameObject collidedObject = hitInfo.collider.gameObject;
                 FireBall FireBall = Fireball.GetComponent<FireBall>();
                 if (collidedObject != FireBall.parentFireBallShooter) {
-                    if (collidedObject.TryGetComponent<Player>(out var player) && player.state == Player.State.GAME) {
-                        player.state = Player.State.LOSE;
+                    if (collidedObject.TryGetComponent<Player>(out var player) && 
+                    player.state == Player.State.GAME) {
+                        collidedObject.transform.Find("PlayerVisual").GetComponent<PlayerAnimator>().SetDead();
                     }
                     if (collidedObject.CompareTag("Wall")) {
                         Destroy(Fireball);
