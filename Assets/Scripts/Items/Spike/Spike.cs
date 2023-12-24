@@ -13,10 +13,10 @@ public class Spike : MonoBehaviour
     }
 
     private void OnTriggerStay(Collider other) {
-        if (other.gameObject.CompareTag("Player")) {
-            Player player = other.gameObject.GetComponent<Player>();
+        if (other.CompareTag("Player")) {
+            Player player = other.GetComponent<Player>();
             if (player.state == Player.State.GAME) {
-                player.state = Player.State.LOSE;
+                player.SetDead();
             }
         }
     }

@@ -12,7 +12,7 @@ using UnityEditor.Profiling;
 
 public class Player : MonoBehaviour {
    
-    public enum State { MOVE, GAME, SELECT_ITEM, STOP, WIN, LOSE };
+    public enum State { MOVE, GAME, SELECT_ITEM, STOP, WIN, DEAD_ANIMATION, LOSE };
 
     public float jumpSpeed;
     public bool isPressSpace = false;
@@ -130,6 +130,14 @@ public class Player : MonoBehaviour {
 
     public bool IsWalking() {
         return isWalking;
+    }
+
+    public bool IsDeadAnimation() {
+        return state == State.DEAD_ANIMATION;
+    }
+
+    public void SetDead() {
+        state = State.DEAD_ANIMATION;
     }
 
     private Vector3 GetMoveDirNormalized() {

@@ -29,8 +29,9 @@ public class CannonBombController : MonoBehaviour
                 GameObject collidedObject = hitInfo.collider.gameObject;
                 CannonBomb bombScript = bomb.GetComponent<CannonBomb>();
                 if (collidedObject != bombScript.parentCannon) {
-                    if (collidedObject.TryGetComponent<Player>(out var player) && player.state == Player.State.GAME) {
-                        player.state = Player.State.LOSE;
+                    if (collidedObject.TryGetComponent<Player>(out var player) && 
+                    player.state == Player.State.GAME) {
+                        player.SetDead();
                     }
                     if (collidedObject.CompareTag("Wall")) {
                         Destroy(bomb);

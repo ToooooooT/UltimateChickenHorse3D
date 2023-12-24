@@ -11,19 +11,21 @@ public class FanController : BaseItem
 
     private State state;
     private Transform fan;
+    private Transform middle;
     private float maxY;
     private float minY;
     private Vector3 originPosition;
 
     void Awake() {
         state = State.IDLE;
-        fan = transform.Find("Fan");
+        fan = transform.Find("middle").Find("Fan");
+        middle = transform.Find("middle");
     }
 
     void Start() {
         rotateSpeed = 200.0f;
-        maxY = transform.position.y + 20.0f;
-        minY = transform.position.y;
+        maxY = middle.position.y + 20.0f;
+        minY = middle.position.y;
         moveSpeed = 10.0f;
     }
 
@@ -41,13 +43,13 @@ public class FanController : BaseItem
     }
 
     private void Move() {
-        Vector3 position = transform.position;
+        Vector3 position = middle.localPosition;
         position.y += moveSpeed * Time.deltaTime;
         if (position.y > maxY || position.y < minY) {
             moveSpeed *= -1;
         }
         position.y = Mathf.Clamp(position.y, minY, maxY);
-        transform.position = position;
+        middle.localPosition = position;
     }
 
     public override void Initialize() {

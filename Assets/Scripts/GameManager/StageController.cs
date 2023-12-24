@@ -32,9 +32,16 @@ public class StageController : MonoBehaviour
     private int createItemCounter;
     private List<int> winnerIndexs;
 
+    private Vector3[] selectItemPositions;
+
     void Start() {
         items = new();
         winnerIndexs = new();
+        selectItemPositions = new Vector3[4];
+        selectItemPositions[0] = new Vector3(3000 - 38, 1, 3000 - 38);
+        selectItemPositions[1] = new Vector3(3000 + 38, 1, 3000 + 38);
+        selectItemPositions[2] = new Vector3(3000 + 38, 1, 3000 - 38);
+        selectItemPositions[3] = new Vector3(3000 - 38, 1, 3000 + 38);
         // remember to change to party
         gameMode = PlayerPrefs.GetString("GameMode", "Party");
         if (gameMode == "Party") {
@@ -87,6 +94,11 @@ public class StageController : MonoBehaviour
                     p.Enable(Player.State.GAME);
                     AdjustCamera(isFollow: true, isVirtual: false, player);
                     p.ModifyPosition(Vector3.zero);
+                    // reset items
+                    Transform rocket = player.transform.Find("Rocket");
+                    rocket?.GetComponent<Rocket>().Reset();
+                    Transform coin = player.transform.Find("Coin");
+                    coin?.GetComponent<Coin>().Reset();
                     break;
                 case Player.State.WIN:
                     LinBenScript LinBen = LinBenObject.GetComponent<LinBenScript>();
@@ -95,6 +107,13 @@ public class StageController : MonoBehaviour
                         p.Enable(Player.State.GAME);
                         AdjustCamera(isFollow: true, isVirtual: false, player);
                         p.ModifyPosition(Vector3.zero);
+                        // destroy items
+                        if (player.transform.Find("Rocket") != null) {
+                            Destroy(player.transform.Find("Rocket").gameObject);
+                        }
+                        if (player.transform.Find("Coin") != null) {
+                            Destroy(player.transform.Find("Coin").gameObject);
+                        }
                     }
                     break;
                 case Player.State.STOP:
@@ -114,7 +133,7 @@ public class StageController : MonoBehaviour
                 case Player.State.GAME:
                     // check lose 
                     if (player.transform.position.y < -50) {
-                        player.GetComponent<Player>().Disable(Player.State.LOSE);
+                        player.GetComponent<Player>().SetDead();
                     }
                     break;
                 }
@@ -203,7 +222,7 @@ public class StageController : MonoBehaviour
         for (int i = 0; i < playerObjects.Count; ++i) {
             Player player = playerObjects[i].GetComponent<Player>();
             player.Enable(Player.State.SELECT_ITEM);
-            RandomPositionToSelectItem(player);
+            player.ModifyPosition(selectItemPositions[i]);
             AdjustCamera(isFollow: true, isVirtual: false, playerObjects[i]);
         }
     }
@@ -248,16 +267,6 @@ public class StageController : MonoBehaviour
         }
     }
 
-    private void RandomPositionToSelectItem(Player player) {
-        Vector3 spawnArea = GetComponent<ItemGenerator>().spawnArea;
-        spawnArea.y = 3;
-        Vector3 size = GetComponent<ItemGenerator>().size;
-        float randomX = Random.Range(spawnArea.x - size.x / 2, spawnArea.x + size.x / 2);
-        float randomY = Random.Range(spawnArea.y - size.y / 2, spawnArea.y + size.y / 2);
-        float randomZ = Random.Range(spawnArea.z - size.z / 2, spawnArea.z + size.z / 2);
-        player.ModifyPosition(new Vector3(randomX, randomY, randomZ));
-    }
-
     private void AdjustCamera(bool isFollow, bool isVirtual, GameObject player) {
         Transform camera = player.transform.Find("Camera");
         if (isFollow) {
@@ -276,7 +285,7 @@ public class StageController : MonoBehaviour
         for (int i = 0; i < playerObjects.Count; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.transform.position.y < -50) {
-                player.Disable(Player.State.LOSE);
+                player.SetDead();
                 // SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
             } else if (player.state == Player.State.LOSE) {
                 // SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
