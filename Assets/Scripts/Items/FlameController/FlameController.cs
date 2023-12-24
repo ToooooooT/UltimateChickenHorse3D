@@ -46,7 +46,7 @@ public class FlameController : BaseItem
         if (other.CompareTag("Player") && state == State.FIRE && fire.activeSelf) {
             Player player = other.GetComponent<Player>();
             if (player.state == Player.State.GAME) {
-                other.transform.Find("PlayerVisual").GetComponent<PlayerAnimator>().SetDead();
+                player.SetDead();
             }
         }
     }

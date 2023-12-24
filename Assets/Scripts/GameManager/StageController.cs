@@ -132,7 +132,7 @@ public class StageController : MonoBehaviour
                 case Player.State.GAME:
                     // check lose 
                     if (player.transform.position.y < -50) {
-                        player.transform.Find("PlayerVisual").GetComponent<PlayerAnimator>().SetDead();
+                        player.GetComponent<Player>().SetDead();
                     }
                     break;
                 }
@@ -284,7 +284,7 @@ public class StageController : MonoBehaviour
         for (int i = 0; i < playerObjects.Count; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
             if (player.transform.position.y < -50) {
-                playerObjects[i].transform.Find("PlayerVisual").GetComponent<PlayerAnimator>().SetDead();
+                player.SetDead();
                 // SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
             } else if (player.state == Player.State.LOSE) {
                 // SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);

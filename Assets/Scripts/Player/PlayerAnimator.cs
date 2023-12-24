@@ -19,11 +19,15 @@ public class PlayerAnimator : MonoBehaviour {
 
     void Update() {
         animator.SetBool(IS_WALKING, player.IsWalking());
+        animator.SetBool(IS_DEAD, player.IsDeadAnimation());
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dead") && !isAnimationFinished &&
         animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f) {
             isAnimationFinished = true;
             animator.SetBool(IS_DEAD, false);
             player.state = Player.State.LOSE;
+        }
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Dead")) {
+            isAnimationFinished = false;
         }
     }
 

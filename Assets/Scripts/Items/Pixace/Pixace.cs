@@ -46,7 +46,7 @@ public class Pixace : BaseItem
     private void OnTriggerEnter(Collider other) {
         if (other.CompareTag("Player")) {
             if (angular > Mathf.PI / 2 && angular < 3 * Mathf.PI /2) {
-                other.transform.Find("PlayerVisual").GetComponent<PlayerAnimator>().SetDead();;
+                other.GetComponent<Player>().SetDead();
             }
         }
     }

@@ -31,7 +31,7 @@ public class ArrowController : MonoBehaviour
                 if (collidedObject != newArrowScript.parentCrossbow) {
                     if (collidedObject.TryGetComponent<Player>(out var player) && 
                     player.state == Player.State.GAME) {
-                        collidedObject.transform.Find("PlayerVisual").GetComponent<PlayerAnimator>().SetDead();
+                        player.SetDead();
                     }
                     if (collidedObject.CompareTag("Wall")) {
                         Destroy(arrow);

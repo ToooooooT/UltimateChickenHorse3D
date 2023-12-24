@@ -39,7 +39,7 @@ public class Pull : BaseItem
                 float distence = forceDirection.magnitude;
                 Player playerScript = allGameObjects[i].GetComponent<Player>();
                 if (distence < 3 && playerScript.state == Player.State.GAME) {
-                    allGameObjects[i].transform.Find("PlayerVisual").GetComponent<PlayerAnimator>().SetDead();
+                    playerScript.SetDead();
                 } else if (distence < 15 && playerScript.state == Player.State.GAME) {
                     playerScript.exSpeed += forceDirection * (FORCE * 500 / (distence * distence * distence));
                 }

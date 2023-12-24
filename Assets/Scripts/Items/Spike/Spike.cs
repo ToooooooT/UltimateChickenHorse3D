@@ -16,7 +16,7 @@ public class Spike : MonoBehaviour
         if (other.CompareTag("Player")) {
             Player player = other.GetComponent<Player>();
             if (player.state == Player.State.GAME) {
-                other.transform.Find("PlayerVisual").GetComponent<PlayerAnimator>().SetDead();
+                player.SetDead();
             }
         }
     }
