@@ -9,7 +9,8 @@ public class PlayerManager : MonoBehaviour
 {
     private PlayerInputManager playerManager;
     private StageController stageController;
-    private GameObject canvas;
+    private GameObject pauseCanvas;
+    private GameObject blackCanvas;
 
     private static readonly int[] slidersPosX = new int[] { 880, 500, 350, 300 };
     private static readonly int[] slidersGridSpace = new int[] { 300, 700, 500, 330 };
@@ -25,7 +26,8 @@ public class PlayerManager : MonoBehaviour
     private void Awake() {
         playerManager = GetComponent<PlayerInputManager>();
         stageController = GetComponent<StageController>();
-        canvas = GameObject.Find("PauseCanvas");
+        pauseCanvas = GameObject.Find("PauseCanvas");
+        blackCanvas = GameObject.Find("BlackCanvas");
 
         joinAction.Enable();
         joinAction.performed += context => JoinAction(context);
@@ -47,7 +49,7 @@ public class PlayerManager : MonoBehaviour
         PlayerJoinedGame?.Invoke(playerInput);
         stageController.playerObjects.Add(playerInput.gameObject);
         // modify sliders layout when adding player
-        GameObject sliders = canvas.transform.Find("SettingMenu").Find("Sliders").gameObject;
+        GameObject sliders = pauseCanvas.transform.Find("SettingMenu").Find("Sliders").gameObject;
         int n = playerList.Count;
         Vector3 pos = sliders.GetComponent<RectTransform>().position;
         pos.x = slidersPosX[n - 1];
@@ -62,6 +64,11 @@ public class PlayerManager : MonoBehaviour
         cellSize.x = slidersCellSizeX[n - 1];
         newSlider.GetComponent<GridLayoutGroup>().cellSize = cellSize;
         newSlider.GetComponent<CameraSlider>().SetCamera(playerInput.gameObject);
+        if (playerList.Count == 3) {
+            blackCanvas.transform.Find("Black").gameObject.SetActive(true);
+        } else if (playerList.Count == 4) {
+            blackCanvas.transform.Find("Black").gameObject.SetActive(false);
+        }
     }
 
     void OnPlayerLeft(PlayerInput playerInput) {
