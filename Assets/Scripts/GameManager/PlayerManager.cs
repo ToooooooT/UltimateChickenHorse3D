@@ -17,6 +17,7 @@ public class PlayerManager : MonoBehaviour
     private static readonly int[] slidersCellSizeX = new int[] { 300, 300, 200, 150 };
 
     private Material[] playerMaterials = new Material[4];
+    private Sprite[] playerCursors = new Sprite[4];
 
     public List<PlayerInput> playerList = new();
     public event System.Action<PlayerInput> PlayerJoinedGame;
@@ -25,7 +26,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] InputAction joinAction;
     [SerializeField] InputAction leaveAction;
 
-    private const string FOLDER = "Materials";
+    private const string PLAYER_MATERIALS_FOLDER = "Materials";
+    private const string PLAYER_CURSORS_FOLDER = "Cursors";
 
     private void Awake() {
         playerManager = GetComponent<PlayerInputManager>();
@@ -39,10 +41,15 @@ public class PlayerManager : MonoBehaviour
         leaveAction.Enable();
         leaveAction.performed += context => LeaveAction(context);
 
-        playerMaterials[0] = Resources.Load<Material>(FOLDER + "/PlayerBody");
-        playerMaterials[1] = Resources.Load<Material>(FOLDER + "/PlayerBody_Blue");
-        playerMaterials[2] = Resources.Load<Material>(FOLDER + "/PlayerBody_Red");
-        playerMaterials[3] = Resources.Load<Material>(FOLDER + "/PlayerBody_Green");
+        playerMaterials[0] = Resources.Load<Material>(PLAYER_MATERIALS_FOLDER + "/PlayerBody");
+        playerMaterials[1] = Resources.Load<Material>(PLAYER_MATERIALS_FOLDER + "/PlayerBody_Blue");
+        playerMaterials[2] = Resources.Load<Material>(PLAYER_MATERIALS_FOLDER + "/PlayerBody_Red");
+        playerMaterials[3] = Resources.Load<Material>(PLAYER_MATERIALS_FOLDER + "/PlayerBody_Green");
+
+        playerCursors[0] = Resources.Load<Sprite>(PLAYER_CURSORS_FOLDER + "/YellowCursor");
+        playerCursors[1] = Resources.Load<Sprite>(PLAYER_CURSORS_FOLDER + "/BlueCursor");
+        playerCursors[2] = Resources.Load<Sprite>(PLAYER_CURSORS_FOLDER + "/RedCursor");
+        playerCursors[3] = Resources.Load<Sprite>(PLAYER_CURSORS_FOLDER + "/GreenCursor");
     }
 
     void Start() {
@@ -65,6 +72,8 @@ public class PlayerManager : MonoBehaviour
         };
         player.transform.Find("PlayerVisual").Find("Head").GetComponent<MeshRenderer>().SetMaterials(materialList);
         player.transform.Find("PlayerVisual").Find("Body").GetComponent<MeshRenderer>().SetMaterials(materialList);
+        // set player cursors 
+        player.transform.Find("Canvas").Find("Cursor").GetComponent<Image>().sprite = playerCursors[playerList.Count - 1];
         // modify sliders layout when adding player
         GameObject sliders = pauseCanvas.transform.Find("SettingMenu").Find("Sliders").gameObject;
         int n = playerList.Count;
