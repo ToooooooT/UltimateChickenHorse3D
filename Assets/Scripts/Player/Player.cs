@@ -45,6 +45,8 @@ public class Player : MonoBehaviour {
     private Vector3 followObjectMove;
     private GameObject pauseMenu;
     private GameObject chooseItemCanvas;
+    private ParticleSystem jumpParticles;
+    private ParticleSystem moveParticles;
     private string gameMode;
 
     private void Awake() {
@@ -54,6 +56,8 @@ public class Player : MonoBehaviour {
         placeObjectInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("PlaceObject");
         pauseMenu = GameObject.Find("PauseCanvas").transform.Find("PauseMenu").gameObject;
         chooseItemCanvas = GameObject.Find("ChooseItemCanvas").gameObject;
+        jumpParticles = transform.Find("PlayerJumpParticles").GetComponent<ParticleSystem>();
+        moveParticles = transform.Find("PlayerMovingParticles").GetComponent<ParticleSystem>();
     }
 
     private void Start() {
@@ -302,6 +306,8 @@ public class Player : MonoBehaviour {
         if (CheckWall() || IsGrounded()) {
             isJumping = true;
             buttonPressedTime = 0;
+            jumpParticles.Play();
+            moveParticles.Stop();
         }
     }
 
@@ -357,6 +363,9 @@ public class Player : MonoBehaviour {
         } else if ((state == State.GAME || state == State.MOVE ) && hit.gameObject.TryGetComponent<PlayerFollowObject>(out var playerFollow)) {
             // follow object move
             followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition(gameObject);
+        }
+        if (!moveParticles.isPlaying) {
+            moveParticles.Play();
         }
     }
 

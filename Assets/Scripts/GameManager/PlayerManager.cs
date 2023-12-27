@@ -81,6 +81,7 @@ public class PlayerManager : MonoBehaviour
         cellSize.x = slidersCellSizeX[n - 1];
         newSlider.GetComponent<GridLayoutGroup>().cellSize = cellSize;
         newSlider.GetComponent<CameraSlider>().SetCamera(playerInput.gameObject);
+        // add black curtain if only three players
         if (playerList.Count == 3) {
             blackCanvas.transform.Find("Black").gameObject.SetActive(true);
         } else if (playerList.Count == 4) {
