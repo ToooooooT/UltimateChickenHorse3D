@@ -50,7 +50,7 @@ public class Crossbow : BaseItem
     void Slerp()
     {
         Vector3 targetDirection = (aimingPlayer.transform.position - transform.position).normalized;
-        transform.forward = (transform.forward + Time.deltaTime * rotateSpeed * (targetDirection - transform.forward * Vector3.Dot(targetDirection, transform.forward)));
+        transform.forward = transform.forward + Time.deltaTime * rotateSpeed * (targetDirection - transform.forward * Vector3.Dot(targetDirection, transform.forward));
     }
     void ChangeAimingPlayer()
     {
@@ -71,9 +71,7 @@ public class Crossbow : BaseItem
         while (n > 1) {
             n--;
             int k = Random.Range(0, n + 1);
-            T value = list[k];
-            list[k] = list[n];
-            list[n] = value;
+            (list[n], list[k]) = (list[k], list[n]);
         }
     }
     void ShootingMode()
@@ -111,7 +109,7 @@ public class Crossbow : BaseItem
                 newArrow.transform.localScale = new Vector3(5f, 5f, 5f);
                 Arrow ArrowScript = newArrow.GetComponent<Arrow>();
                 ArrowScript.velocity = transform.forward * 0.5f;
-                ArrowScript.parentCrossbow = this.gameObject;
+                ArrowScript.parentCrossbow = gameObject;
                 GameObject gameController = GameObject.Find("GameController");
                 StageController stageController = gameController.GetComponent<StageController>();
                 stageController.items.Add(newArrow);

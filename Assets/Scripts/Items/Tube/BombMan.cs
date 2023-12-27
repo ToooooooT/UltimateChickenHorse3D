@@ -72,7 +72,7 @@ public class BombMan : Velocity
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             for(int i = 0; i < players.Length; i++) {
                 if((players[i].transform.position - transform.position).magnitude <= transform.localScale.x * 1.25f) {
-                    players[i].GetComponent<Player>().state = Player.State.LOSE;
+                    players[i].GetComponent<Player>().SetDead();
                 }
             }
         }
@@ -120,7 +120,7 @@ public class BombMan : Velocity
         ShuffleList(playerList);
         foreach (GameObject player in playerList) {
             Player playerScript = player.GetComponent<Player>();
-            if (playerScript.state != Player.State.LOSE) {
+            if (playerScript.GetState() != Player.State.LOSE) {
                 aimingPlayer = player;
                 Vector3 targetDirection = (aimingPlayer.transform.position - transform.position);
                 targetDirection.y = 0;

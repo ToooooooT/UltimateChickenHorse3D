@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Frog : Velocity
 {
@@ -24,39 +25,34 @@ public class Frog : Velocity
     private float kickAnimationClipTime;
     private Vector3 kickOutDatumPoint;
     private float kickOutRadius;
+    private InputActionMap frogPlayerInputActionMap;
+
     private void Awake()
     {
         colliderFrog = GetComponent<Collider>();
         state = State.PLACING;
     }
-    // Start is called before the first frame update
-    void Start()
-    {
+
+    void Start() {
         animator = GetComponent<Animator>();
         gravity = new Vector3(0, -3, 0);
         jumpingSpeed = 20;
-        maxEndureTime = 5;
+        maxEndureTime = 25;
         jumpCooldownTime = 7;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if(ridingPlayer != null && ridingPlayer.GetComponent<Player>().state == Player.State.LOSE) {
-            getOff(false);
+    void Update() {
+        if(ridingPlayer != null && ridingPlayer.GetComponent<Player>().GetState() == Player.State.LOSE) {
+            GetOff(false);
             Destroy(gameObject);
         }
         if (state == State.RIDING) {
-            Eat();
-            ShortJump();
             if (IsGrounded() && jumpCooldown <= 0) {
-                LongJump();
                 if (velocity.y <0) {
                     velocity = new Vector3(0, velocity.y, 0);
                 }
                 jumpCooldown = jumpCooldownTime;
-            }
-            else if (IsCeilinged()) {
+            } else if (IsCeilinged()) {
                 velocity = new Vector3(velocity.x, 0, velocity.z);
             }
             if (!IsGrounded()) {
@@ -81,33 +77,30 @@ public class Frog : Velocity
                 //animator.SetTrigger("Tongue");
                 state = State.EATING;
                 kickAnimationClipTime = 0;
-                kickOutDatumPoint = ((transform.position + 2.5f * transform.forward) + (transform.position)) / 2;
-                kickOutRadius = (((transform.position + 2.5f * transform.forward) - (transform.position)) / 2).magnitude;
-                getOff(false);
+                kickOutDatumPoint = (transform.position + 2.5f * transform.forward + transform.position) / 2;
+                kickOutRadius = ((transform.position + 2.5f * transform.forward - transform.position) / 2).magnitude;
+                GetOff(false);
             }
-        }
-        else if (state == State.EATING) {
+        } else if (state == State.EATING) {
             if (catchedPlayer == ridingPlayer) {
                 if(kickAnimationClipTime < 1) {
                     KickOutAnimation();
                     kickAnimationClipTime += 3f * Time.deltaTime;
-                }
-                else if (DeadAnimation()) {
-                    catchedPlayer.GetComponent<Player>().state = Player.State.LOSE;
+                } else if (DeadAnimation()) {
+                    catchedPlayer.GetComponent<Player>().SetDead();
                     Destroy(gameObject);
                 }
-            }
-            else {
+            } else {
                 if (DeadAnimation()) {
-                    catchedPlayer.GetComponent<Player>().state = Player.State.LOSE;
-                    getOff(false);
+                    catchedPlayer.GetComponent<Player>().SetDead();
+                    GetOff(false);
                     Destroy(gameObject);
                 }
             }
         }
     }
-    private void KickOutAnimation()
-    {
+
+    private void KickOutAnimation() {
         Vector3 frogForward = transform.forward;
         frogForward.y = 0;
         frogForward = frogForward.normalized;
@@ -119,8 +112,8 @@ public class Frog : Velocity
             animator.SetTrigger("Tongue");
         }
     }
-    private bool DeadAnimation()
-    {
+
+    private bool DeadAnimation() {
         float clipTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
         if(clipTime > 0.5) {
             Player catchedPlayerScript = catchedPlayer.GetComponent<Player>();
@@ -131,9 +124,9 @@ public class Frog : Velocity
         }
         return false;
     }
-    private void ShortJump()
-    {
-        if (Input.GetKey(KeyCode.W)) {
+
+    private void ShortJump(InputAction.CallbackContext context) {
+        if (state == State.RIDING) {
             Vector3 cameraForward = playerCamera.transform.forward;
             cameraForward.y = 0;
             if (IsGrounded() && jumpCooldown <= 0) {
@@ -150,9 +143,9 @@ public class Frog : Velocity
             }
         }
     }
-    private void LongJump()
-    {
-        if (Input.GetKey(KeyCode.Space)) {
+
+    private void LongJump(InputAction.CallbackContext context) {
+        if (state == State.RIDING && IsGrounded() && jumpCooldown <= 0) {
             Vector3 cameraForward = playerCamera.transform.forward;
             cameraForward.y = 0;
             velocity += 2f * cameraForward.normalized;
@@ -163,8 +156,8 @@ public class Frog : Velocity
                 animator.SetTrigger("Jump");
         }
     }
-    private GameObject PlayerCatched()
-    {
+
+    private GameObject PlayerCatched() {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         //Vector3 playerDirection;
         //TODO set playerDirection
@@ -182,37 +175,37 @@ public class Frog : Velocity
         }
         return null;
     }
-    private void Eat()
-    {
-        if (Input.GetMouseButtonDown(0)) {
+
+    private void Eat(InputAction.CallbackContext context) {
+        if (state == State.RIDING) {
             Vector3 cameraForward = playerCamera.transform.forward;
             cameraForward.y = 0;
             transform.forward = cameraForward.normalized;
             animator.SetTrigger("Tongue");
         }
     }
-    private bool IsGrounded()
-    {
+
+    private bool IsGrounded() {
         Vector3 p1 = transform.position + frogController.center;
         float castDistance = 0.5f;
         return Physics.SphereCast(p1, frogController.radius * 2, Vector3.down, out RaycastHit hit, castDistance)
                 && TagCanJump(hit.collider);
     }
-    private bool IsCeilinged()
-    {
+
+    private bool IsCeilinged() {
         Vector3 p1 = transform.position + frogController.center;
         float castDistance = 0.5f;
         return Physics.SphereCast(p1, frogController.radius * 2, Vector3.up, out RaycastHit hit, castDistance)
                 && TagCanJump(hit.collider);
     }
-    private bool TagCanJump(Collider collider)
-    {
+
+    private bool TagCanJump(Collider collider) {
         return collider.CompareTag("Airplane") ||
             collider.CompareTag("Wall") ||
             collider.CompareTag("CannonPipe");
     }
-    private void OnTriggerEnter(Collider collider)
-    {
+
+    private void OnTriggerEnter(Collider collider) {
         if (ridingPlayer == null && collider.gameObject.transform.CompareTag("Player")) {
             ridingPlayer = collider.gameObject;
             playerScale = ridingPlayer.transform.localScale;
@@ -221,7 +214,7 @@ public class Frog : Velocity
             ridingPlayer.transform.SetParent(transform);
             ridingPlayer.transform.localPosition = new Vector3(0f, 0.3f, 0f);
             ridingPlayerScript = ridingPlayer.transform.GetComponent<Player>();
-            ridingPlayerScript.FrogDisable();
+            ridingPlayerScript.FrogEnable();
             playerCamera = ridingPlayer.transform.Find("Camera").gameObject;
             /*
             playerCameraScript = playerCamera.GetComponent<MouseControlFollowCamera>();
@@ -237,28 +230,52 @@ public class Frog : Velocity
             state = State.RIDING;
         }
     }
-    public void getOff(bool alreadyGetOff)
-    {
-        if (alreadyGetOff) return;
+
+    public void Enable() {
+        frogPlayerInputActionMap = ridingPlayer.GetComponent<PlayerInput>().actions.FindActionMap("Frog");
+        frogPlayerInputActionMap.Enable();
+        InputAction shortJump = frogPlayerInputActionMap.FindAction("ShortJump");
+        shortJump.performed += ShortJump;
+        InputAction longJump = frogPlayerInputActionMap.FindAction("LongJump");
+        longJump.performed += LongJump;
+        InputAction eat = frogPlayerInputActionMap.FindAction("Eat");
+        eat.performed += Eat;
+    }
+
+    public void Disable() {
+        frogPlayerInputActionMap = ridingPlayer.GetComponent<PlayerInput>().actions.FindActionMap("Frog");
+        frogPlayerInputActionMap.Disable();
+        InputAction shortJump = frogPlayerInputActionMap.FindAction("ShortJump");
+        shortJump.performed -= ShortJump;
+        InputAction longJump = frogPlayerInputActionMap.FindAction("LongJump");
+        longJump.performed -= LongJump;
+        InputAction eat = frogPlayerInputActionMap.FindAction("Eat");
+        eat.performed -= Eat;
+    }
+
+
+    public void GetOff(bool alreadyGetOff) {
+        if (alreadyGetOff) {
+            return;
+        }
         if (ridingPlayer != null) {
             ridingPlayer.transform.SetParent(null);ridingPlayerScript.ModifyPosition(transform.position);
             ridingPlayer.transform.localScale = playerScale;
             Player playerScript = ridingPlayer.GetComponent<Player>();
-            if (playerScript != null) {
-                playerScript.FrogEnable();
-            }
+            playerScript?.FrogDisable();
             //ridingPlayer = null;
         }
     }
-    public override void Initialize()
-    {
+
+    public override void Initialize() {
         colliderFrog.isTrigger = true;
         state = State.IDLE;
     }
-    public override void Reset()
-    {
-        if(ridingPlayer != null)
-            ridingPlayerScript.FrogEnable();
+
+    public override void Reset() {
+        if (ridingPlayer != null) {
+            ridingPlayerScript.FrogDisable();
+        }
         state = State.IDLE;
     }
 }

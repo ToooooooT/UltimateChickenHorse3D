@@ -107,31 +107,37 @@ public class Player : MonoBehaviour {
             chooseItemCreate.performed += ChooseItemCreate;
             break;
         }
+        if (transform.parent != null && transform.parent.gameObject.name == "ToxicFrog") {
+            FrogEnable();
+        }
     }
-    public void FrogEnable()
-    {
-        InputAction move = playerInputActionMap.FindAction("Move");
-        move.Enable();
-        InputAction jump = playerInputActionMap.FindAction("Jump");
-        jump.started += DoJump;
-        jump.canceled += CancelJump;
-        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
-        accelerate.started += DoAccelerate;
-        accelerate.canceled += NoAccelerate;
-        gravity = gravityCache;
+
+    public void FrogEnable() {
+        if (transform.parent != null && transform.parent.TryGetComponent<Frog>(out var frog)) {
+            InputAction move = playerInputActionMap.FindAction("Move");
+            move.Disable();
+            InputAction jump = playerInputActionMap.FindAction("Jump");
+            jump.Disable();
+            InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+            accelerate.Disable();
+            gravity = 0;
+            frog.Enable();
+        }
     }
-    public void FrogDisable()
-    {
-        InputAction move = playerInputActionMap.FindAction("Move");
-        move.Disable();
-        InputAction jump = playerInputActionMap.FindAction("Jump");
-        jump.started -= DoJump;
-        jump.canceled -= CancelJump;
-        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
-        accelerate.started -= DoAccelerate;
-        accelerate.canceled -= NoAccelerate;
-        gravity = 0;
+
+    public void FrogDisable() {
+        if (transform.parent != null && transform.parent.TryGetComponent<Frog>(out var frog)) {
+            InputAction move = playerInputActionMap.FindAction("Move");
+            move.Enable();
+            InputAction jump = playerInputActionMap.FindAction("Jump");
+            jump.Enable();
+            InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+            accelerate.Enable();
+            gravity = gravityCache;
+            frog.Disable();
+        }
     }
+
     public void Disable(State new_state) {
         state = new_state;
         playerInputActionMap.Disable();
@@ -155,6 +161,9 @@ public class Player : MonoBehaviour {
             chooseItemCreate.performed -= ChooseItemCreate;
             break;
         }
+        if (transform.parent != null && transform.parent.TryGetComponent<Frog>(out var frog)) {
+            frog.Disable();
+        }
     }
 
     public bool IsWalking() {
@@ -162,7 +171,7 @@ public class Player : MonoBehaviour {
     }
 
     public bool IsDeadAnimation() {
-        return state == State.DEAD_ANIMATION;
+        return state == State.DEAD_ANIMATION || state == State.LOSE;
     }
 
     public void SetDead() {
