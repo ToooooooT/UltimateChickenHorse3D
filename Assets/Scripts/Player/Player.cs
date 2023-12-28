@@ -14,6 +14,7 @@ public class Player : MonoBehaviour {
    
     public enum State { MOVE, GAME, SELECT_ITEM, STOP, WIN, DEAD_ANIMATION, LOSE };
 
+    public float jumpSpeedMultiple;
     public float jumpSpeed;
     public bool isPressSpace = false;
     public float verticalVelocity;
@@ -49,6 +50,11 @@ public class Player : MonoBehaviour {
     private ParticleSystem moveParticles;
     private string gameMode;
 
+    private string skillName;
+    private float skillCooldown;
+    private Data skillData;
+    private float castCooldown;
+
     private void Awake() {
         virtualCamera = transform.Find("Camera").GetComponent<CinemachineVirtualCamera>();
         controller = GetComponent<CharacterController>();
@@ -66,6 +72,7 @@ public class Player : MonoBehaviour {
         moveSpeedJumpWallratio = 10f;
         rotateSpeed = 10f;
         velocity = normalMoveSpeed;
+        jumpSpeedMultiple = 1f;
         jumpSpeed = 25f;
         gravity = 60;
         gravityCache = 60;
@@ -82,12 +89,70 @@ public class Player : MonoBehaviour {
 
     private void Update() {
         if (state == State.GAME || state == State.SELECT_ITEM || state == State.MOVE) {
+            if (skillData!=null && Input.GetKeyDown(KeyCode.R)) InceptSkill();
             HandleMovement();
             HandleJump();
             HandleFacement();
         }
     }
+    public void ChangeSkill()
+    {
+        skillData = new SkillReader().GetSkill(skillName);
+        skillName = skillData.skillName;
+        Debug.Log(skillName);
+    }
+    private void InceptSkill()
+    {
+        switch (skillName) {
+            case "JumpHigh": 
+                InceptJumpHigh();
+                break;
+            case "DanceInvincible": 
+                InceptDanceInvincible();
+                break;
+            case "Shoot": 
+                InceptShoot();
+                break;
+            case "Magnetic": 
+                InceptMagnetic();
+                break;
+            case "Hook": 
+                InceptHook();
+                break;
+            case "Tack": 
+                InceptTack();
+                break;
+        }
+        castCooldown = skillData.castTime;
+    }
+    private void InceptJumpHigh()
+    {
+        skillData.jumpHigh = !skillData.jumpHigh;
+        if (skillData.jumpHigh)
+            jumpSpeedMultiple = 3;
+        else
+            jumpSpeedMultiple = 1;
+    }
+    private void InceptDanceInvincible()
+    {
 
+    }
+    private void InceptShoot()
+    {
+
+    }
+    private void InceptMagnetic()
+    {
+
+    }
+    private void InceptHook()
+    {
+
+    }
+    private void InceptTack()
+    {
+
+    }
     public void Enable(State new_state) {
         state = new_state;
         playerInputActionMap.Enable();
@@ -237,7 +302,7 @@ public class Player : MonoBehaviour {
         }
         if (isJumping) {
             buttonPressedTime += Time.deltaTime;
-            verticalVelocity = jumpSpeed;
+            verticalVelocity = jumpSpeedMultiple * jumpSpeed;
             if (buttonPressedTime > buttonPressedWindow) {
                 isJumping = false;
                 verticalVelocity = 0;
