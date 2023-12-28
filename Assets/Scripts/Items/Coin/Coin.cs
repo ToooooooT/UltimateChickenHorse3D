@@ -13,11 +13,13 @@ public class Coin : BaseItem
     private State state;
     private Transform pirateCoin;
     private Vector3 localScale;
+    private ParticleSystem lightGlow;
 
     void Awake() {
         state = State.IDLE;
         pirateCoin = transform.Find("PirateCoin");
         pirateCoin.GetComponent<MeshCollider>().enabled = false;
+        lightGlow = transform.Find("LightGlow").GetComponent<ParticleSystem>();
     }
 
     void Start() {
@@ -27,11 +29,13 @@ public class Coin : BaseItem
     void Update() {
         if (state == State.ROTATE) {
             Rotate();
-        }
-        if (transform.parent != null && 
-        transform.parent.GetComponent<Player>().GetState() == Player.State.WIN) {
-            transform.Find("Explode").gameObject.SetActive(true);
-            transform.Find("PirateCoin").gameObject.SetActive(false);
+            if (transform.parent != null && 
+            transform.parent.GetComponent<Player>().GetState() == Player.State.WIN) {
+                transform.Find("Explode").gameObject.SetActive(true);
+                transform.Find("PirateCoin").gameObject.SetActive(false);
+                lightGlow.Stop();
+                state = State.IDLE;
+            }
         }
     }
 
@@ -43,6 +47,7 @@ public class Coin : BaseItem
 
     public override void Initialize() {
         state = State.ROTATE;
+        lightGlow.Play();
         pirateCoin.GetComponent<MeshCollider>().enabled = true;
         localScale = transform.localScale;
         origin_position = transform.position;
@@ -51,9 +56,14 @@ public class Coin : BaseItem
 
     public override void Reset() {
         state = State.IDLE;
+        lightGlow.Stop();
         transform.localScale = localScale;
         transform.parent = null;
         pirateCoin.GetComponent<MeshCollider>().enabled = true;
         transform.SetPositionAndRotation(origin_position, origin_rotation);
+    }
+
+    public bool IsRotate() {
+        return state == State.ROTATE;
     }
 }

@@ -38,6 +38,7 @@ public class TimeSlower : BaseItem
         if (other.gameObject.CompareTag("Player") && state == State.IDLE) {
             Time.timeScale = 0.2f;
             state = State.SLOW;
+            transform.Find("Whirl").GetComponent<ParticleSystem>().Play();
         }
     }
 

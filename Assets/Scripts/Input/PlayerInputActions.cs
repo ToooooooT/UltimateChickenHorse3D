@@ -1218,6 +1218,107 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Frog"",
+            ""id"": ""bb344eb7-f5a9-4a55-b224-b5fe09e6d1f8"",
+            ""actions"": [
+                {
+                    ""name"": ""ShortJump"",
+                    ""type"": ""Button"",
+                    ""id"": ""1787e40f-21f1-40f6-9670-cd686bcc9764"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LongJump"",
+                    ""type"": ""Button"",
+                    ""id"": ""c5d417eb-1d3d-4a7d-a5f3-51fca687965d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Eat"",
+                    ""type"": ""Button"",
+                    ""id"": ""12eb6e06-bd6e-41b8-b605-3f65072383b0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""459fc20b-4c00-4d7d-b30f-94c02c22bea8"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard_mouse"",
+                    ""action"": ""ShortJump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""10f633ee-f954-44d5-98c3-7b21389bc3ee"",
+                    ""path"": ""<XInputController>/leftStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Xbox_controller"",
+                    ""action"": ""ShortJump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""66045257-fee7-484a-994b-8f8996448523"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard_mouse"",
+                    ""action"": ""LongJump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f5d28325-d24c-4fd7-9f31-d243c6f37dce"",
+                    ""path"": ""<XInputController>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Xbox_controller"",
+                    ""action"": ""LongJump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a3676386-5a7a-40a0-9fd1-a777086a9039"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard_mouse"",
+                    ""action"": ""Eat"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""205884b4-d5fe-423a-a5df-5ea19b46b073"",
+                    ""path"": ""<XInputController>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Xbox_controller"",
+                    ""action"": ""Eat"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1275,6 +1376,11 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Cursor = asset.FindActionMap("Cursor", throwIfNotFound: true);
         m_Cursor_Click = m_Cursor.FindAction("Click", throwIfNotFound: true);
         m_Cursor_Move = m_Cursor.FindAction("Move", throwIfNotFound: true);
+        // Frog
+        m_Frog = asset.FindActionMap("Frog", throwIfNotFound: true);
+        m_Frog_ShortJump = m_Frog.FindAction("ShortJump", throwIfNotFound: true);
+        m_Frog_LongJump = m_Frog.FindAction("LongJump", throwIfNotFound: true);
+        m_Frog_Eat = m_Frog.FindAction("Eat", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1598,6 +1704,68 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         }
     }
     public CursorActions @Cursor => new CursorActions(this);
+
+    // Frog
+    private readonly InputActionMap m_Frog;
+    private List<IFrogActions> m_FrogActionsCallbackInterfaces = new List<IFrogActions>();
+    private readonly InputAction m_Frog_ShortJump;
+    private readonly InputAction m_Frog_LongJump;
+    private readonly InputAction m_Frog_Eat;
+    public struct FrogActions
+    {
+        private @PlayerInputActions m_Wrapper;
+        public FrogActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @ShortJump => m_Wrapper.m_Frog_ShortJump;
+        public InputAction @LongJump => m_Wrapper.m_Frog_LongJump;
+        public InputAction @Eat => m_Wrapper.m_Frog_Eat;
+        public InputActionMap Get() { return m_Wrapper.m_Frog; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(FrogActions set) { return set.Get(); }
+        public void AddCallbacks(IFrogActions instance)
+        {
+            if (instance == null || m_Wrapper.m_FrogActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_FrogActionsCallbackInterfaces.Add(instance);
+            @ShortJump.started += instance.OnShortJump;
+            @ShortJump.performed += instance.OnShortJump;
+            @ShortJump.canceled += instance.OnShortJump;
+            @LongJump.started += instance.OnLongJump;
+            @LongJump.performed += instance.OnLongJump;
+            @LongJump.canceled += instance.OnLongJump;
+            @Eat.started += instance.OnEat;
+            @Eat.performed += instance.OnEat;
+            @Eat.canceled += instance.OnEat;
+        }
+
+        private void UnregisterCallbacks(IFrogActions instance)
+        {
+            @ShortJump.started -= instance.OnShortJump;
+            @ShortJump.performed -= instance.OnShortJump;
+            @ShortJump.canceled -= instance.OnShortJump;
+            @LongJump.started -= instance.OnLongJump;
+            @LongJump.performed -= instance.OnLongJump;
+            @LongJump.canceled -= instance.OnLongJump;
+            @Eat.started -= instance.OnEat;
+            @Eat.performed -= instance.OnEat;
+            @Eat.canceled -= instance.OnEat;
+        }
+
+        public void RemoveCallbacks(IFrogActions instance)
+        {
+            if (m_Wrapper.m_FrogActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IFrogActions instance)
+        {
+            foreach (var item in m_Wrapper.m_FrogActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_FrogActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public FrogActions @Frog => new FrogActions(this);
     private int m_Keyboard_mouseSchemeIndex = -1;
     public InputControlScheme Keyboard_mouseScheme
     {
@@ -1643,5 +1811,11 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     {
         void OnClick(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
+    }
+    public interface IFrogActions
+    {
+        void OnShortJump(InputAction.CallbackContext context);
+        void OnLongJump(InputAction.CallbackContext context);
+        void OnEat(InputAction.CallbackContext context);
     }
 }

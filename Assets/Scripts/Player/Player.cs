@@ -45,6 +45,8 @@ public class Player : MonoBehaviour {
     private Vector3 followObjectMove;
     private GameObject pauseMenu;
     private GameObject chooseItemCanvas;
+    private ParticleSystem jumpParticles;
+    private ParticleSystem moveParticles;
     private string gameMode;
 
     private void Awake() {
@@ -54,6 +56,8 @@ public class Player : MonoBehaviour {
         placeObjectInputActionMap = GetComponent<PlayerInput>().actions.FindActionMap("PlaceObject");
         pauseMenu = GameObject.Find("PauseCanvas").transform.Find("PauseMenu").gameObject;
         chooseItemCanvas = GameObject.Find("ChooseItemCanvas").gameObject;
+        jumpParticles = transform.Find("PlayerJumpParticles").GetComponent<ParticleSystem>();
+        moveParticles = transform.Find("PlayerMovingParticles").GetComponent<ParticleSystem>();
     }
 
     private void Start() {
@@ -107,31 +111,37 @@ public class Player : MonoBehaviour {
             chooseItemCreate.performed += ChooseItemCreate;
             break;
         }
+        if (transform.parent != null && transform.parent.gameObject.name == "ToxicFrog") {
+            FrogEnable();
+        }
     }
-    public void FrogEnable()
-    {
-        InputAction move = playerInputActionMap.FindAction("Move");
-        move.Enable();
-        InputAction jump = playerInputActionMap.FindAction("Jump");
-        jump.started += DoJump;
-        jump.canceled += CancelJump;
-        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
-        accelerate.started += DoAccelerate;
-        accelerate.canceled += NoAccelerate;
-        gravity = gravityCache;
+
+    public void FrogEnable() {
+        if (transform.parent != null && transform.parent.TryGetComponent<Frog>(out var frog)) {
+            InputAction move = playerInputActionMap.FindAction("Move");
+            move.Disable();
+            InputAction jump = playerInputActionMap.FindAction("Jump");
+            jump.Disable();
+            InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+            accelerate.Disable();
+            gravity = 0;
+            frog.Enable();
+        }
     }
-    public void FrogDisable()
-    {
-        InputAction move = playerInputActionMap.FindAction("Move");
-        move.Disable();
-        InputAction jump = playerInputActionMap.FindAction("Jump");
-        jump.started -= DoJump;
-        jump.canceled -= CancelJump;
-        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
-        accelerate.started -= DoAccelerate;
-        accelerate.canceled -= NoAccelerate;
-        gravity = 0;
+
+    public void FrogDisable() {
+        if (transform.parent != null && transform.parent.TryGetComponent<Frog>(out var frog)) {
+            InputAction move = playerInputActionMap.FindAction("Move");
+            move.Enable();
+            InputAction jump = playerInputActionMap.FindAction("Jump");
+            jump.Enable();
+            InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+            accelerate.Enable();
+            gravity = gravityCache;
+            frog.Disable();
+        }
     }
+
     public void Disable(State new_state) {
         state = new_state;
         playerInputActionMap.Disable();
@@ -155,6 +165,9 @@ public class Player : MonoBehaviour {
             chooseItemCreate.performed -= ChooseItemCreate;
             break;
         }
+        if (transform.parent != null && transform.parent.TryGetComponent<Frog>(out var frog)) {
+            frog.Disable();
+        }
     }
 
     public bool IsWalking() {
@@ -162,7 +175,7 @@ public class Player : MonoBehaviour {
     }
 
     public bool IsDeadAnimation() {
-        return state == State.DEAD_ANIMATION;
+        return state == State.DEAD_ANIMATION || state == State.LOSE;
     }
 
     public void SetDead() {
@@ -293,6 +306,8 @@ public class Player : MonoBehaviour {
         if (CheckWall() || IsGrounded()) {
             isJumping = true;
             buttonPressedTime = 0;
+            jumpParticles.Play();
+            moveParticles.Stop();
         }
     }
 
@@ -348,6 +363,9 @@ public class Player : MonoBehaviour {
         } else if ((state == State.GAME || state == State.MOVE ) && hit.gameObject.TryGetComponent<PlayerFollowObject>(out var playerFollow)) {
             // follow object move
             followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition(gameObject);
+        }
+        if (!moveParticles.isPlaying) {
+            moveParticles.Play();
         }
     }
 

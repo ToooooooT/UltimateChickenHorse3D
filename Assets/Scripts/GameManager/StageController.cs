@@ -132,8 +132,10 @@ public class StageController : MonoBehaviour
                     break;
                 case Player.State.GAME:
                     // check lose 
-                    if (player.transform.position.y < -50) {
-                        player.GetComponent<Player>().SetDead();
+                    if (player.transform.position.y < -50 && 
+                    p.GetState() != Player.State.DEAD_ANIMATION
+                    && p.GetState() != Player.State.LOSE) {
+                        p.SetDead();
                     }
                     break;
                 }
@@ -285,7 +287,9 @@ public class StageController : MonoBehaviour
     private void CheckPlayersState() {
         for (int i = 0; i < playerObjects.Count; i++) {
             Player player = playerObjects[i].GetComponent<Player>();
-            if (player.transform.position.y < -50) {
+            if (player.transform.position.y < -50 && 
+            player.GetState() != Player.State.DEAD_ANIMATION &&
+            player.GetState() != Player.State.LOSE) {
                 player.SetDead();
                 // SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
             } else if (player.GetState() == Player.State.LOSE) {

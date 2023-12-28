@@ -1196,6 +1196,107 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "Frog",
+            "id": "bb344eb7-f5a9-4a55-b224-b5fe09e6d1f8",
+            "actions": [
+                {
+                    "name": "ShortJump",
+                    "type": "Button",
+                    "id": "1787e40f-21f1-40f6-9670-cd686bcc9764",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "LongJump",
+                    "type": "Button",
+                    "id": "c5d417eb-1d3d-4a7d-a5f3-51fca687965d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Eat",
+                    "type": "Button",
+                    "id": "12eb6e06-bd6e-41b8-b605-3f65072383b0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "459fc20b-4c00-4d7d-b30f-94c02c22bea8",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard_mouse",
+                    "action": "ShortJump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "10f633ee-f954-44d5-98c3-7b21389bc3ee",
+                    "path": "<XInputController>/leftStick/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Xbox_controller",
+                    "action": "ShortJump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "66045257-fee7-484a-994b-8f8996448523",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard_mouse",
+                    "action": "LongJump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f5d28325-d24c-4fd7-9f31-d243c6f37dce",
+                    "path": "<XInputController>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Xbox_controller",
+                    "action": "LongJump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a3676386-5a7a-40a0-9fd1-a777086a9039",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard_mouse",
+                    "action": "Eat",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "205884b4-d5fe-423a-a5df-5ea19b46b073",
+                    "path": "<XInputController>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Xbox_controller",
+                    "action": "Eat",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
