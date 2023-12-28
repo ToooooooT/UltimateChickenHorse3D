@@ -5,33 +5,45 @@ using UnityEngine;
 public class Cannon : BaseItem
 {
     private enum State { shooting, idle , placing};
+
     [SerializeField] private State state = State.placing;
-    private const string FOLDERPATH = "cannon bomb";
     [SerializeField] private float rotateSpeed;
     [SerializeField] private float countdown;
     [SerializeField] private float countdownTime;
 
+    private GameObject bomb;
+    private Transform[] cannons;
+    private ParticleSystem[] smokes;
+    private StageController stageController;
+    private int cannonNums;
+
+    private const string FOLDERPATH = "cannon bomb";
+
     void Awake() {
         state = State.placing;
+        bomb = Resources.Load<GameObject>(FOLDERPATH + "/Round_shot");
+        cannonNums = transform.childCount;
+        cannons = new Transform[cannonNums];
+        smokes = new ParticleSystem[cannonNums];
+        for (int i = 0; i < cannonNums; ++i) {
+            cannons[i] = transform.GetChild(i);
+            smokes[i] = cannons[i].Find("Small_cannon").Find("Smoke").GetComponent<ParticleSystem>();
+        }
+        stageController = GameObject.Find("GameController").GetComponent<StageController>();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         countdownTime = 10;
         rotateSpeed = 40;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         if (state != State.placing) {
             ShootingMode();
         }
     }
 
-    void ShootingMode()
-    {
+    void ShootingMode() {
         if (state == State.shooting) {
             Generatebomb();
             state = State.idle;
@@ -45,28 +57,25 @@ public class Cannon : BaseItem
         transform.Rotate(transform.up, rotateSpeed * Time.deltaTime);
     }
 
-    public override void Initialize()
-    {
+    public override void Initialize() {
         state = State.shooting;
     }
 
-    public override void Reset()
-    {
+    public override void Reset() {
         state = State.placing;
     }
 
-    public void Generatebomb()
-    {
-        for (int i = 0; i < transform.childCount; i++) {
-            GameObject newBomb = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/Round_shot"));
-            newBomb.transform.position = transform.GetChild(i).position + 1.6f * transform.GetChild(i).up + 2f * transform.GetChild(i).forward;
-            newBomb.transform.localScale = new Vector3(10f, 10f, 10f);
-            CannonBomb BombScript = newBomb.GetComponent<CannonBomb>();
-            BombScript.velocity = transform.GetChild(i).forward * 0.5f;
-            BombScript.parentCannon = this.gameObject;
-            GameObject gameController = GameObject.Find("GameController");
-            StageController stageController = gameController.GetComponent<StageController>();
+    private void Generatebomb() {
+        for (int i = 0; i < cannonNums; i++) {
+            GameObject newBomb = Instantiate(bomb);
+            Transform newBombTransform = newBomb.transform;
+            newBombTransform.position = cannons[i].position + 1.6f * cannons[i].up + 2f * cannons[i].forward;
+            newBombTransform.localScale = new Vector3(10f, 10f, 10f);
+            CannonBomb cannonBomb = newBomb.GetComponent<CannonBomb>();
+            cannonBomb.velocity = cannons[i].forward * 0.5f;
+            cannonBomb.cannon = gameObject;
             stageController.items.Add(newBomb);
+            smokes[i].Play();
             Destroy(newBomb, 5f);
         }
     }
