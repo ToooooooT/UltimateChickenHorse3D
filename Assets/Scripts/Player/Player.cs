@@ -360,7 +360,7 @@ public class Player : MonoBehaviour {
     private void OnControllerColliderHit(ControllerColliderHit hit) {
         if (state == State.SELECT_ITEM && hit.gameObject.CompareTag("ChoosingItem")) {
             GetItem(hit.gameObject);
-        } else if ((state == State.GAME || state == State.MOVE ) && hit.gameObject.TryGetComponent<PlayerFollowObject>(out var playerFollow)) {
+        } else if ((state == State.GAME || state == State.MOVE ) && hit.gameObject.TryGetComponent<PlayerFollowObject>(out _)) {
             // follow object move
             followObjectMove = hit.gameObject.GetComponent<PlayerFollowObject>().GetDiffPosition(gameObject);
         }
