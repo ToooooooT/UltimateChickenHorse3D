@@ -26,13 +26,20 @@ public class JumpToStage : MonoBehaviour
     void Update() {
         if (!flag && countdown.flgNextStage == true) {
             playersInPavilion = countdown.playersInPavilion;
+            playersGetSkill();
             GetNextStageId();
             nextStageText.enabled = true;
             nextStageText.text = stageNames[nextStageId];
             StartCoroutine(FadeInOut());
         }
     }
-
+    void playersGetSkill()
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        for(int i = 0; i < players.Length; i++) {
+            players[i].GetComponent<Player>().ChangeSkill();
+        }
+    }
     IEnumerator FadeInOut() {
         float fadeSpeed = 0.5f;
 

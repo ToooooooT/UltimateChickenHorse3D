@@ -14,6 +14,7 @@ public class Player : MonoBehaviour {
    
     public enum State { MOVE, GAME, SELECT_ITEM, STOP, WIN, DEAD_ANIMATION, LOSE };
 
+    public float jumpSpeedMultiple;
     public float jumpSpeed;
     public bool isPressSpace = false;
     public float verticalVelocity;
@@ -49,6 +50,13 @@ public class Player : MonoBehaviour {
     private ParticleSystem moveParticles;
     private string gameMode;
 
+    private string skillName;
+    private float skillCooldown;
+    private Data skillData;
+    private float castCooldown;
+    private GameObject ornament;
+    private const string FOLDERPATH = "SkillsItem";
+
     private void Awake() {
         virtualCamera = transform.Find("Camera").GetComponent<CinemachineVirtualCamera>();
         controller = GetComponent<CharacterController>();
@@ -66,6 +74,7 @@ public class Player : MonoBehaviour {
         moveSpeedJumpWallratio = 10f;
         rotateSpeed = 10f;
         velocity = normalMoveSpeed;
+        jumpSpeedMultiple = 1f;
         jumpSpeed = 25f;
         gravity = 60;
         gravityCache = 60;
@@ -82,12 +91,151 @@ public class Player : MonoBehaviour {
 
     private void Update() {
         if (state == State.GAME || state == State.SELECT_ITEM || state == State.MOVE) {
+            if (skillData!=null && Input.GetKeyDown(KeyCode.R)) 
+                InceptSkill();
             HandleMovement();
             HandleJump();
-            HandleFacement();
+            HandleFacement(); 
+            UseSkill();
         }
     }
+    private bool UsingSkill()
+    {
+        if (skillData == null) return false;
+        if (skillData.castTime > 0) return true;
+        if (skillData.invincible) return true;
+        return false;
+    }
+    public void ChangeSkill(string newSkillName = "")
+    {
+        if (newSkillName != "")
+            skillName = newSkillName;
+        skillData = new SkillReader().GetSkill(skillName);
+        skillName = skillData.skillName;
+        Ornament();
+        ResetSkill();
+    }
+    private void ResetSkill()
+    {
+        //jump
+        jumpSpeedMultiple = 1;
+        //dance invincible
+        SkillEnableMove();
+        transform.up = Vector3.up;
+    }
+    private void Ornament()
+    {
+        GameObject ornamentPrefab = Resources.Load<GameObject>(FOLDERPATH + "/" + skillName + "/ornament");
+        if (ornament != null) {
+            Destroy(ornament);
+        }
+        ornament = Instantiate(ornamentPrefab, transform);
+        ornament.transform.localPosition = new Vector3(0.5f, 1.5f, 0f);
+    }
+    private void InceptSkill()
+    {
+        switch (skillName) {
+            case "JumpHigh":
+                skillData.jumpHigh = !skillData.jumpHigh;
+                if (skillData.jumpHigh)
+                    jumpSpeedMultiple = 3;
+                else
+                    jumpSpeedMultiple = 1;
+                break;
+            case "DanceInvincible": 
+                skillData.invincible = !skillData.invincible;
+                if (skillData.invincible) {
+                    SkillDisableMove();
+                }
+                else {
+                    SkillEnableMove();
+                    transform.up = Vector3.up;
+                }
+                break;
+            case "Shoot": 
+                break;
+            case "Magnetic": 
+                break;
+            case "Hook": 
+                break;
+            case "Tack": 
+                break;
+        }
+        castCooldown = skillData.castTime;
+    }
+    private void UseSkill()
+    {
+        if (!UsingSkill()) {
+            if (ornament != null) {
+                ornament.transform.right = (ornament.transform.right + 0.01f * ornament.transform.forward).normalized;
+            }
+            return;
+        }
+        switch (skillName) {
+            case "JumpHigh":
+                break;
+            case "DanceInvincible":
+                DanceInvincible();
+                break;
+            case "Shoot":
+                Shoot();
+                break;
+            case "Magnetic":
+                Magnetic();
+                break;
+            case "Hook":
+                Hook();
+                break;
+            case "Tack":
+                Tack();
+                break;
+        }
+        castCooldown -= Time.deltaTime;
+        Debug.Log(castCooldown);
+    }
+    private void DanceInvincible()
+    {
+        transform.up = new Vector3(0.37f * Mathf.Cos(skillData.dancingAngle), 0.53f, 0.37f * Mathf.Sin(skillData.dancingAngle));
+        skillData.dancingAngle += Time.deltaTime;
+    }
+    private void Shoot()
+    {
 
+    }
+    private void Magnetic()
+    {
+
+    }
+    private void Hook()
+    {
+
+    }
+    private void Tack()
+    {
+
+    }
+    private void SkillEnableMove()
+    {
+        InputAction move = playerInputActionMap.FindAction("Move");
+        move.Enable();
+        InputAction jump = playerInputActionMap.FindAction("Jump");
+        jump.started += DoJump;
+        jump.canceled += CancelJump;
+        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+        accelerate.started += DoAccelerate;
+        accelerate.canceled += NoAccelerate;
+    }
+    private void SkillDisableMove()
+    {
+        InputAction move = playerInputActionMap.FindAction("Move");
+        move.Disable();
+        InputAction jump = playerInputActionMap.FindAction("Jump");
+        jump.started -= DoJump;
+        jump.canceled -= CancelJump;
+        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+        accelerate.started -= DoAccelerate;
+        accelerate.canceled -= NoAccelerate;
+    }
     public void Enable(State new_state) {
         state = new_state;
         playerInputActionMap.Enable();
@@ -115,7 +263,34 @@ public class Player : MonoBehaviour {
             FrogEnable();
         }
     }
-
+    public void Disable(State new_state)
+    {
+        state = new_state;
+        playerInputActionMap.Disable();
+        InputAction move = playerInputActionMap.FindAction("Move");
+        move.Disable();
+        InputAction jump = playerInputActionMap.FindAction("Jump");
+        jump.started -= DoJump;
+        jump.canceled -= CancelJump;
+        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+        accelerate.started -= DoAccelerate;
+        accelerate.canceled -= NoAccelerate;
+        InputAction pause = playerInputActionMap.FindAction("Pause");
+        pause.started -= Pause;
+        switch (gameMode) {
+            case "Party":
+                InputAction giveup = playerInputActionMap.FindAction("GiveUp");
+                giveup.performed -= GiveUp;
+                break;
+            case "Create":
+                InputAction chooseItemCreate = playerInputActionMap.FindAction("ChooseItemCreate");
+                chooseItemCreate.performed -= ChooseItemCreate;
+                break;
+        }
+        if (transform.parent != null && transform.parent.TryGetComponent<Frog>(out var frog)) {
+            frog.Disable();
+        }
+    }
     public void FrogEnable() {
         if (transform.parent != null && transform.parent.TryGetComponent<Frog>(out var frog)) {
             InputAction move = playerInputActionMap.FindAction("Move");
@@ -142,33 +317,7 @@ public class Player : MonoBehaviour {
         }
     }
 
-    public void Disable(State new_state) {
-        state = new_state;
-        playerInputActionMap.Disable();
-        InputAction move = playerInputActionMap.FindAction("Move");
-        move.Disable();
-        InputAction jump = playerInputActionMap.FindAction("Jump");
-        jump.started -= DoJump;
-        jump.canceled -= CancelJump;
-        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
-        accelerate.started -= DoAccelerate;
-        accelerate.canceled -= NoAccelerate;
-        InputAction pause = playerInputActionMap.FindAction("Pause");
-        pause.started -= Pause;
-        switch (gameMode) {
-        case "Party":
-            InputAction giveup = playerInputActionMap.FindAction("GiveUp");
-            giveup.performed -= GiveUp;
-            break;
-        case "Create":
-            InputAction chooseItemCreate = playerInputActionMap.FindAction("ChooseItemCreate");
-            chooseItemCreate.performed -= ChooseItemCreate;
-            break;
-        }
-        if (transform.parent != null && transform.parent.TryGetComponent<Frog>(out var frog)) {
-            frog.Disable();
-        }
-    }
+    
 
     public bool IsWalking() {
         return isWalking;
@@ -179,7 +328,8 @@ public class Player : MonoBehaviour {
     }
 
     public void SetDead() {
-        state = State.DEAD_ANIMATION;
+        if (skillData == null || !skillData.invincible)
+            state = State.DEAD_ANIMATION;
     }
 
     public void SetLose() {
@@ -237,7 +387,7 @@ public class Player : MonoBehaviour {
         }
         if (isJumping) {
             buttonPressedTime += Time.deltaTime;
-            verticalVelocity = jumpSpeed;
+            verticalVelocity = jumpSpeedMultiple * jumpSpeed;
             if (buttonPressedTime > buttonPressedWindow) {
                 isJumping = false;
                 verticalVelocity = 0;
