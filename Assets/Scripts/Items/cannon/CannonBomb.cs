@@ -47,7 +47,6 @@ public class CannonBomb : Velocity
             Destroy(gameObject, 2);
             GetComponent<MeshRenderer>().enabled = false;
             transform.Find("Wind").gameObject.SetActive(false);
-            transform.Find("Wind1").gameObject.SetActive(false);
             transform.Find("Explosion").gameObject.SetActive(true);
         }
     }
