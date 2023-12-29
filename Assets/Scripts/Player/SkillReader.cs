@@ -4,10 +4,14 @@ using UnityEngine;
 public class Data
 {
     public Data() { }
-    public bool jumpHigh = false;
     public string skillName = "";
     public float cooldownTime = 0;
     public float castTime = 0;
+    //Jump
+    public bool jumpHigh = false;
+    //dance invincible
+    public bool invincible = false;
+    public float dancingAngle = 0;
 }
 public class SkillReader : Data
 {
@@ -35,7 +39,7 @@ public class SkillReader : Data
             case "Hook": return GetHookData(skillName);
             case "Tack": return GetTackData(skillName);
         }
-        return GetJumpHighData("JumpHigh");
+        return GetJumpHighData("DanceInvincible");
         //return GetSkill(skillNames[(int) Random.Range(0, skillNames.Length-1)]);
     }
 
