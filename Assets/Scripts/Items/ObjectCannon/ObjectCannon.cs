@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectCannon : MonoBehaviour
+public class ObjectCannon : BaseItem
 {
-    private enum State{idle, shooting, cooldown}
+    private enum State {NONE, IDLE, SHOOTING, COOLDOWN}
+
+    [SerializeField] private float bombManRatio;
+
     private State state;
     private const float SHOOTING_SPEED = 500f;
     private float trueSpeed;
@@ -12,77 +15,95 @@ public class ObjectCannon : MonoBehaviour
     private float countdown;
     private GameObject cannon;
     private GameObject shootingObject;
-    private float cannonGoUp;
     private Vector3 scale;
-    // Start is called before the first frame update
-    void Start()
-    {
-        cannonGoUp = 1f;
-        state = State.idle;
+    private ParticleSystem bombParicle;
+
+    void Awake() {
+        state = State.NONE;
         cannon = transform.Find("cannon").gameObject;
+        bombParicle = transform.Find("cannon").Find("Explosion").GetComponent<ParticleSystem>();
+        bombManRatio = 0.03f;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (state == State.shooting)
+    void Update() {
+        if (state == State.SHOOTING) {
             Shooting();
-        else if (state == State.cooldown)
+        } else if (state == State.COOLDOWN) {
             Cooldown();
-    }
-    void Shooting()
-    {
-        if(countdown > 5) {
-            countdown -= 0.1f;
-            shootingObject.transform.position = cannon.transform.position;
         }
-        else {
+    }
+
+    void Shooting() {
+        if(countdown > 5) {
+            countdown -= 10 * Time.deltaTime;
+            if (shootingObject == null) {
+                // object in cannon may explode
+                return;
+            }
+            if (!shootingObject.CompareTag("Player")) {
+                shootingObject.GetComponent<Velocity>().velocity = cannon.transform.forward;
+                shootingObject.transform.forward = cannon.transform.forward;
+            }
+            shootingObject.transform.position = cannon.transform.position;
+        } else {
+            if (shootingObject == null) {
+                // object in cannon may explode
+                return;
+            }
             trueSpeed = SHOOTING_SPEED;
             if (shootingObject.CompareTag("Player")) {
-                Player playerScript = shootingObject.GetComponent<Player>();
-                playerScript.exSpeed = trueSpeed * cannon.transform.forward;
-            }
-            else {
-                Velocity velocityScript = shootingObject.GetComponent<Velocity>();
-                velocityScript.velocity = trueSpeed * cannon.transform.forward;
+                shootingObject.GetComponent<Player>().exSpeed = trueSpeed * cannon.transform.forward;
+            } else {
+                Vector3 velocity = shootingObject.GetComponent<Velocity>().velocity;
+                shootingObject.GetComponent<Velocity>().velocity = velocity.magnitude * cannon.transform.forward.normalized;
             }
             shootingObject.transform.localScale = scale;
-            state = State.cooldown;
+            state = State.COOLDOWN;
+            bombParicle.Play();
         }
     }
-    void Cooldown()
-    {
+
+    void Cooldown() {
         if (countdown > 0) {
-            if (shootingObject.CompareTag("Player")) {
-                Player playerScript = shootingObject.GetComponent<Player>();
-                playerScript.exSpeed += trueSpeed * cannon.transform.forward + (SHOOTING_TIME - 5 - countdown) * new Vector3(0, -30f, 0);
+            countdown -= 10 * Time.deltaTime;
+            if (shootingObject == null) {
+                // object in cannon may explode
+                return;
             }
-            else {
-                Velocity velocityScript = shootingObject.GetComponent<Velocity>();
-                velocityScript.velocity += trueSpeed * cannon.transform.forward + (SHOOTING_TIME - 5 - countdown) * new Vector3(0,-30f,0);
+            if (shootingObject.CompareTag("Player")) {
+                shootingObject.GetComponent<Player>().exSpeed += trueSpeed * cannon.transform.forward 
+                                            + (SHOOTING_TIME - 5 - countdown) * new Vector3(0, -30f, 0);
+            }
+            if (shootingObject.CompareTag("BombMan")) {
+                shootingObject.GetComponent<Velocity>().velocity += bombManRatio * trueSpeed * cannon.transform.forward; 
+                shootingObject.GetComponent<Rigidbody>().velocity = new Vector3(0, shootingObject.GetComponent<Velocity>().velocity.y, 0);
             }
             trueSpeed *= 0.98f;
-            countdown -= 0.1f;
-        }
-        else {
-            state = State.idle;
+        } else {
+            state = State.IDLE;
         }
     }
-    void OnTriggerEnter(Collider collision)
-    {
+
+    void OnTriggerStay(Collider collision) {
         GameObject obj = collision.gameObject;
-        if (Shootable(obj) && state == State.idle){
+        if (Shootable(obj) && state == State.IDLE){
             shootingObject = obj;
             countdown = SHOOTING_TIME;
             scale = obj.transform.localScale;
             obj.transform.localScale = new Vector3(0, 0, 0);
-            state = State.shooting;
+            state = State.SHOOTING;
         }
     }
-    bool Shootable(GameObject obj)
-    {
-        return obj.CompareTag("Player")||
-            obj.CompareTag("Airplane")||
-            obj.CompareTag("CannonBomb");
+
+    bool Shootable(GameObject obj) {
+        return obj.CompareTag("Player") || obj.TryGetComponent<Velocity>(out var _);
+    }
+
+    public override void Initialize() {
+        state = State.IDLE;
+    }
+
+    public override void Reset() {
+        state = State.NONE;
     }
 }

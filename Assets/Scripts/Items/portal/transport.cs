@@ -4,17 +4,14 @@ using UnityEngine;
 
 public class Transport : MonoBehaviour
 {
-    private enum State { enable, unable };
-    private State state; 
+    public enum State { enable, unable };
+    public State state; 
+    public float countdown;
 
-    private float countdown;
-    private GameObject magic;
     private GameObject[] portals;
-    private Color validColor = new(0.0f, 1.0f, 0.0f, 0.05f);
 
     void Start() {
         state = State.unable;
-        magic = transform.Find("Magic").gameObject;
         countdown = 0;
     }
 
@@ -26,25 +23,19 @@ public class Transport : MonoBehaviour
         } else if(countdown <= 0) {
             if (state == State.unable) {
                 state = State.enable;
-                Renderer cubeRenderer = GetComponent<Renderer>();
-                int newLayerMask = 1 << 1;
-                cubeRenderer.renderingLayerMask = (uint)newLayerMask;
-                if (TryGetComponent<Renderer>(out var renderer)) {
-                    renderer.material.color = validColor;
-                }
+                SetParticleSystem(true);
             } else if (state == State.enable) {
                 state = State.unable;
-                Renderer cubeRenderer = GetComponent<Renderer>();
-                int newLayerMask = 0;
-                cubeRenderer.renderingLayerMask = (uint)newLayerMask;
+                SetParticleSystem(false);
             }
             countdown = Random.Range(8f, 10f);
         }
-        countdown -= 0.01f;
+        countdown -= Time.deltaTime;
     }
 
-    public void StartParticleSystem() {
-        magic.SetActive(true);
+    private void SetParticleSystem(bool active) {
+        transform.Find("Rays").gameObject.SetActive(active);
+        transform.Find("Rays1").gameObject.SetActive(active);
     }
 
     private void OnTriggerEnter(Collider other) {
@@ -64,17 +55,11 @@ public class Transport : MonoBehaviour
             
             chosenPortalScript.state = State.unable;
             chosenPortalScript.countdown = Random.Range(8f, 10f);
-            Renderer chosenCubeRenderer = chosenPortalScript.GetComponent<Renderer>();
-            int chosenNewLayerMask = 0;
-            chosenCubeRenderer.renderingLayerMask = (uint)chosenNewLayerMask;
-            chosenPortalScript.StartParticleSystem();
+            chosenPortalScript.SetParticleSystem(false);
 
             state = State.unable;
             countdown = Random.Range(8f, 10f);
-            Renderer myCubeRenderer = GetComponent<Renderer>();
-            int myNewLayerMask = 0;
-            myCubeRenderer.renderingLayerMask = (uint)myNewLayerMask;
-            StartParticleSystem();
+            SetParticleSystem(false);
 
             if (other.CompareTag("Player")) {
                 Player otherscript = other.GetComponent<Player>();

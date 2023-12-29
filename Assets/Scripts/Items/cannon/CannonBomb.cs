@@ -33,6 +33,7 @@ public class CannonBomb : Velocity
                 if (collidedObject.TryGetComponent<Player>(out var player) && 
                 player.GetState() == Player.State.GAME) {
                     player.SetDead();
+                    Bomb();
                 } else if (collidedObject.CompareTag("Wall")) {
                     Bomb();
                 }
@@ -46,7 +47,6 @@ public class CannonBomb : Velocity
             Destroy(gameObject, 2);
             GetComponent<MeshRenderer>().enabled = false;
             transform.Find("Wind").gameObject.SetActive(false);
-            transform.Find("Wind1").gameObject.SetActive(false);
             transform.Find("Explosion").gameObject.SetActive(true);
         }
     }

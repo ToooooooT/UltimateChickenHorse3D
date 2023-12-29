@@ -5,14 +5,23 @@ using UnityEngine;
 public class Carrier : BaseItem
 {
     private enum State { shooting, idle ,placing};
-    private State state;
+
     private const string FOLDERPATH = "airplane";
-    public float countdown;
-    public float countdownTime;
     private static readonly string[] airplaneType = { "Awacs" , "F18" , "F35" , "Hawkeye" , "Seahawk"};
+
+    private State state;
+    private GameObject[] airplane;
+    private StageController stageController;
+    private float countdown;
+    private float countdownTime;
 
     void Awake() {
         state = State.placing;
+        airplane = new GameObject[airplaneType.Length];
+        for (int i = 0; i < airplaneType.Length; ++i) {
+            airplane[i] = Resources.Load<GameObject>(FOLDERPATH + "/" + airplaneType[i]);
+        }
+        stageController = GameObject.Find("GameController").GetComponent<StageController>();
     }
 
     void Start() {
@@ -20,8 +29,9 @@ public class Carrier : BaseItem
     }
 
     void Update() {
-        if (state != State.placing)
+        if (state != State.placing) {
             ShootingMode();
+        }
     }
 
     void ShootingMode() {
@@ -37,30 +47,26 @@ public class Carrier : BaseItem
         }
     }
 
-    public override void Initialize()
-    {
+    public override void Initialize() {
         state = State.shooting;
     }
 
-    public override void Reset()
-    {
+    public override void Reset() {
         state = State.placing;
     }
 
-    public void GenerateAirplane()
-    {
-        string chooseType = airplaneType[(int)Random.Range(0, airplaneType.Length)];
-        GameObject newAirplane = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/" + chooseType));
+    private void GenerateAirplane() {
+        int index = Random.Range(0, airplaneType.Length);
+        GameObject newAirplane = Instantiate(airplane[index]);
         newAirplane.transform.SetPositionAndRotation(transform.position + 1.6f * transform.up + 2f * transform.forward, transform.rotation);
-        if (chooseType == "Awacs")
+        if (airplaneType[index] == "Awacs") {
             newAirplane.transform.localScale = new Vector3(0.002f, 0.002f, 0.002f);
-        else
+        } else {
             newAirplane.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+        }
         Airplane airplaneScript = newAirplane.GetComponent<Airplane>();
         airplaneScript.velocity = 0.2f * transform.forward;
-        airplaneScript.parentCarrier = this.gameObject;
-        GameObject gameController = GameObject.Find("GameController");
-        StageController stageController = gameController.GetComponent<StageController>();
+        airplaneScript.carrier = gameObject;
         stageController.items.Add(newAirplane);
     }
 }
