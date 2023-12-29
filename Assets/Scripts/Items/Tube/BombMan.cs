@@ -71,7 +71,8 @@ public class BombMan : Velocity
             }
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             for(int i = 0; i < players.Length; i++) {
-                if((players[i].transform.position - transform.position).magnitude <= transform.localScale.x * 1.25f) {
+                if((players[i].transform.position - transform.position).magnitude <= transform.localScale.x * 1.25f &&
+                    players[i].GetComponent<Player>().GetState() == Player.State.GAME) {
                     players[i].GetComponent<Player>().SetDead();
                 }
             }

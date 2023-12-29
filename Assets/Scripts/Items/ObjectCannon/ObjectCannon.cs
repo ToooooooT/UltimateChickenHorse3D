@@ -6,6 +6,8 @@ public class ObjectCannon : BaseItem
 {
     private enum State {NONE, IDLE, SHOOTING, COOLDOWN}
 
+    [SerializeField] private float bombManRatio;
+
     private State state;
     private const float SHOOTING_SPEED = 500f;
     private float trueSpeed;
@@ -20,6 +22,7 @@ public class ObjectCannon : BaseItem
         state = State.NONE;
         cannon = transform.Find("cannon").gameObject;
         bombParicle = transform.Find("cannon").Find("Explosion").GetComponent<ParticleSystem>();
+        bombManRatio = 0.03f;
     }
 
     void Update() {
@@ -31,34 +34,51 @@ public class ObjectCannon : BaseItem
     }
 
     void Shooting() {
-        Debug.Log(shootingObject.name);
         if(countdown > 5) {
             countdown -= 10 * Time.deltaTime;
+            if (shootingObject == null) {
+                // object in cannon may explode
+                return;
+            }
+            if (!shootingObject.CompareTag("Player")) {
+                shootingObject.GetComponent<Velocity>().velocity = cannon.transform.forward;
+                shootingObject.transform.forward = cannon.transform.forward;
+            }
             shootingObject.transform.position = cannon.transform.position;
         } else {
+            if (shootingObject == null) {
+                // object in cannon may explode
+                return;
+            }
             trueSpeed = SHOOTING_SPEED;
             if (shootingObject.CompareTag("Player")) {
                 shootingObject.GetComponent<Player>().exSpeed = trueSpeed * cannon.transform.forward;
             } else {
-                shootingObject.GetComponent<Velocity>().velocity = trueSpeed * cannon.transform.forward;
+                Vector3 velocity = shootingObject.GetComponent<Velocity>().velocity;
+                shootingObject.GetComponent<Velocity>().velocity = velocity.magnitude * cannon.transform.forward.normalized;
             }
             shootingObject.transform.localScale = scale;
             state = State.COOLDOWN;
+            bombParicle.Play();
         }
     }
 
     void Cooldown() {
-        Debug.Log(shootingObject.name);
         if (countdown > 0) {
+            countdown -= 10 * Time.deltaTime;
+            if (shootingObject == null) {
+                // object in cannon may explode
+                return;
+            }
             if (shootingObject.CompareTag("Player")) {
                 shootingObject.GetComponent<Player>().exSpeed += trueSpeed * cannon.transform.forward 
                                             + (SHOOTING_TIME - 5 - countdown) * new Vector3(0, -30f, 0);
-            } else {
-                shootingObject.GetComponent<Velocity>().velocity += trueSpeed * cannon.transform.forward 
-                                            + (SHOOTING_TIME - 5 - countdown) * new Vector3(0,-30f,0);
+            }
+            if (shootingObject.CompareTag("BombMan")) {
+                shootingObject.GetComponent<Velocity>().velocity += bombManRatio * trueSpeed * cannon.transform.forward; 
+                shootingObject.GetComponent<Rigidbody>().velocity = new Vector3(0, shootingObject.GetComponent<Velocity>().velocity.y, 0);
             }
             trueSpeed *= 0.98f;
-            countdown -= 10 * Time.deltaTime;
         } else {
             state = State.IDLE;
         }
@@ -72,12 +92,11 @@ public class ObjectCannon : BaseItem
             scale = obj.transform.localScale;
             obj.transform.localScale = new Vector3(0, 0, 0);
             state = State.SHOOTING;
-            bombParicle.Play();
         }
     }
 
     bool Shootable(GameObject obj) {
-        return obj.CompareTag("Player") || !obj.CompareTag("Wall");
+        return obj.CompareTag("Player") || obj.TryGetComponent<Velocity>(out var _);
     }
 
     public override void Initialize() {
