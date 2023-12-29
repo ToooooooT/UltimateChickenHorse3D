@@ -33,6 +33,7 @@ public class CannonBomb : Velocity
                 if (collidedObject.TryGetComponent<Player>(out var player) && 
                 player.GetState() == Player.State.GAME) {
                     player.SetDead();
+                    Bomb();
                 } else if (collidedObject.CompareTag("Wall")) {
                     Bomb();
                 }

@@ -85,6 +85,7 @@ public class StageController : MonoBehaviour
                     p.ModifyPosition(Vector3.zero);
                 }
             }   
+            createItemCounter = 0;
             break;
         case CreateStage.PLAY:
             foreach (GameObject player in playerObjects) {
