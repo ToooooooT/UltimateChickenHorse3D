@@ -113,8 +113,17 @@ public class Player : MonoBehaviour {
         skillData = new SkillReader().GetSkill(skillName);
         skillName = skillData.skillName;
         Ornament();
+        ResetSkill();
     }
-    public void Ornament()
+    private void ResetSkill()
+    {
+        //jump
+        jumpSpeedMultiple = 1;
+        //dance invincible
+        SkillEnableMove();
+        transform.up = Vector3.up;
+    }
+    private void Ornament()
     {
         GameObject ornamentPrefab = Resources.Load<GameObject>(FOLDERPATH + "/" + skillName + "/ornament");
         if (ornament != null) {
