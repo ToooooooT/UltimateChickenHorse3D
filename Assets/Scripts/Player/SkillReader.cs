@@ -27,10 +27,13 @@ public class SkillReader : Data
     {
         
     }
-
+    public string[] GetSkillNames()
+    {
+        return new string[] { "JumpHigh", "DanceInvincible", "Shoot", "Magnetic", "Hook", "Tack" };
+    }
     public Data GetSkill(string skillName)
     {
-        string[] skillNames = new string[] { "JumpHigh", "DanceInvincible", "Shoot", "Magnetic", "Hook", "Tack" };
+        string[] skillNames = GetSkillNames();
         switch (skillName) {
             case "JumpHigh":return GetJumpHighData(skillName);
             case "DanceInvincible": return GetDanceInvincibleData(skillName);
@@ -40,7 +43,7 @@ public class SkillReader : Data
             case "Tack": return GetTackData(skillName);
         }
         return GetJumpHighData("DanceInvincible");
-        //return GetSkill(skillNames[(int) Random.Range(0, skillNames.Length-1)]);
+        //return GetSkill(skillNames[(int) Random.Range(0, skillNames.Length)]);
     }
 
     private Data GetJumpHighData(string skillName)

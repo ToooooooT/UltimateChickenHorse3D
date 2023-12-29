@@ -54,6 +54,8 @@ public class Player : MonoBehaviour {
     private float skillCooldown;
     private Data skillData;
     private float castCooldown;
+    private GameObject ornament;
+    private const string FOLDERPATH = "SkillsItem";
 
     private void Awake() {
         virtualCamera = transform.Find("Camera").GetComponent<CinemachineVirtualCamera>();
@@ -104,11 +106,22 @@ public class Player : MonoBehaviour {
         if (skillData.invincible) return true;
         return false;
     }
-    public void ChangeSkill()
+    public void ChangeSkill(string newSkillName = "")
     {
+        if (newSkillName != "")
+            skillName = newSkillName;
         skillData = new SkillReader().GetSkill(skillName);
         skillName = skillData.skillName;
-        Debug.Log(skillName);
+        Ornament();
+    }
+    public void Ornament()
+    {
+        GameObject ornamentPrefab = Resources.Load<GameObject>(FOLDERPATH + "/" + skillName + "/ornament");
+        if (ornament != null) {
+            Destroy(ornament);
+        }
+        ornament = Instantiate(ornamentPrefab, transform);
+        ornament.transform.localPosition = new Vector3(0.5f, 1.5f, 0f);
     }
     private void InceptSkill()
     {
@@ -143,7 +156,12 @@ public class Player : MonoBehaviour {
     }
     private void UseSkill()
     {
-        if (!UsingSkill()) return;
+        if (!UsingSkill()) {
+            if (ornament != null) {
+                ornament.transform.right = (ornament.transform.right + 0.01f * ornament.transform.forward).normalized;
+            }
+            return;
+        }
         switch (skillName) {
             case "JumpHigh":
                 break;
