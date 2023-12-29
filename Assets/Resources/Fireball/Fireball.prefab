@@ -4673,6 +4673,7 @@ GameObject:
   - component: {fileID: 6144688474473026569}
   - component: {fileID: 1614228515614689533}
   - component: {fileID: 459048675814460263}
+  - component: {fileID: 7950067637352911242}
   m_Layer: 0
   m_Name: Fireball
   m_TagString: FireBall
@@ -4784,6 +4785,33 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   parentFireBallShooter: {fileID: 0}
   shrinkSpeed: 0
+--- !u!54 &7950067637352911242
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3569240716298096555}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &2008844323396672551
 PrefabInstance:
   m_ObjectHideFlags: 0
