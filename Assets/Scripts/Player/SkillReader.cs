@@ -5,6 +5,7 @@ public class Data
 {
     public Data() { }
     public string skillName = "";
+    public int skillNum = 0;
     public float cooldownTime = 0;
     public float castTime = 0;
     public Vector3 ornamentLocalScale = Vector3.zero;
