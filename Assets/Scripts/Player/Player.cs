@@ -104,6 +104,7 @@ public class Player : MonoBehaviour {
         if (skillData == null) return false;
         if (skillData.castTime > 0) return true;
         if (skillData.invincible) return true;
+        if (skillData.jumpHigh) return true;
         return false;
     }
     public void ChangeSkill(string newSkillName = "")
@@ -112,6 +113,7 @@ public class Player : MonoBehaviour {
             skillName = newSkillName;
         skillData = new SkillReader().GetSkill(skillName);
         skillName = skillData.skillName;
+        
         Ornament();
         ResetSkill();
     }
@@ -130,17 +132,25 @@ public class Player : MonoBehaviour {
             Destroy(ornament);
         }
         ornament = Instantiate(ornamentPrefab, transform);
-        ornament.transform.localPosition = new Vector3(0.5f, 1.5f, 0f);
+        ornament.transform.localPosition = skillData.ornamentLocalPosition;
+        skillData.ornamentLocalScale = ornament.transform.localScale;
     }
     private void InceptSkill()
     {
         switch (skillName) {
             case "JumpHigh":
                 skillData.jumpHigh = !skillData.jumpHigh;
-                if (skillData.jumpHigh)
+                if (skillData.jumpHigh) {
                     jumpSpeedMultiple = 3;
-                else
+                    ornament.transform.localPosition = skillData.usingPosition;
+                    ornament.transform.localScale = skillData.usingScale;
+                    ornament.transform.forward = transform.right;
+                }
+                else {
                     jumpSpeedMultiple = 1;
+                    ornament.transform.localPosition = skillData.ornamentLocalPosition;
+                    ornament.transform.localScale = skillData.ornamentLocalScale;
+                }
                 break;
             case "DanceInvincible": 
                 skillData.invincible = !skillData.invincible;
@@ -173,6 +183,14 @@ public class Player : MonoBehaviour {
         }
         switch (skillName) {
             case "JumpHigh":
+                Transform jumperTransform = ornament.transform.Find("Jumper");
+                Vector3 jumperLocalPosition = jumperTransform.localPosition;
+                if (skillData.jumperClip <= 0.2)
+                    jumperLocalPosition.y = 2 - skillData.jumperClip * (4 / 0.2f);
+                else
+                    jumperLocalPosition.y = -2 + (skillData.jumperClip - 0.2f) * (4 / 0.8f);
+                jumperTransform.localPosition = jumperLocalPosition;
+                skillData.jumperClip = Mathf.Min(Time.deltaTime + skillData.jumperClip, 1);
                 break;
             case "DanceInvincible":
                 DanceInvincible();
@@ -454,6 +472,9 @@ public class Player : MonoBehaviour {
     private void DoJump(InputAction.CallbackContext context) {
         isPressSpace = true;
         if (CheckWall() || IsGrounded()) {
+            if (skillData != null && skillData.jumpHigh) {
+                skillData.jumperClip = 0;
+            }
             isJumping = true;
             buttonPressedTime = 0;
             jumpParticles.Play();
