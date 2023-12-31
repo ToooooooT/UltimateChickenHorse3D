@@ -101,9 +101,13 @@ public class Player : MonoBehaviour {
     }
     private void UseSkill()
     {
+        Debug.Log(skillCooldown);
+        skillCooldown -= Time.deltaTime;
         if (!UsingSkill()) {
             if (ornament != null) {
                 ornament.transform.right = (ornament.transform.right + 0.01f * ornament.transform.forward).normalized;
+                if (skillCooldown <= 0)
+                    PlayerVisible(ornament);
             }
             return;
         }
@@ -119,7 +123,6 @@ public class Player : MonoBehaviour {
                 skillData.jumperClip = Mathf.Min(Time.deltaTime + skillData.jumperClip, 1);
                 break;
             case "DanceInvincible":
-                DanceInvincible();
                 break;
             case "Shoot":
                 Shoot();
@@ -139,9 +142,10 @@ public class Player : MonoBehaviour {
     private bool UsingSkill()
     {
         if (skillData == null) return false;
-        if (skillData.castTime > 0) return true;
+        if (castCooldown > 0) return true;
         if (skillData.invincible) return true;
         if (skillData.jumpHigh) return true;
+        if (skillData.gravitating) return true;
         return false;
     }
     public void ChangeSkill(string newSkillName = "")
@@ -150,7 +154,7 @@ public class Player : MonoBehaviour {
             skillName = newSkillName;
         skillData = new SkillReader().GetSkill(skillName);
         skillName = skillData.skillName;
-        
+        Debug.Log(skillName);
         Ornament();
         ResetSkill();
     }
@@ -174,6 +178,7 @@ public class Player : MonoBehaviour {
     }
     private void InceptSkill()
     {
+        if (skillCooldown > 0) return;
         switch (skillName) {
             case "JumpHigh":
                 skillData.jumpHigh = !skillData.jumpHigh;
@@ -207,7 +212,13 @@ public class Player : MonoBehaviour {
                 break;
             case "Shoot": 
                 break;
-            case "Magnetic": 
+            case "Magnetic":
+                ornament.transform.localPosition = skillData.usingPosition;
+                ornament.transform.localScale = skillData.usingScale;
+                ornament.transform.forward = transform.forward;
+                SkillDisableMove();
+                skillData.gravitating = true;
+                skillData.gravitateForce = 2;
                 break;
             case "Hook": 
                 break;
@@ -215,21 +226,30 @@ public class Player : MonoBehaviour {
                 break;
         }
         castCooldown = skillData.castTime;
+        skillCooldown = skillData.cooldownTime;
     }
     
-    private void DanceInvincible()
-    {
-        //transform.up = new Vector3(0.37f * Mathf.Cos(skillData.dancingAngle), 0.53f, 0.37f * Mathf.Sin(skillData.dancingAngle));
-        //skillData.dancingAngle += Time.deltaTime;
-
-    }
     private void Shoot()
     {
 
     }
     private void Magnetic()
     {
-
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        for(int i = 0; i < players.Length; i++) {
+            if(players[i] != gameObject) {
+                players[i].GetComponent<Player>().exSpeed += Time.deltaTime * skillData.gravitateForce * (transform.position - players[i].transform.position).normalized;
+            }
+            skillData.gravitateForce *= 1.2f;
+            castCooldown -= Time.deltaTime;
+        }
+        if(castCooldown <= 0) {
+            skillData.gravitating = false;
+            PlayerInvisible(ornament);
+            SkillEnableMove();
+            ornament.transform.localPosition = skillData.ornamentLocalPosition;
+            ornament.transform.localScale = skillData.ornamentLocalScale;
+        }
     }
     private void Hook()
     {
