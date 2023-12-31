@@ -99,70 +99,6 @@ public class Player : MonoBehaviour {
             UseSkill();
         }
     }
-    private bool UsingSkill()
-    {
-        if (skillData == null) return false;
-        if (skillData.castTime > 0) return true;
-        if (skillData.invincible) return true;
-        return false;
-    }
-    public void ChangeSkill(string newSkillName = "")
-    {
-        if (newSkillName != "")
-            skillName = newSkillName;
-        skillData = new SkillReader().GetSkill(skillName);
-        skillName = skillData.skillName;
-        Ornament();
-        ResetSkill();
-    }
-    private void ResetSkill()
-    {
-        //jump
-        jumpSpeedMultiple = 1;
-        //dance invincible
-        SkillEnableMove();
-        transform.up = Vector3.up;
-    }
-    private void Ornament()
-    {
-        GameObject ornamentPrefab = Resources.Load<GameObject>(FOLDERPATH + "/" + skillName + "/ornament");
-        if (ornament != null) {
-            Destroy(ornament);
-        }
-        ornament = Instantiate(ornamentPrefab, transform);
-        ornament.transform.localPosition = new Vector3(0.5f, 1.5f, 0f);
-    }
-    private void InceptSkill()
-    {
-        switch (skillName) {
-            case "JumpHigh":
-                skillData.jumpHigh = !skillData.jumpHigh;
-                if (skillData.jumpHigh)
-                    jumpSpeedMultiple = 3;
-                else
-                    jumpSpeedMultiple = 1;
-                break;
-            case "DanceInvincible": 
-                skillData.invincible = !skillData.invincible;
-                if (skillData.invincible) {
-                    SkillDisableMove();
-                }
-                else {
-                    SkillEnableMove();
-                    transform.up = Vector3.up;
-                }
-                break;
-            case "Shoot": 
-                break;
-            case "Magnetic": 
-                break;
-            case "Hook": 
-                break;
-            case "Tack": 
-                break;
-        }
-        castCooldown = skillData.castTime;
-    }
     private void UseSkill()
     {
         if (!UsingSkill()) {
@@ -173,6 +109,14 @@ public class Player : MonoBehaviour {
         }
         switch (skillName) {
             case "JumpHigh":
+                Transform jumperTransform = ornament.transform.Find("Jumper");
+                Vector3 jumperLocalPosition = jumperTransform.localPosition;
+                if (skillData.jumperClip <= 0.2)
+                    jumperLocalPosition.y = 2 - skillData.jumperClip * (4 / 0.2f);
+                else
+                    jumperLocalPosition.y = -2 + (skillData.jumperClip - 0.2f) * (4 / 0.8f);
+                jumperTransform.localPosition = jumperLocalPosition;
+                skillData.jumperClip = Mathf.Min(Time.deltaTime + skillData.jumperClip, 1);
                 break;
             case "DanceInvincible":
                 DanceInvincible();
@@ -191,12 +135,93 @@ public class Player : MonoBehaviour {
                 break;
         }
         castCooldown -= Time.deltaTime;
-        Debug.Log(castCooldown);
     }
+    private bool UsingSkill()
+    {
+        if (skillData == null) return false;
+        if (skillData.castTime > 0) return true;
+        if (skillData.invincible) return true;
+        if (skillData.jumpHigh) return true;
+        return false;
+    }
+    public void ChangeSkill(string newSkillName = "")
+    {
+        if (newSkillName != "")
+            skillName = newSkillName;
+        skillData = new SkillReader().GetSkill(skillName);
+        skillName = skillData.skillName;
+        
+        Ornament();
+        ResetSkill();
+    }
+    private void ResetSkill()
+    {
+        //jump
+        jumpSpeedMultiple = 1;
+        //dance invincible
+        SkillEnableMove();
+        transform.up = Vector3.up;
+    }
+    private void Ornament()
+    {
+        GameObject ornamentPrefab = Resources.Load<GameObject>(FOLDERPATH + "/" + skillName + "/ornament");
+        if (ornament != null) {
+            Destroy(ornament);
+        }
+        ornament = Instantiate(ornamentPrefab, transform);
+        ornament.transform.localPosition = skillData.ornamentLocalPosition;
+        skillData.ornamentLocalScale = ornament.transform.localScale;
+    }
+    private void InceptSkill()
+    {
+        switch (skillName) {
+            case "JumpHigh":
+                skillData.jumpHigh = !skillData.jumpHigh;
+                if (skillData.jumpHigh) {
+                    jumpSpeedMultiple = 3;
+                    ornament.transform.localPosition = skillData.usingPosition;
+                    ornament.transform.localScale = skillData.usingScale;
+                    ornament.transform.forward = transform.right;
+                }
+                else {
+                    jumpSpeedMultiple = 1;
+                    ornament.transform.localPosition = skillData.ornamentLocalPosition;
+                    ornament.transform.localScale = skillData.ornamentLocalScale;
+                }
+                break;
+            case "DanceInvincible": 
+                skillData.invincible = !skillData.invincible;
+                if (skillData.invincible) {
+                    SkillDisableMove();
+                    ornament.transform.localPosition = skillData.usingPosition;
+                    ornament.transform.localScale = skillData.usingScale;
+                    PlayerInvisible(gameObject);
+                }
+                else {
+                    SkillEnableMove();
+                    transform.up = Vector3.up;
+                    ornament.transform.localPosition = skillData.ornamentLocalPosition;
+                    ornament.transform.localScale = skillData.ornamentLocalScale;
+                    PlayerVisible(gameObject);
+                }
+                break;
+            case "Shoot": 
+                break;
+            case "Magnetic": 
+                break;
+            case "Hook": 
+                break;
+            case "Tack": 
+                break;
+        }
+        castCooldown = skillData.castTime;
+    }
+    
     private void DanceInvincible()
     {
-        transform.up = new Vector3(0.37f * Mathf.Cos(skillData.dancingAngle), 0.53f, 0.37f * Mathf.Sin(skillData.dancingAngle));
-        skillData.dancingAngle += Time.deltaTime;
+        //transform.up = new Vector3(0.37f * Mathf.Cos(skillData.dancingAngle), 0.53f, 0.37f * Mathf.Sin(skillData.dancingAngle));
+        //skillData.dancingAngle += Time.deltaTime;
+
     }
     private void Shoot()
     {
@@ -213,6 +238,30 @@ public class Player : MonoBehaviour {
     private void Tack()
     {
 
+    }
+    private void PlayerInvisible(GameObject obj)
+    {
+        Renderer renderer = obj.GetComponent<Renderer>();
+        if (renderer != null) {
+            renderer.enabled = false;
+        }
+
+        foreach (Transform childTransform in obj.transform) {
+            if (childTransform.gameObject.name == "ornament(Clone)")
+                continue;
+            PlayerInvisible(childTransform.gameObject);
+        }
+    }
+    private void PlayerVisible(GameObject obj)
+    {
+        Renderer renderer = obj.GetComponent<Renderer>();
+        if (renderer != null) {
+            renderer.enabled = true;
+        }
+
+        foreach (Transform childTransform in obj.transform) {
+            PlayerVisible(childTransform.gameObject);
+        }
     }
     private void SkillEnableMove()
     {
@@ -454,6 +503,9 @@ public class Player : MonoBehaviour {
     private void DoJump(InputAction.CallbackContext context) {
         isPressSpace = true;
         if (CheckWall() || IsGrounded()) {
+            if (skillData != null && skillData.jumpHigh) {
+                skillData.jumperClip = 0;
+            }
             isJumping = true;
             buttonPressedTime = 0;
             jumpParticles.Play();
