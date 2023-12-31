@@ -99,6 +99,43 @@ public class Player : MonoBehaviour {
             UseSkill();
         }
     }
+    private void UseSkill()
+    {
+        if (!UsingSkill()) {
+            if (ornament != null) {
+                ornament.transform.right = (ornament.transform.right + 0.01f * ornament.transform.forward).normalized;
+            }
+            return;
+        }
+        switch (skillName) {
+            case "JumpHigh":
+                Transform jumperTransform = ornament.transform.Find("Jumper");
+                Vector3 jumperLocalPosition = jumperTransform.localPosition;
+                if (skillData.jumperClip <= 0.2)
+                    jumperLocalPosition.y = 2 - skillData.jumperClip * (4 / 0.2f);
+                else
+                    jumperLocalPosition.y = -2 + (skillData.jumperClip - 0.2f) * (4 / 0.8f);
+                jumperTransform.localPosition = jumperLocalPosition;
+                skillData.jumperClip = Mathf.Min(Time.deltaTime + skillData.jumperClip, 1);
+                break;
+            case "DanceInvincible":
+                DanceInvincible();
+                break;
+            case "Shoot":
+                Shoot();
+                break;
+            case "Magnetic":
+                Magnetic();
+                break;
+            case "Hook":
+                Hook();
+                break;
+            case "Tack":
+                Tack();
+                break;
+        }
+        castCooldown -= Time.deltaTime;
+    }
     private bool UsingSkill()
     {
         if (skillData == null) return false;
@@ -156,10 +193,16 @@ public class Player : MonoBehaviour {
                 skillData.invincible = !skillData.invincible;
                 if (skillData.invincible) {
                     SkillDisableMove();
+                    ornament.transform.localPosition = skillData.usingPosition;
+                    ornament.transform.localScale = skillData.usingScale;
+                    PlayerInvisible(gameObject);
                 }
                 else {
                     SkillEnableMove();
                     transform.up = Vector3.up;
+                    ornament.transform.localPosition = skillData.ornamentLocalPosition;
+                    ornament.transform.localScale = skillData.ornamentLocalScale;
+                    PlayerVisible(gameObject);
                 }
                 break;
             case "Shoot": 
@@ -173,48 +216,12 @@ public class Player : MonoBehaviour {
         }
         castCooldown = skillData.castTime;
     }
-    private void UseSkill()
-    {
-        if (!UsingSkill()) {
-            if (ornament != null) {
-                ornament.transform.right = (ornament.transform.right + 0.01f * ornament.transform.forward).normalized;
-            }
-            return;
-        }
-        switch (skillName) {
-            case "JumpHigh":
-                Transform jumperTransform = ornament.transform.Find("Jumper");
-                Vector3 jumperLocalPosition = jumperTransform.localPosition;
-                if (skillData.jumperClip <= 0.2)
-                    jumperLocalPosition.y = 2 - skillData.jumperClip * (4 / 0.2f);
-                else
-                    jumperLocalPosition.y = -2 + (skillData.jumperClip - 0.2f) * (4 / 0.8f);
-                jumperTransform.localPosition = jumperLocalPosition;
-                skillData.jumperClip = Mathf.Min(Time.deltaTime + skillData.jumperClip, 1);
-                break;
-            case "DanceInvincible":
-                DanceInvincible();
-                break;
-            case "Shoot":
-                Shoot();
-                break;
-            case "Magnetic":
-                Magnetic();
-                break;
-            case "Hook":
-                Hook();
-                break;
-            case "Tack":
-                Tack();
-                break;
-        }
-        castCooldown -= Time.deltaTime;
-        Debug.Log(castCooldown);
-    }
+    
     private void DanceInvincible()
     {
-        transform.up = new Vector3(0.37f * Mathf.Cos(skillData.dancingAngle), 0.53f, 0.37f * Mathf.Sin(skillData.dancingAngle));
-        skillData.dancingAngle += Time.deltaTime;
+        //transform.up = new Vector3(0.37f * Mathf.Cos(skillData.dancingAngle), 0.53f, 0.37f * Mathf.Sin(skillData.dancingAngle));
+        //skillData.dancingAngle += Time.deltaTime;
+
     }
     private void Shoot()
     {
@@ -231,6 +238,30 @@ public class Player : MonoBehaviour {
     private void Tack()
     {
 
+    }
+    private void PlayerInvisible(GameObject obj)
+    {
+        Renderer renderer = obj.GetComponent<Renderer>();
+        if (renderer != null) {
+            renderer.enabled = false;
+        }
+
+        foreach (Transform childTransform in obj.transform) {
+            if (childTransform.gameObject.name == "ornament(Clone)")
+                continue;
+            PlayerInvisible(childTransform.gameObject);
+        }
+    }
+    private void PlayerVisible(GameObject obj)
+    {
+        Renderer renderer = obj.GetComponent<Renderer>();
+        if (renderer != null) {
+            renderer.enabled = true;
+        }
+
+        foreach (Transform childTransform in obj.transform) {
+            PlayerVisible(childTransform.gameObject);
+        }
     }
     private void SkillEnableMove()
     {

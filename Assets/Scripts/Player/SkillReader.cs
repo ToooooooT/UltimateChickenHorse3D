@@ -65,6 +65,8 @@ public class SkillReader : Data
         Data skillData = new Data();
         skillData.skillName = skillName;
         skillData.cooldownTime = 0;
+        skillData.usingPosition = new Vector3(0, 0, 0);
+        skillData.usingScale = new Vector3(100, 100, 100);
         return skillData;
     }
     private Data GetShootData(string skillName)
