@@ -52,7 +52,7 @@ public class Player : MonoBehaviour {
 
     private string skillName;
     private float skillCooldown;
-    private Data skillData;
+    public Data skillData;
     private float castCooldown;
     private GameObject ornament;
     private const string FOLDERPATH = "SkillsItem";
@@ -101,7 +101,6 @@ public class Player : MonoBehaviour {
     }
     private void UseSkill()
     {
-        Debug.Log(skillCooldown);
         skillCooldown -= Time.deltaTime;
         if (!UsingSkill()) {
             if (ornament != null) {
