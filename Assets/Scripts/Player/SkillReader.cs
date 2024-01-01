@@ -18,9 +18,16 @@ public class Data
     //dance invincible
     public bool invincible = false;
     public float dancingAngle = 0;
+    //shoot
+    public GameObject[] players;
+    public bool aiming = false;
+    public bool pushing = false;
+    public int aimingPlayer = 0;
+    public GameObject playerCamera;
+    public float pushForce = 100;
     //magnetic
-    public float gravitateForce = 0;
-    public bool gravitating = false;
+    public float magneticForce = 0;
+    public bool magneting = false;
 }
 public class SkillReader : Data
 {
@@ -77,7 +84,12 @@ public class SkillReader : Data
     {
         Data skillData = new Data();
         skillData.skillName = skillName;
-        skillData.cooldownTime = 10;
+        skillData.cooldownTime = 20;
+        skillData.aiming = false;
+        skillData.pushing = false;
+        skillData.castTime = 5;
+        skillData.pushForce = 100;
+        skillData.usingScale = new Vector3(1.8f, 1.8f, 1.8f);
         return skillData;
     }
     private Data GetMagneticData(string skillName)
@@ -85,8 +97,8 @@ public class SkillReader : Data
         Data skillData = new Data();
         skillData.skillName = skillName;
         skillData.cooldownTime = 60;
-        skillData.gravitating = false;
-        skillData.gravitateForce = 0;
+        skillData.magneting = false;
+        skillData.magneticForce = 0;
         skillData.castTime = 5;
         skillData.usingPosition = new Vector3(0, 0, 0.8f);
         skillData.usingScale = new Vector3(1, 1, 1);

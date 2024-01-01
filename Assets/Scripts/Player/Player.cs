@@ -144,7 +144,7 @@ public class Player : MonoBehaviour {
         if (castCooldown > 0) return true;
         if (skillData.invincible) return true;
         if (skillData.jumpHigh) return true;
-        if (skillData.gravitating) return true;
+        if (skillData.magneting) return true;
         return false;
     }
     public void ChangeSkill(string newSkillName = "")
@@ -153,7 +153,6 @@ public class Player : MonoBehaviour {
             skillName = newSkillName;
         skillData = new SkillReader().GetSkill(skillName);
         skillName = skillData.skillName;
-        Debug.Log(skillName);
         Ornament();
         ResetSkill();
     }
@@ -209,15 +208,24 @@ public class Player : MonoBehaviour {
                     PlayerVisible(gameObject);
                 }
                 break;
-            case "Shoot": 
+            case "Shoot":
+                skillData.players = GameObject.FindGameObjectsWithTag("Player");
+                if (skillData.players.Length > 1) {
+                    skillData.aiming = true;
+                    SkillDisableMove();
+                    skillData.playerCamera = transform.Find("Camera").gameObject;
+                    skillData.playerCamera.GetComponent<MouseControlFollowCamera>().enabled = false;
+                    skillCooldown = skillData.cooldownTime;
+                    ornament.transform.localScale = skillData.usingScale;
+                }
                 break;
             case "Magnetic":
                 ornament.transform.localPosition = skillData.usingPosition;
                 ornament.transform.localScale = skillData.usingScale;
                 ornament.transform.forward = transform.forward;
                 SkillDisableMove();
-                skillData.gravitating = true;
-                skillData.gravitateForce = 2;
+                skillData.magneting = true;
+                skillData.magneticForce = 2;
                 break;
             case "Hook": 
                 break;
@@ -230,20 +238,58 @@ public class Player : MonoBehaviour {
     
     private void Shoot()
     {
-
+        if (!skillData.pushing && (Input.GetKeyDown(KeyCode.R) || skillData.players[skillData.aimingPlayer] == gameObject)) {
+            skillData.aimingPlayer = (skillData.aimingPlayer + 1) % skillData.players.Length;
+            castCooldown = skillData.castTime; 
+            return;
+        }
+        skillData.playerCamera.transform.forward = (skillData.players[skillData.aimingPlayer].transform.position - transform.position).normalized;
+        skillData.playerCamera.transform.position = skillData.players[skillData.aimingPlayer].transform.position - 5 * skillData.playerCamera.transform.forward;
+        skillCooldown = skillData.cooldownTime;
+        if (Input.GetMouseButtonDown(0)) {
+            skillData.playerCamera.GetComponent<MouseControlFollowCamera>().enabled = true;
+            SkillEnableMove();
+            castCooldown = 0.5f;
+            skillData.pushing = true;
+        }
+        if (!skillData.pushing && castCooldown <= 0.5f) {
+            skillData.playerCamera.GetComponent<MouseControlFollowCamera>().enabled = true;
+            SkillEnableMove();
+            skillData.pushing = true;
+        }
+        if(castCooldown <= 0.1f) {
+            skillData.playerCamera.GetComponent<MouseControlFollowCamera>().enabled = true;
+            SkillEnableMove();
+            skillData.pushing = false;
+            PlayerInvisible(ornament);
+            castCooldown = 0;
+        }
+        if (skillData.pushing) {
+            if (castCooldown > 0.4f) {
+                ornament.transform.position = ((0.5f - castCooldown) * skillData.players[skillData.aimingPlayer].transform.position + (castCooldown - 0.4f) * transform.position) / 0.1f;
+            }
+            else {
+                skillData.players[skillData.aimingPlayer].GetComponent<Player>().exSpeed += skillData.pushForce * skillData.playerCamera.transform.forward;
+                ornament.transform.position = skillData.players[skillData.aimingPlayer].transform.position - skillData.playerCamera.transform.forward;
+            }
+        }
+        else {
+            ornament.transform.position = transform.position + 2 * skillData.playerCamera.transform.forward;
+            ornament.transform.forward = skillData.playerCamera.transform.forward;
+        }
     }
     private void Magnetic()
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         for(int i = 0; i < players.Length; i++) {
             if(players[i] != gameObject) {
-                players[i].GetComponent<Player>().exSpeed += Time.deltaTime * skillData.gravitateForce * (transform.position - players[i].transform.position).normalized;
+                players[i].GetComponent<Player>().exSpeed += Time.deltaTime * skillData.magneticForce * (transform.position - players[i].transform.position).normalized;
             }
-            skillData.gravitateForce *= 1.2f;
+            skillData.magneticForce *= 1.2f;
             castCooldown -= Time.deltaTime;
         }
         if(castCooldown <= 0) {
-            skillData.gravitating = false;
+            skillData.magneting = false;
             PlayerInvisible(ornament);
             SkillEnableMove();
             ornament.transform.localPosition = skillData.ornamentLocalPosition;
