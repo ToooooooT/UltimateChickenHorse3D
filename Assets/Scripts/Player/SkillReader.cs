@@ -17,17 +17,24 @@ public class Data
     public float jumperClip = 1;
     //dance invincible
     public bool invincible = false;
-    public float dancingAngle = 0;
     //shoot
-    public GameObject[] players;
-    public bool aiming = false;
-    public bool pushing = false;
-    public int aimingPlayer = 0;
-    public GameObject playerCamera;
-    public float pushForce = 100;
+    public GameObject[] shootPlayers;
+    public bool shootAiming = false;
+    public bool shootPushing = false;
+    public int shootAimingPlayer = 0;
+    public GameObject shootPlayerCamera;
+    public float shootPushForce = 100;
     //magnetic
     public float magneticForce = 0;
     public bool magneting = false;
+    //hook
+    public GameObject[] hookPlayers;
+    public bool hookAiming = false;
+    public bool hooking = false;
+    public int hookAimingPlayer = 0;
+    public GameObject hookPlayerCamera;
+    public Vector3 hookCatchVector;
+    public bool hookIsCatched;
 }
 public class SkillReader : Data
 {
@@ -85,10 +92,10 @@ public class SkillReader : Data
         Data skillData = new Data();
         skillData.skillName = skillName;
         skillData.cooldownTime = 20;
-        skillData.aiming = false;
-        skillData.pushing = false;
+        skillData.shootAiming = false;
+        skillData.shootPushing = false;
         skillData.castTime = 5;
-        skillData.pushForce = 100;
+        skillData.shootPushForce = 5000;
         skillData.usingScale = new Vector3(1.8f, 1.8f, 1.8f);
         return skillData;
     }
@@ -96,7 +103,7 @@ public class SkillReader : Data
     {
         Data skillData = new Data();
         skillData.skillName = skillName;
-        skillData.cooldownTime = 60;
+        skillData.cooldownTime = 30;
         skillData.magneting = false;
         skillData.magneticForce = 0;
         skillData.castTime = 5;
@@ -108,7 +115,11 @@ public class SkillReader : Data
     {
         Data skillData = new Data();
         skillData.skillName = skillName;
-        skillData.cooldownTime = 30;
+        skillData.cooldownTime = 15;
+        skillData.hookAiming = false;
+        skillData.hooking = false;
+        skillData.castTime = 10;
+        skillData.usingScale = new Vector3(1.8f, 1.8f, 1.8f);
         return skillData;
     }
     private Data GetTackData(string skillName)
