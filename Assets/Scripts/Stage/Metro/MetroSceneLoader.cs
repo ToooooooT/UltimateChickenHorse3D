@@ -2,20 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MetroSceneLoader : MonoBehaviour
+public class MetroSceneLoader : SkyboxLoaderTemplate
 {
-    private string skyboxPath = "Skybox/Panoramics/FS003/FS003_Rainy";
-    private string bgm = "metroBackground";
-
-    void Start() {
-        Material skyboxMaterial = Resources.Load<Material>(skyboxPath);
-        RenderSettings.skybox = skyboxMaterial;
-        AudioManager audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
-        audioManager.PlayBGM(bgm);
-    }
-
-    void Update()
-    {
-        
-    }
+    protected override string skyboxPath { get; } = "Skybox/Panoramics/FS003/FS003_Rainy";
+    protected override string bgm { get; } = "metroBackground";
 }

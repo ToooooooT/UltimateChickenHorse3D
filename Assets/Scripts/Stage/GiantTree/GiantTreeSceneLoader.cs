@@ -2,20 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GiantTreeSceneLoader : MonoBehaviour
+public class GiantTreeSceneLoader : SkyboxLoaderTemplate
 {
-    private string skyboxPath = "Skybox/Panoramics/FS002/FS002_Day_Sunless";
-    private string bgm = "giantTreeBackground";
-
-    void Start() {
-        Material skyboxMaterial = Resources.Load<Material>(skyboxPath);
-        RenderSettings.skybox = skyboxMaterial;
-        AudioManager audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
-        audioManager.PlayBGM(bgm);
-    }
-
-    void Update()
-    {
-        
-    }
+    protected override string skyboxPath { get; }= "Skybox/Panoramics/FS002/FS002_Day_Sunless";
+    protected override string bgm {get; } = "giantTreeBackground";
 }

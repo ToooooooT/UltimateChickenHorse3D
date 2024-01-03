@@ -10,9 +10,9 @@ public class DroneController : MonoBehaviour
     [SerializeField] private float speed;
 
     void Start() {
-        minX = -50;   
-        maxX = 120;
-        speed = 4.0f;
+        minX = -25;   
+        maxX = 105;
+        speed = 3.0f;
     }
 
     void Update() {

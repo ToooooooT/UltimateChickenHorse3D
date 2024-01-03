@@ -4,16 +4,21 @@ using UnityEngine;
 
 public class SkyboxLoaderTemplate : MonoBehaviour
 {
-    private string skyboxPath = "Skybox/Cubemaps/Classic/FS000_Day_04";
+    protected virtual string skyboxPath { get; } = "Skybox/Cubemaps/Classic/FS000_Day_04";
+    protected virtual string bgm { get; } = "introBackground";
 
-    void Start() {
+    protected void Start() {
+        LoadSkybox();
+        LoadBGM();
+    }
+
+    private void LoadSkybox() {
         Material skyboxMaterial = Resources.Load<Material>(skyboxPath);
-
         RenderSettings.skybox = skyboxMaterial;
     }
 
-    void Update()
-    {
-        
+    private void LoadBGM() {
+        AudioManager audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        audioManager.PlayBGM(bgm);
     }
 }
