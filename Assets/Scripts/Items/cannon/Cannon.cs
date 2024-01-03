@@ -16,7 +16,7 @@ public class Cannon : BaseItem
     private ParticleSystem[] smokes;
     private StageController stageController;
     private int cannonNums;
-
+    private AudioManager audioManager;
     private const string FOLDERPATH = "cannon bomb";
 
     void Awake() {
@@ -30,6 +30,7 @@ public class Cannon : BaseItem
             smokes[i] = cannons[i].Find("Small_cannon").Find("Smoke").GetComponent<ParticleSystem>();
         }
         stageController = GameObject.Find("GameController").GetComponent<StageController>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     void Start() {
@@ -46,6 +47,7 @@ public class Cannon : BaseItem
     void ShootingMode() {
         if (state == State.shooting) {
             Generatebomb();
+            audioManager.PlaySE("CannonShoot");
             state = State.idle;
             countdown = countdownTime;
         } else {
