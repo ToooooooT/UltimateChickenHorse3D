@@ -14,6 +14,7 @@ public class Player : MonoBehaviour {
    
     public enum State { MOVE, GAME, SELECT_ITEM, STOP, WIN, DEAD_ANIMATION, LOSE };
 
+    public float jumpSpeedMultiple;
     public float jumpSpeed;
     public bool isPressSpace = false;
     public float verticalVelocity;
@@ -48,6 +49,14 @@ public class Player : MonoBehaviour {
     private ParticleSystem jumpParticles;
     private ParticleSystem moveParticles;
     private string gameMode;
+    private AudioManager audioManager;
+
+    private string skillName;
+    private float skillCooldown;
+    public Data skillData;
+    private float castCooldown;
+    private GameObject ornament;
+    private const string FOLDERPATH = "SkillsItem";
 
     private void Awake() {
         virtualCamera = transform.Find("Camera").GetComponent<CinemachineVirtualCamera>();
@@ -58,6 +67,7 @@ public class Player : MonoBehaviour {
         chooseItemCanvas = GameObject.Find("ChooseItemCanvas").gameObject;
         jumpParticles = transform.Find("PlayerJumpParticles").GetComponent<ParticleSystem>();
         moveParticles = transform.Find("PlayerMovingParticles").GetComponent<ParticleSystem>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     private void Start() {
@@ -66,6 +76,7 @@ public class Player : MonoBehaviour {
         moveSpeedJumpWallratio = 10f;
         rotateSpeed = 10f;
         velocity = normalMoveSpeed;
+        jumpSpeedMultiple = 1f;
         jumpSpeed = 25f;
         gravity = 60;
         gravityCache = 60;
@@ -82,12 +93,326 @@ public class Player : MonoBehaviour {
 
     private void Update() {
         if (state == State.GAME || state == State.SELECT_ITEM || state == State.MOVE) {
+            if (skillData!=null && Input.GetKeyDown(KeyCode.R)) 
+                InceptSkill();
             HandleMovement();
             HandleJump();
-            HandleFacement();
+            HandleFacement(); 
+            UseSkill();
         }
     }
+    private void UseSkill()
+    {
+        skillCooldown -= Time.deltaTime;
+        if (!UsingSkill()) {
+            if (ornament != null) {
+                ornament.transform.right = (ornament.transform.right + 0.01f * ornament.transform.forward).normalized;
+                if (skillCooldown <= 0)
+                    ObjectVisible(ornament);
+            }
+            return;
+        }
+        switch (skillName) {
+            case "JumpHigh":
+                Transform jumperTransform = ornament.transform.Find("Jumper");
+                Vector3 jumperLocalPosition = jumperTransform.localPosition;
+                if (skillData.jumperClip <= 0.2)
+                    jumperLocalPosition.y = 2 - skillData.jumperClip * (4 / 0.2f);
+                else
+                    jumperLocalPosition.y = -2 + (skillData.jumperClip - 0.2f) * (4 / 0.8f);
+                jumperTransform.localPosition = jumperLocalPosition;
+                skillData.jumperClip = Mathf.Min(Time.deltaTime + skillData.jumperClip, 1);
+                break;
+            case "DanceInvincible":
+                break;
+            case "Shoot":
+                Shoot();
+                break;
+            case "Magnetic":
+                Magnetic();
+                break;
+            case "Hook":
+                Hook();
+                break;
+            case "Tack":
+                Tack();
+                break;
+        }
+        castCooldown -= Time.deltaTime;
+    }
+    private bool UsingSkill()
+    {
+        if (skillData == null) return false;
+        if (castCooldown > 0) return true;
+        if (skillData.invincible) return true;
+        if (skillData.jumpHigh) return true;
+        if (skillData.magneting) return true;
+        return false;
+    }
+    public void ChangeSkill(string newSkillName = "")
+    {
+        if (newSkillName != "")
+            skillName = newSkillName;
+        skillData = new SkillReader().GetSkill(skillName);
+        skillName = skillData.skillName;
+        Ornament();
+        ResetSkill();
+    }
+    private void ResetSkill()
+    {
+        //jump
+        jumpSpeedMultiple = 1;
+        //dance invincible
+        SkillEnableMove();
+        transform.up = Vector3.up;
+    }
+    private void Ornament()
+    {
+        GameObject ornamentPrefab = Resources.Load<GameObject>(FOLDERPATH + "/" + skillName + "/ornament");
+        if (ornament != null) {
+            Destroy(ornament);
+        }
+        ornament = Instantiate(ornamentPrefab, transform);
+        ornament.transform.localPosition = skillData.ornamentLocalPosition;
+        skillData.ornamentLocalScale = ornament.transform.localScale;
+    }
+    private void InceptSkill()
+    {
+        if (skillCooldown > 0) return;
+        switch (skillName) {
+            case "JumpHigh":
+                skillData.jumpHigh = !skillData.jumpHigh;
+                if (skillData.jumpHigh) {
+                    jumpSpeedMultiple = 3;
+                    ornament.transform.localPosition = skillData.usingPosition;
+                    ornament.transform.localScale = skillData.usingScale;
+                    ornament.transform.forward = transform.right;
+                }
+                else {
+                    jumpSpeedMultiple = 1;
+                    ornament.transform.localPosition = skillData.ornamentLocalPosition;
+                    ornament.transform.localScale = skillData.ornamentLocalScale;
+                }
+                break;
+            case "DanceInvincible": 
+                skillData.invincible = !skillData.invincible;
+                if (skillData.invincible) {
+                    SkillDisableMove();
+                    ornament.transform.localPosition = skillData.usingPosition;
+                    ornament.transform.localScale = skillData.usingScale;
+                    ObjectInvisible(gameObject);
+                }
+                else {
+                    SkillEnableMove();
+                    transform.up = Vector3.up;
+                    ornament.transform.localPosition = skillData.ornamentLocalPosition;
+                    ornament.transform.localScale = skillData.ornamentLocalScale;
+                    ObjectVisible(gameObject);
+                }
+                break;
+            case "Shoot":
+                skillData.shootPlayers = GameObject.FindGameObjectsWithTag("Player");
+                if (skillData.shootPlayers.Length > 1) {
+                    skillData.shootAiming = true;
+                    SkillDisableMove();
+                    skillData.shootPlayerCamera = transform.Find("Camera").gameObject;
+                    skillData.shootPlayerCamera.GetComponent<MouseControlFollowCamera>().enabled = false;
+                    skillCooldown = skillData.cooldownTime;
+                    ornament.transform.localScale = skillData.usingScale;
+                }
+                break;
+            case "Magnetic":
+                ornament.transform.localPosition = skillData.usingPosition;
+                ornament.transform.localScale = skillData.usingScale;
+                ornament.transform.forward = transform.forward;
+                SkillDisableMove();
+                skillData.magneting = true;
+                skillData.magneticForce = 2;
+                break;
+            case "Hook":
+                skillData.hookPlayers = GameObject.FindGameObjectsWithTag("Player");
+                if (skillData.hookPlayers.Length > 1) {
+                    skillData.hookIsCatched = false;
+                    skillData.hookAiming = true;
+                    SkillDisableMove();
+                    skillData.hookPlayerCamera = transform.Find("Camera").gameObject;
+                    skillData.hookPlayerCamera.GetComponent<MouseControlFollowCamera>().enabled = false;
+                    skillCooldown = skillData.cooldownTime;
+                    ornament.transform.localScale = skillData.usingScale;
+                }
+                break;
+            case "Tack": 
+                break;
+        }
+        castCooldown = skillData.castTime;
+        skillCooldown = skillData.cooldownTime;
+    }
+    
+    private void Shoot()
+    {
+        if (!skillData.shootPushing && (Input.GetKeyDown(KeyCode.R) || skillData.shootPlayers[skillData.shootAimingPlayer] == gameObject)) {
+            skillData.shootAimingPlayer = (skillData.shootAimingPlayer + 1) % skillData.shootPlayers.Length;
+            castCooldown = skillData.castTime; 
+            return;
+        }
+        skillData.shootPlayerCamera.transform.forward = (skillData.shootPlayers[skillData.shootAimingPlayer].transform.position - transform.position).normalized;
+        skillData.shootPlayerCamera.transform.position = skillData.shootPlayers[skillData.shootAimingPlayer].transform.position - 5 * skillData.shootPlayerCamera.transform.forward;
+        skillCooldown = skillData.cooldownTime;
+        if (Input.GetMouseButtonDown(0)) {
+            skillData.shootPlayerCamera.GetComponent<MouseControlFollowCamera>().enabled = true;
+            SkillEnableMove();
+            castCooldown = 0.5f;
+            skillData.shootPushing = true;
+        }
+        if (!skillData.shootPushing && castCooldown <= 0.5f) {
+            skillData.shootPlayerCamera.GetComponent<MouseControlFollowCamera>().enabled = true;
+            SkillEnableMove();
+            skillData.shootPushing = true;
+        }
+        if(castCooldown <= 0.1f) {
+            skillData.shootPlayerCamera.GetComponent<MouseControlFollowCamera>().enabled = true;
+            SkillEnableMove();
+            skillData.shootPushing = false;
+            ornament.transform.localPosition = skillData.ornamentLocalPosition;
+            ornament.transform.localScale = skillData.ornamentLocalScale;
+            ObjectInvisible(ornament);
+            castCooldown = 0;
+        }
+        if (skillData.shootPushing) {
+            if (castCooldown > 0.4f) {
+                ornament.transform.position = ((0.5f - castCooldown) * skillData.shootPlayers[skillData.shootAimingPlayer].transform.position + (castCooldown - 0.4f) * transform.position) / 0.1f;
+            }
+            else {
+                skillData.shootPlayers[skillData.shootAimingPlayer].GetComponent<Player>().exSpeed += skillData.shootPushForce * Time.deltaTime * skillData.shootPlayerCamera.transform.forward;
+                ornament.transform.position = skillData.shootPlayers[skillData.shootAimingPlayer].transform.position - skillData.shootPlayerCamera.transform.forward;
+            }
+        }
+        else {
+            ornament.transform.position = transform.position + 2 * skillData.shootPlayerCamera.transform.forward;
+            ornament.transform.forward = skillData.shootPlayerCamera.transform.forward;
+        }
+    }
+    private void Magnetic()
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        for(int i = 0; i < players.Length; i++) {
+            if(players[i] != gameObject) {
+                players[i].GetComponent<Player>().exSpeed += Time.deltaTime * skillData.magneticForce * (transform.position - players[i].transform.position).normalized;
+            }
+            skillData.magneticForce *= 1.2f;
+            castCooldown -= Time.deltaTime;
+        }
+        if(castCooldown <= 0) {
+            skillData.magneting = false;
+            ObjectInvisible(ornament);
+            SkillEnableMove();
+            ornament.transform.localPosition = skillData.ornamentLocalPosition;
+            ornament.transform.localScale = skillData.ornamentLocalScale;
+        }
+    }
+    private void Hook()
+    {
+        if (!skillData.hooking && (Input.GetKeyDown(KeyCode.R) || skillData.hookPlayers[skillData.hookAimingPlayer] == gameObject)) {
+            skillData.hookAimingPlayer = (skillData.hookAimingPlayer + 1) % skillData.hookPlayers.Length;
+            castCooldown = skillData.castTime;
+            return;
+        }
+        skillData.hookPlayerCamera.transform.forward = (skillData.hookPlayers[skillData.hookAimingPlayer].transform.position - transform.position).normalized;
+        skillData.hookPlayerCamera.transform.position = skillData.hookPlayers[skillData.hookAimingPlayer].transform.position - 5 * skillData.hookPlayerCamera.transform.forward;
+        skillCooldown = skillData.cooldownTime;
+        if (Input.GetMouseButtonDown(0)) {
+            castCooldown = 2.5f;
+            skillData.hooking = true;
+        }
+        if (!skillData.hooking && castCooldown <= 2.5f) {
+            skillData.hooking = true;
+        }
+        if (castCooldown <= 0.1f) {
+            skillData.hookPlayerCamera.GetComponent<MouseControlFollowCamera>().enabled = true;
+            SkillEnableMove();
+            skillData.hooking = false;
+            ornament.transform.localPosition = skillData.ornamentLocalPosition;
+            ornament.transform.localScale = skillData.ornamentLocalScale;
+            ObjectInvisible(ornament);
+            SkillEnableMove();
+            if (!skillData.hookIsCatched) {
+                skillCooldown = 0;
+            }
+            castCooldown = 0;
+        }
+        if (skillData.hooking) {
+            skillData.hookPlayerCamera.transform.position = ornament.transform.position - 5 * ornament.transform.up + 2 * Vector3.up;
+            skillData.hookPlayerCamera.transform.forward = ornament.transform.position - skillData.hookPlayerCamera.transform.position;
+            if (castCooldown > 0.2f) {
+                if (castCooldown > 1) {
+                    ornament.transform.position = ornament.transform.position + 30 * Time.deltaTime * (skillData.hookPlayers[skillData.hookAimingPlayer].transform.position - ornament.transform.position).normalized;
+                    ornament.transform.up = skillData.hookPlayers[skillData.hookAimingPlayer].transform.position - ornament.transform.position;
+                    skillData.hookCatchVector = skillData.hookPlayers[skillData.hookAimingPlayer].transform.position - (transform.position + 2 * skillData.hookPlayerCamera.transform.forward);
+                }
+                if ((skillData.hookPlayers[skillData.hookAimingPlayer].transform.position - ornament.transform.position).magnitude < 2) {
+                    skillData.hookIsCatched = true;
+                    castCooldown = 0.2f;
+                }
+            }
+            else {
+                Vector3 newPos = (transform.position + 2 * skillData.hookPlayerCamera.transform.forward) + (skillData.hookCatchVector) * (castCooldown - 0.1f) / 0.1f;
+                if (skillData.hookIsCatched) {
+                    skillData.hookPlayers[skillData.hookAimingPlayer].GetComponent<Player>().ModifyPosition(newPos);
+                }
+                ornament.transform.position = newPos;
+            }
+        }
+    }
+    private void Tack()
+    {
 
+    }
+    private void ObjectInvisible(GameObject obj, string exceptTag = "ornament(Clone)")
+    {
+        Renderer renderer = obj.GetComponent<Renderer>();
+        if (renderer != null) {
+            renderer.enabled = false;
+        }
+
+        foreach (Transform childTransform in obj.transform) {
+            if (childTransform.gameObject.name == exceptTag)
+                continue;
+            ObjectInvisible(childTransform.gameObject);
+        }
+    }
+    private void ObjectVisible(GameObject obj)
+    {
+        Renderer renderer = obj.GetComponent<Renderer>();
+        if (renderer != null) {
+            renderer.enabled = true;
+        }
+
+        foreach (Transform childTransform in obj.transform) {
+            ObjectVisible(childTransform.gameObject);
+        }
+    }
+    private void SkillEnableMove()
+    {
+        InputAction move = playerInputActionMap.FindAction("Move");
+        move.Enable();
+        InputAction jump = playerInputActionMap.FindAction("Jump");
+        jump.started += DoJump;
+        jump.canceled += CancelJump;
+        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+        accelerate.started += DoAccelerate;
+        accelerate.canceled += NoAccelerate;
+    }
+    private void SkillDisableMove()
+    {
+        InputAction move = playerInputActionMap.FindAction("Move");
+        move.Disable();
+        InputAction jump = playerInputActionMap.FindAction("Jump");
+        jump.started -= DoJump;
+        jump.canceled -= CancelJump;
+        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+        accelerate.started -= DoAccelerate;
+        accelerate.canceled -= NoAccelerate;
+    }
     public void Enable(State new_state) {
         state = new_state;
         playerInputActionMap.Enable();
@@ -115,7 +440,34 @@ public class Player : MonoBehaviour {
             FrogEnable();
         }
     }
-
+    public void Disable(State new_state)
+    {
+        state = new_state;
+        playerInputActionMap.Disable();
+        InputAction move = playerInputActionMap.FindAction("Move");
+        move.Disable();
+        InputAction jump = playerInputActionMap.FindAction("Jump");
+        jump.started -= DoJump;
+        jump.canceled -= CancelJump;
+        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
+        accelerate.started -= DoAccelerate;
+        accelerate.canceled -= NoAccelerate;
+        InputAction pause = playerInputActionMap.FindAction("Pause");
+        pause.started -= Pause;
+        switch (gameMode) {
+            case "Party":
+                InputAction giveup = playerInputActionMap.FindAction("GiveUp");
+                giveup.performed -= GiveUp;
+                break;
+            case "Create":
+                InputAction chooseItemCreate = playerInputActionMap.FindAction("ChooseItemCreate");
+                chooseItemCreate.performed -= ChooseItemCreate;
+                break;
+        }
+        if (transform.parent != null && transform.parent.TryGetComponent<Frog>(out var frog)) {
+            frog.Disable();
+        }
+    }
     public void FrogEnable() {
         if (transform.parent != null && transform.parent.TryGetComponent<Frog>(out var frog)) {
             InputAction move = playerInputActionMap.FindAction("Move");
@@ -142,33 +494,7 @@ public class Player : MonoBehaviour {
         }
     }
 
-    public void Disable(State new_state) {
-        state = new_state;
-        playerInputActionMap.Disable();
-        InputAction move = playerInputActionMap.FindAction("Move");
-        move.Disable();
-        InputAction jump = playerInputActionMap.FindAction("Jump");
-        jump.started -= DoJump;
-        jump.canceled -= CancelJump;
-        InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
-        accelerate.started -= DoAccelerate;
-        accelerate.canceled -= NoAccelerate;
-        InputAction pause = playerInputActionMap.FindAction("Pause");
-        pause.started -= Pause;
-        switch (gameMode) {
-        case "Party":
-            InputAction giveup = playerInputActionMap.FindAction("GiveUp");
-            giveup.performed -= GiveUp;
-            break;
-        case "Create":
-            InputAction chooseItemCreate = playerInputActionMap.FindAction("ChooseItemCreate");
-            chooseItemCreate.performed -= ChooseItemCreate;
-            break;
-        }
-        if (transform.parent != null && transform.parent.TryGetComponent<Frog>(out var frog)) {
-            frog.Disable();
-        }
-    }
+    
 
     public bool IsWalking() {
         return isWalking;
@@ -179,7 +505,8 @@ public class Player : MonoBehaviour {
     }
 
     public void SetDead() {
-        state = State.DEAD_ANIMATION;
+        if (skillData == null || !skillData.invincible)
+            state = State.DEAD_ANIMATION;
     }
 
     public void SetLose() {
@@ -237,7 +564,7 @@ public class Player : MonoBehaviour {
         }
         if (isJumping) {
             buttonPressedTime += Time.deltaTime;
-            verticalVelocity = jumpSpeed;
+            verticalVelocity = jumpSpeedMultiple * jumpSpeed;
             if (buttonPressedTime > buttonPressedWindow) {
                 isJumping = false;
                 verticalVelocity = 0;
@@ -304,8 +631,12 @@ public class Player : MonoBehaviour {
     private void DoJump(InputAction.CallbackContext context) {
         isPressSpace = true;
         if (CheckWall() || IsGrounded()) {
+            if (skillData != null && skillData.jumpHigh) {
+                skillData.jumperClip = 0;
+            }
             isJumping = true;
             buttonPressedTime = 0;
+            audioManager.PlaySE("jump");
             jumpParticles.Play();
             moveParticles.Stop();
         }

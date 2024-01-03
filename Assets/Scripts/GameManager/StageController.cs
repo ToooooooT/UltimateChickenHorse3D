@@ -31,6 +31,7 @@ public class StageController : MonoBehaviour
     private bool isFirstChooseStage;
     private int createItemCounter;
     private List<int> winnerIndexs;
+    private AudioManager audioManager;
 
     private Vector3[] selectItemPositions;
 
@@ -60,6 +61,8 @@ public class StageController : MonoBehaviour
         pauseMenu = GameObject.Find("PauseCanvas").gameObject;
         isFirstChooseStage = true;
         stage = null;
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        audioManager.PlayBGM("introBackground");
     }
 
     void Update() {

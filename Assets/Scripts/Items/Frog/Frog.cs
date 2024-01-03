@@ -246,10 +246,11 @@ public class Frog : Velocity
             return;
         }
         if (ridingPlayer != null) {
-            ridingPlayer.transform.SetParent(null);ridingPlayerScript.ModifyPosition(transform.position);
-            ridingPlayer.transform.localScale = playerScale;
             Player playerScript = ridingPlayer.GetComponent<Player>();
             playerScript?.FrogDisable();
+            ridingPlayer.transform.SetParent(null);
+            ridingPlayerScript.ModifyPosition(transform.position);
+            ridingPlayer.transform.localScale = playerScale;
         }
     }
 

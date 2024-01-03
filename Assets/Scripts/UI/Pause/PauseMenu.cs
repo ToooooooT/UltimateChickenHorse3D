@@ -19,6 +19,10 @@ public class PauseMenu : MonoBehaviour
     private bool chooseItemCanvasActive;
     private float timeScale;
     private string gameMode;
+    private AudioManager audioManager;
+
+    private string bgmStartUI = "introBackground";
+    private string bgmLobby = "introBackground";
 
     private void Awake() {
         gameController = GameObject.Find("GameController");
@@ -29,6 +33,7 @@ public class PauseMenu : MonoBehaviour
         playersCursor = new bool[4];
         gameMode = PlayerPrefs.GetString("GameMode", "Party");
         chooseItemCanvas = GameObject.Find("ChooseItemCanvas");
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     public void Pause() {
@@ -73,9 +78,12 @@ public class PauseMenu : MonoBehaviour
             case StageController.PartyStage.CHOOSE_STAGE:
                 DestoryPlayer();
                 SceneManager.LoadScene("StartUI");
+                audioManager.PlayBGM(bgmStartUI);
                 break;
             default:
                 stageController.partyStage = StageController.PartyStage.CHOOSE_STAGE;
+                audioManager.StopSE();
+                audioManager.PlayBGM(bgmLobby);
                 ChangeSkybox();
                 break;
             }
@@ -84,9 +92,12 @@ public class PauseMenu : MonoBehaviour
             case StageController.CreateStage.CHOOSE_STAGE:
                 DestoryPlayer();
                 SceneManager.LoadScene("StartUI");
+                audioManager.PlayBGM(bgmStartUI);
                 break;
             default:
                 stageController.createStage = StageController.CreateStage.CHOOSE_STAGE;
+                audioManager.StopSE();
+                audioManager.PlayBGM(bgmLobby);
                 ChangeSkybox();
                 break;
             }
