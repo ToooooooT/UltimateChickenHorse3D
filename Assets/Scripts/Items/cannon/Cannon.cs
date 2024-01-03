@@ -68,7 +68,7 @@ public class Cannon : BaseItem
     }
 
     private void Generatebomb() {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < cannonNums; i++) {
             GameObject newBomb = Instantiate(bomb);
             Transform newBombTransform = newBomb.transform;
             newBombTransform.position = cannons[i].position + 1.6f * cannons[i].up + 2f * cannons[i].forward;
