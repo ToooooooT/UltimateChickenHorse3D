@@ -49,6 +49,7 @@ public class Player : MonoBehaviour {
     private ParticleSystem jumpParticles;
     private ParticleSystem moveParticles;
     private string gameMode;
+    private AudioManager audioManager;
 
     private string skillName;
     private float skillCooldown;
@@ -66,6 +67,7 @@ public class Player : MonoBehaviour {
         chooseItemCanvas = GameObject.Find("ChooseItemCanvas").gameObject;
         jumpParticles = transform.Find("PlayerJumpParticles").GetComponent<ParticleSystem>();
         moveParticles = transform.Find("PlayerMovingParticles").GetComponent<ParticleSystem>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     private void Start() {
@@ -634,6 +636,7 @@ public class Player : MonoBehaviour {
             }
             isJumping = true;
             buttonPressedTime = 0;
+            audioManager.PlaySE("jump");
             jumpParticles.Play();
             moveParticles.Stop();
         }

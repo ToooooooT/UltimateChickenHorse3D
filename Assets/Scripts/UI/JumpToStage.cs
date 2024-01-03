@@ -9,6 +9,7 @@ public class JumpToStage : MonoBehaviour
     private int nextStageId;
     private Countdown countdown;
     private int[] playersInPavilion;
+    private AudioManager audioManager;
     public CanvasGroup fadeCanvasGroup;
     public TextMeshProUGUI nextStageText;
     public bool flag;
@@ -20,6 +21,7 @@ public class JumpToStage : MonoBehaviour
         nextStageId = 0;
         nextStageText.enabled = false;
         flag = false;
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     // Update is called once per frame
@@ -42,15 +44,19 @@ public class JumpToStage : MonoBehaviour
     }
     IEnumerator FadeInOut() {
         float fadeSpeed = 0.5f;
-
+        float volumeRatio = 1.0f;
+        float originalVolume = audioManager.Volume;
         // fade out
         while (fadeCanvasGroup.alpha < 1.0f) {
             fadeCanvasGroup.alpha += Time.deltaTime * fadeSpeed;
+            volumeRatio -= Time.deltaTime * fadeSpeed;
+            audioManager.Volume = originalVolume * volumeRatio;
             yield return null;
         }
 
         // TeleportPlayers();
         countdown.ResetState();
+        audioManager.Volume = 0;
         flag = true;
         transform.parent.position = new Vector3(0, -1000, 0);
         yield return new WaitForSeconds(2.0f);
@@ -58,9 +64,13 @@ public class JumpToStage : MonoBehaviour
         // fade in
         while (fadeCanvasGroup.alpha > 0.0f) {
             fadeCanvasGroup.alpha -= Time.deltaTime * fadeSpeed;
+            volumeRatio += Time.deltaTime * fadeSpeed;
+            volumeRatio = Mathf.Clamp01(volumeRatio);
+            audioManager.Volume = originalVolume * volumeRatio;
             yield return null;
         }
 
+        audioManager.Volume = originalVolume;
         transform.parent.gameObject.SetActive(false);
         nextStageText.enabled = false;
         flag = false;
