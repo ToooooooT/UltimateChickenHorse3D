@@ -153,10 +153,38 @@ public class Player : MonoBehaviour {
     {
         if (newSkillName != "")
             skillName = newSkillName;
+        else {
+            ChangeRandomSkill();
+            return;
+        }
         skillData = new SkillReader().GetSkill(skillName);
         skillName = skillData.skillName;
         Ornament();
         ResetSkill();
+    }
+    private void ChangeRandomSkill()
+    {
+        if (skillData == null) {
+            ChooseSkill(-1);
+        }
+        else {
+            ChooseSkill(skillData.skillNum);
+        }
+    }
+    private void ChooseSkill(int skillNum)
+    {
+        string[] skillNames = new SkillReader().GetSkillNames();
+        int newSkillNum = (skillNum + 1) % skillNames.Length;
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        for (int i = 0; i < players.Length; i++) {
+            Data skillDatai = players[i].GetComponent<Player>().skillData;
+            if (skillDatai != null && skillDatai.skillNum == newSkillNum) {
+                ChooseSkill(newSkillNum);
+                return;
+            }
+        }
+        ChangeSkill(skillNames[newSkillNum]);
+        skillData.skillNum = newSkillNum;
     }
     private void ResetSkill()
     {
