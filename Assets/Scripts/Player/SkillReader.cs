@@ -52,7 +52,7 @@ public class SkillReader : Data
     }
     public string[] GetSkillNames()
     {
-        return new string[] { "JumpHigh", "DanceInvincible", "Shoot", "Magnetic", "Hook", "Tack" };
+        return new string[] { "JumpHigh", "DanceInvincible", "Shoot", "Magnetic", "Hook" };
     }
     public Data GetSkill(string skillName)
     {
@@ -65,8 +65,7 @@ public class SkillReader : Data
             case "Hook": return GetHookData(skillName);
             case "Tack": return GetTackData(skillName);
         }
-        return GetJumpHighData("DanceInvincible");
-        //return GetSkill(skillNames[(int) Random.Range(0, skillNames.Length)]);
+        return GetSkill(skillNames[(int) Random.Range(0, skillNames.Length)]);
     }
 
     private Data GetJumpHighData(string skillName)

@@ -18,13 +18,17 @@ public class ChangeSkill : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player")) {
-            Player playerScript = other.gameObject.GetComponent<Player>();
-            if (playerScript.skillData == null) {
-                ChooseSkill(other.gameObject, -1);
-            }
-            else {
-                ChooseSkill(other.gameObject, playerScript.skillData.skillNum);
-            }
+            ChangePlayerSkill(other.gameObject);
+        }
+    }
+    private void ChangePlayerSkill(GameObject player)
+    {
+        Player playerScript = player.GetComponent<Player>();
+        if (playerScript.skillData == null) {
+            ChooseSkill(player, -1);
+        }
+        else {
+            ChooseSkill(player.gameObject, playerScript.skillData.skillNum);
         }
     }
     private void ChooseSkill(GameObject player, int skillNum)
