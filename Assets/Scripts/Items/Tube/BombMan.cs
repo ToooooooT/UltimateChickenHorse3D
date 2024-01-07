@@ -16,6 +16,9 @@ public class BombMan : Velocity
     private float Acceleration;
     private bool walking;
     private bool alreadySplit;
+    private AudioManager audioManager;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +30,7 @@ public class BombMan : Velocity
         rotateSpeed = 3f;
         Acceleration = 181f;
         animator = GetComponent<Animator>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     // Update is called once per frame
@@ -35,6 +39,7 @@ public class BombMan : Velocity
         if (state == State.walking) {
             if (walking) {
                 animator.SetBool("walk", true);
+                audioManager.PlaySE("bombmanRun");
                 velocity += Time.deltaTime * Acceleration * transform.forward;
             }
             else {
@@ -71,7 +76,8 @@ public class BombMan : Velocity
             }
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             for(int i = 0; i < players.Length; i++) {
-                if((players[i].transform.position - transform.position).magnitude <= transform.localScale.x * 1.25f &&
+                audioManager.PlaySE("bombExplode");
+                if ((players[i].transform.position - transform.position).magnitude <= transform.localScale.x * 1.25f &&
                     players[i].GetComponent<Player>().GetState() == Player.State.GAME) {
                     players[i].GetComponent<Player>().SetDead();
                 }

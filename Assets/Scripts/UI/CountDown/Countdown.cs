@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -9,16 +11,18 @@ public class Countdown : MonoBehaviour
 
     public TextMeshProUGUI countdownText;
     public int totalPlayersCount = 1;
+    private int nextStageID = -1;
     public bool flgNextStage;
 
     void Start() {
+        playersInPavilion = new int[transform.childCount];
         ResetState();
     }
 
     void Update() {
         CountTotalPlayers();
 
-        if (CheckPlayersAllInPavilion() && !flgNextStage) {
+        if (CheckPlayersAllInPavilion() && !flgNextStage && nextStageID == -1) {
             countdownTimer -= Time.deltaTime;
 
             if (countdownTimer <= 0f) {

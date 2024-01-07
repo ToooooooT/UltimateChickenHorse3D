@@ -19,7 +19,7 @@ public class TireController : BaseItem
     }
 
     void Start() {
-        rotateSpeed = 80.0f;
+        rotateSpeed = 240.0f;
         theta = 0;
     }
 

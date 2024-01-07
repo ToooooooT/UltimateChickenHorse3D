@@ -13,8 +13,10 @@ public class Metro : MonoBehaviour
     private Vector3 startPosition;
     private float currentDistance = 0;
     private float totalDistance = 235f;
+    private AudioManager audioManager;
 
     void Start() {
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         state = State.IDLE;
         
         startPosition = transform.position;
@@ -29,6 +31,7 @@ public class Metro : MonoBehaviour
         if (state == State.MOVING) {
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
             currentDistance = (transform.position - startPosition).magnitude;
+            audioManager.PlaySE("metroTrain");
             if (currentDistance >= totalDistance) {
                 state = State.FINISH;
             }

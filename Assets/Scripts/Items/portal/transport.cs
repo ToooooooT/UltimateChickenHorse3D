@@ -9,8 +9,11 @@ public class Transport : MonoBehaviour
     public float countdown;
 
     private GameObject[] portals;
+    private AudioManager audioManager;
+
 
     void Start() {
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         state = State.unable;
         countdown = 0;
     }
@@ -50,6 +53,7 @@ public class Transport : MonoBehaviour
             }
         }
         if(enablePortals.Count > 0) {
+            audioManager.PlaySE("portalTransport");
             int choose = Random.Range(0, enablePortals.Count);
             Transport chosenPortalScript = enablePortals[choose].GetComponent<Transport>();
             

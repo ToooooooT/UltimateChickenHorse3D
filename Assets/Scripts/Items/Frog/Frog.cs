@@ -27,6 +27,8 @@ public class Frog : Velocity
     private InputActionMap frogPlayerInputActionMap;
     private bool longJumpIsPressed;
     private bool shortJumpIsPressed;
+    private AudioManager audioManager;
+
 
     private void Awake() {
         colliderFrog = GetComponent<Collider>();
@@ -34,6 +36,7 @@ public class Frog : Velocity
     }
 
     void Start() {
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         animator = GetComponent<Animator>();
         gravity = new Vector3(0, -3, 0);
         jumpingSpeed = 20;
@@ -50,6 +53,7 @@ public class Frog : Velocity
         }
         if (state == State.RIDING) {
             if (shortJumpIsPressed) {
+                audioManager.PlaySE("frogJump");
                 ShortJump();
             }
             if (IsGrounded() && jumpCooldown <= 0) {
@@ -201,6 +205,7 @@ public class Frog : Velocity
 
     private void OnTriggerEnter(Collider collider) {
         if (state == State.IDLE && ridingPlayer == null && collider.gameObject.transform.CompareTag("Player")) {
+            audioManager.PlaySE("rideOnFrog");
             ridingPlayer = collider.gameObject;
             playerScale = ridingPlayer.transform.localScale;
             endureTime = maxEndureTime;

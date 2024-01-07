@@ -71,8 +71,8 @@ public class Player : MonoBehaviour {
     }
 
     private void Start() {
-        normalMoveSpeed = 5f;
-        accelerateMoveSpeed = 7f;
+        normalMoveSpeed = 15f;
+        accelerateMoveSpeed = normalMoveSpeed * 1.5f;
         moveSpeedJumpWallratio = 10f;
         rotateSpeed = 10f;
         velocity = normalMoveSpeed;
@@ -533,6 +533,7 @@ public class Player : MonoBehaviour {
     }
 
     public void SetDead() {
+        audioManager.PlaySE("dead1");
         if (skillData == null || !skillData.invincible)
             state = State.DEAD_ANIMATION;
     }
