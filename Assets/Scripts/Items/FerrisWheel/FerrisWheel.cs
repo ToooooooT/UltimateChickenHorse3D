@@ -25,7 +25,6 @@ public class FerrisWheel : BaseItem
     }
 
     void Rotate() {
-        // Assuming the child object has a specific name, adjust it accordingly
         Vector3 rotation = transform.rotation.eulerAngles;
         rotation.z += Time.deltaTime * rotateSpeed;
         transform.rotation = Quaternion.Euler(rotation);
