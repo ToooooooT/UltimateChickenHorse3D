@@ -8,7 +8,6 @@ using Cinemachine;
 using UnityEngine.Rendering.UI;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
-using UnityEditor.Profiling;
 
 public class Player : MonoBehaviour {
    
@@ -95,8 +94,9 @@ public class Player : MonoBehaviour {
 
     private void Update() {
         if (state == State.GAME || state == State.SELECT_ITEM || state == State.MOVE) {
-            if (skillData!=null && Input.GetKeyDown(KeyCode.R)) 
+            if (skillData != null && RClick) {
                 InceptSkill();
+            } 
             HandleMovement();
             HandleJump();
             HandleFacement(); 
@@ -105,8 +105,7 @@ public class Player : MonoBehaviour {
         RClick = false;
         leftClick = false;
     }
-    //RClick
-    //leftClick
+
     private void UseSkill()
     {
         skillCooldown -= Time.deltaTime;
@@ -455,6 +454,10 @@ public class Player : MonoBehaviour {
         InputAction jump = playerInputActionMap.FindAction("Jump");
         jump.started += DoJump;
         jump.canceled += CancelJump;
+        InputAction skill = playerInputActionMap.FindAction("Skill");
+        skill.performed += ctx => RClick = true;
+        InputAction shoot = playerInputActionMap.FindAction("Shoot");
+        shoot.performed += ctx => leftClick = true;
         InputAction accelerate = playerInputActionMap.FindAction("Accelerate");
         accelerate.started += DoAccelerate;
         accelerate.canceled += NoAccelerate;
@@ -539,9 +542,10 @@ public class Player : MonoBehaviour {
     }
 
     public void SetDead() {
-        audioManager.PlaySE("dead1");
-        if (skillData == null || !skillData.invincible)
+        if (skillData == null || !skillData.invincible) {
+            audioManager.PlaySE("dead1");
             state = State.DEAD_ANIMATION;
+        }
     }
 
     public void SetLose() {
