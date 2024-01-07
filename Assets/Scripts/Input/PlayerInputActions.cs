@@ -55,6 +55,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Skill"",
+                    ""type"": ""Button"",
+                    ""id"": ""7251e5e5-453b-4297-8127-f5360f9bfa2b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""062c7a9e-5ac9-4e8d-bf58-c298e70be286"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""FPS2TPS"",
                     ""type"": ""Button"",
                     ""id"": ""bd64150b-5421-47d9-9600-1f29b2fdd0f8"",
@@ -558,6 +576,50 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ChooseItemCreate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""beaf790a-69a9-4af9-9ec0-5719d7b86460"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard_mouse"",
+                    ""action"": ""Skill"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e03b63a7-84a3-4c75-9bc4-80a56dafcb9c"",
+                    ""path"": ""<XInputController>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Xbox_controller"",
+                    ""action"": ""Skill"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""54db1064-b5e4-4118-88ae-5e866c8e0779"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard_mouse"",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cc8fb61e-2c7d-4188-a6c9-3805c61e48ac"",
+                    ""path"": ""<XInputController>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Xbox_controller"",
+                    ""action"": ""Shoot"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1356,6 +1418,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Accelerate = m_Player.FindAction("Accelerate", throwIfNotFound: true);
+        m_Player_Skill = m_Player.FindAction("Skill", throwIfNotFound: true);
+        m_Player_Shoot = m_Player.FindAction("Shoot", throwIfNotFound: true);
         m_Player_FPS2TPS = m_Player.FindAction("FPS2TPS", throwIfNotFound: true);
         m_Player_ZoomCamera = m_Player.FindAction("ZoomCamera", throwIfNotFound: true);
         m_Player_MoveCamera = m_Player.FindAction("MoveCamera", throwIfNotFound: true);
@@ -1445,6 +1509,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Accelerate;
+    private readonly InputAction m_Player_Skill;
+    private readonly InputAction m_Player_Shoot;
     private readonly InputAction m_Player_FPS2TPS;
     private readonly InputAction m_Player_ZoomCamera;
     private readonly InputAction m_Player_MoveCamera;
@@ -1458,6 +1524,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Accelerate => m_Wrapper.m_Player_Accelerate;
+        public InputAction @Skill => m_Wrapper.m_Player_Skill;
+        public InputAction @Shoot => m_Wrapper.m_Player_Shoot;
         public InputAction @FPS2TPS => m_Wrapper.m_Player_FPS2TPS;
         public InputAction @ZoomCamera => m_Wrapper.m_Player_ZoomCamera;
         public InputAction @MoveCamera => m_Wrapper.m_Player_MoveCamera;
@@ -1482,6 +1550,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Accelerate.started += instance.OnAccelerate;
             @Accelerate.performed += instance.OnAccelerate;
             @Accelerate.canceled += instance.OnAccelerate;
+            @Skill.started += instance.OnSkill;
+            @Skill.performed += instance.OnSkill;
+            @Skill.canceled += instance.OnSkill;
+            @Shoot.started += instance.OnShoot;
+            @Shoot.performed += instance.OnShoot;
+            @Shoot.canceled += instance.OnShoot;
             @FPS2TPS.started += instance.OnFPS2TPS;
             @FPS2TPS.performed += instance.OnFPS2TPS;
             @FPS2TPS.canceled += instance.OnFPS2TPS;
@@ -1513,6 +1587,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Accelerate.started -= instance.OnAccelerate;
             @Accelerate.performed -= instance.OnAccelerate;
             @Accelerate.canceled -= instance.OnAccelerate;
+            @Skill.started -= instance.OnSkill;
+            @Skill.performed -= instance.OnSkill;
+            @Skill.canceled -= instance.OnSkill;
+            @Shoot.started -= instance.OnShoot;
+            @Shoot.performed -= instance.OnShoot;
+            @Shoot.canceled -= instance.OnShoot;
             @FPS2TPS.started -= instance.OnFPS2TPS;
             @FPS2TPS.performed -= instance.OnFPS2TPS;
             @FPS2TPS.canceled -= instance.OnFPS2TPS;
@@ -1789,6 +1869,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnAccelerate(InputAction.CallbackContext context);
+        void OnSkill(InputAction.CallbackContext context);
+        void OnShoot(InputAction.CallbackContext context);
         void OnFPS2TPS(InputAction.CallbackContext context);
         void OnZoomCamera(InputAction.CallbackContext context);
         void OnMoveCamera(InputAction.CallbackContext context);

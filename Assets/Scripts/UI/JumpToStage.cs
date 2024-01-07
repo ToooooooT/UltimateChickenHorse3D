@@ -41,7 +41,9 @@ public class JumpToStage : MonoBehaviour
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         for(int i = 0; i < players.Length; i++) {
-            players[i].GetComponent<Player>().ChangeSkill();
+            if (players[i].GetComponent<Player>().skillData == null) {
+                players[i].GetComponent<Player>().ChangeSkill();
+            }
         }
     }
     IEnumerator FadeInOut() {

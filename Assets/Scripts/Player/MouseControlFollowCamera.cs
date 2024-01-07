@@ -5,7 +5,6 @@ using Cinemachine;
 using UnityEngine.InputSystem;
 using System;
 using Unity.VisualScripting;
-using UnityEditor.Build.Player;
 
 public class MouseControlFollowCamera : MonoBehaviour
 {
