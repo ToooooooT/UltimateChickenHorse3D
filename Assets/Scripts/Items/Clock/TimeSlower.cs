@@ -10,6 +10,8 @@ public class TimeSlower : BaseItem
 
     private float slowCounter = 0;
     private State state;
+    private AudioManager audioManager;
+
 
     void Awake() {
         state = State.STOP;
@@ -18,6 +20,7 @@ public class TimeSlower : BaseItem
     // Start is called before the first frame update
     void Start() {
         period = 2.0f;
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     // Update is called once per frame
@@ -39,6 +42,7 @@ public class TimeSlower : BaseItem
             Time.timeScale = 0.2f;
             state = State.SLOW;
             transform.Find("Whirl").GetComponent<ParticleSystem>().Play();
+            audioManager.PlaySE("slowMotion");
         }
     }
 

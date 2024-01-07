@@ -12,6 +12,7 @@ public class Rocket : BaseItem
     private Player player;
     private Vector3 origin_position;
     private Quaternion origin_rotation;
+    private AudioManager audioManager;
 
 
     // Start is called before the first frame update
@@ -22,6 +23,7 @@ public class Rocket : BaseItem
         player = null;
         exSpeedRatio = 0.055f;
         InitFire();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     // Update is called once per frame
@@ -38,6 +40,7 @@ public class Rocket : BaseItem
     private void UpdateState() {
         if (player != null && player.isPressSpace) {
             state = State.Flying;
+            audioManager.PlaySE("rocketFly");
         } else if (player != null) {
             state = State.Equipped;
         }

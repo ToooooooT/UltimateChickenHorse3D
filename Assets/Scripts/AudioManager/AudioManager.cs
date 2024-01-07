@@ -112,6 +112,7 @@ public class AudioManager : MonoBehaviour
 
         foreach (AudioClip bgmClip in levelsClipsList) {
             bgmClips.Add(bgmClip.name, bgmClip);
+            Debug.Log(bgmClip.name);
         }
 
         foreach (AudioClip seClip in itemsClipsList) {

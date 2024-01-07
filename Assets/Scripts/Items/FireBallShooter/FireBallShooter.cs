@@ -13,6 +13,7 @@ public class FireBallShooter : BaseItem
 
     private GameObject fireBall;
     private StageController stageController;
+    private AudioManager audioManager;
 
     private const string FOLDERPATH = "Fireball";
 
@@ -20,6 +21,7 @@ public class FireBallShooter : BaseItem
         state = State.placing;
         fireBall = Resources.Load<GameObject>(FOLDERPATH + "/Fireball");
         stageController = GameObject.Find("GameController").GetComponent<StageController>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     void Start() {
@@ -36,6 +38,7 @@ public class FireBallShooter : BaseItem
     void ShootingMode() {
         if (state == State.shooting) {
             GenerateFireBall();
+            audioManager.PlaySE("fireballThrowing");
             state = State.idle;
             countdown = countdownTime;
         } else {

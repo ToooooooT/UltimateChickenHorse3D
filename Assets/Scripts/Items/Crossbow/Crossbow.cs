@@ -13,6 +13,7 @@ public class Crossbow : BaseItem
     [SerializeField] private float changeAimingCountdown;
     [SerializeField] private float changeAimingCountdownTime;
     private GameObject aimingPlayer;
+    private AudioManager audioManager;
 
     void Awake()
     {
@@ -26,6 +27,7 @@ public class Crossbow : BaseItem
         changeAimingCountdown = 0;
         changeAimingCountdownTime = 100;
         rotateSpeed = 5f;
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     // Update is called once per frame
@@ -78,6 +80,7 @@ public class Crossbow : BaseItem
     {
         if (state == State.shooting) {
             GenerateArrow();
+
             state = State.idle;
             countdown = countdownTime;
         }
@@ -101,6 +104,7 @@ public class Crossbow : BaseItem
 
     public void GenerateArrow()
     {
+        audioManager.PlaySE("bowShoot");
         for (int i = transform.childCount-1; i >= 0 ; i--) {
             if (transform.GetChild(i).CompareTag("ArrowPosition")) {
                 GameObject newArrow = Instantiate(Resources.Load<GameObject>(FOLDERPATH + "/Arrow"));

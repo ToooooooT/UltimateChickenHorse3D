@@ -6,6 +6,8 @@ public class Pull : BaseItem
 {
     private enum State { idle, active}
     private State state;
+    private AudioManager audioManager;
+
     [SerializeField] private float FORCE;
 
     private void Awake() {
@@ -13,6 +15,8 @@ public class Pull : BaseItem
     }
 
     void Start() {
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+
         FORCE = 0.2f;
     }
     
@@ -31,6 +35,7 @@ public class Pull : BaseItem
                 if (distence < 3) {
                     if (allGameObjects[i].CompareTag("Frog"))
                         allGameObjects[i].GetComponent<Frog>().GetOff(false);
+                    audioManager.PlaySE("inhaleObject");
                     Destroy(allGameObjects[i]);
                 } else if (distence < 15) {
                     Velocity objectVelocityScript = allGameObjects[i].GetComponent<Velocity>();

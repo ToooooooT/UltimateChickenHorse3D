@@ -6,9 +6,11 @@ public class DestroyDetecter : MonoBehaviour
 {
     private List<GameObject> items;
     private Collider[] hitColliders;
+    private AudioManager audioManager;
 
     void Start() {
-        items = GameObject.Find("GameController").GetComponent<StageController>().items;   
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        items = GameObject.Find("GameController").GetComponent<StageController>().items;
     }
 
     void Update() {
@@ -28,6 +30,7 @@ public class DestroyDetecter : MonoBehaviour
     }
 
     public void DestroyItems() {
+        audioManager.PlaySE("bombExplode");
         foreach (Collider collider in hitColliders) {
             GameObject obj = GetTopParentObject(collider.gameObject);
             if (items.Contains(obj)) {

@@ -12,12 +12,14 @@ public class FireBall : Velocity
     private Transform fire;
     private bool isBurning;
 
+    private AudioManager audioManager;
 
     void Start() {
         smoke = transform.Find("Smoke");
         fire = transform.Find("Fire");
         isBurning = false;
         shrinkSpeed = 0.2f;
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     void Update() {
@@ -64,5 +66,6 @@ public class FireBall : Velocity
         smoke.gameObject.SetActive(false);
         transform.Find("Sun").gameObject.SetActive(false);
         fire.gameObject.SetActive(true);
+        audioManager.PlaySE("fire");
     }
 }

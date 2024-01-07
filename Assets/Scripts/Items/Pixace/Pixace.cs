@@ -11,6 +11,8 @@ public class Pixace : BaseItem
     private float clockwise;
     private Vector3 initRight;
     private float initRotateY;
+    private AudioManager audioManager;
+
 
     void Awake() {
         state = State.placing;
@@ -21,6 +23,7 @@ public class Pixace : BaseItem
         rotationSpeed = 30;
         angular = -0.1f;
         clockwise = 1f;
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     void Update() {
@@ -31,6 +34,9 @@ public class Pixace : BaseItem
 
     void Rotate() {
         if (angular <= 0) {
+            if (clockwise == -1f) {
+                audioManager.PlaySE("swing");
+            }
             clockwise = 1f;
             initRight = transform.right;
         } else if (angular >= 2 * Mathf.PI) {

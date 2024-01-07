@@ -13,6 +13,8 @@ public class FlameController : BaseItem
     private float timeCounter;
     private State state;
     private CapsuleCollider fireCollider;
+    private AudioManager audioManager;
+
 
     void Awake() {
         fire = transform.Find("Fire").gameObject;
@@ -25,6 +27,7 @@ public class FlameController : BaseItem
                 fireCollider.enabled = false;
             }
         }
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     void Start() {
@@ -34,6 +37,7 @@ public class FlameController : BaseItem
     void Update() {
         if (state == State.FIRE) {
             timeCounter += Time.deltaTime;
+            audioManager.PlaySE("flamethrower");
             if (timeCounter > period) {
                 timeCounter = 0;
                 fire.SetActive(!fire.activeSelf);

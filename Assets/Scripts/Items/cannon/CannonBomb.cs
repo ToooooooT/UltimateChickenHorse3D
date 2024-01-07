@@ -9,8 +9,11 @@ public class CannonBomb : Velocity
     private State state;
 
     public GameObject cannon;
+    private AudioManager audioManager;
+
 
     void Start() {
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         state = State.MOVE;
     }
 
@@ -28,6 +31,7 @@ public class CannonBomb : Velocity
 
     private void CheckCollision() {
         if (Physics.SphereCast(transform.position, 1.1f, velocity, out RaycastHit hitInfo, 1f)) {
+            audioManager.PlaySE("bombExplode");
             GameObject collidedObject = hitInfo.collider.gameObject;
             if (collidedObject != cannon) {
                 if (collidedObject.TryGetComponent<Player>(out var player) && 

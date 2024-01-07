@@ -14,6 +14,7 @@ public class Coin : BaseItem
     private Transform pirateCoin;
     private Vector3 localScale;
     private ParticleSystem lightGlow;
+    private AudioManager audioManager;
 
     void Awake() {
         state = State.IDLE;
@@ -23,6 +24,7 @@ public class Coin : BaseItem
     }
 
     void Start() {
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         rotateSpeed = 100.0f;
     }
 
@@ -31,6 +33,7 @@ public class Coin : BaseItem
             Rotate();
             if (transform.parent != null && 
             transform.parent.GetComponent<Player>().GetState() == Player.State.WIN) {
+                audioManager.PlaySE("getMonney");
                 transform.Find("Explode").gameObject.SetActive(true);
                 transform.Find("PirateCoin").gameObject.SetActive(false);
                 lightGlow.Stop();
