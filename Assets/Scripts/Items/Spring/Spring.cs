@@ -17,6 +17,7 @@ public class Spring : BaseItem
     private float frequency;
     private float amplitude;
     private float startTime;
+    private AudioManager audioManager;
     private Player player;
 
     // Start is called before the first frame update
@@ -33,6 +34,7 @@ public class Spring : BaseItem
         frequency = 5;
         startTime = -1;
         player = null;
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     // Update is called once per frame
@@ -48,6 +50,7 @@ public class Spring : BaseItem
             Vector3 bounceVelocity = new Vector3(0, -player.verticalVelocity, 0) + player.jumpSpeed * 100 * transform.up.normalized;
             player.exSpeed += bounceVelocity;
             player = null;
+            audioManager.PlaySE("spring");
         }
     }
 

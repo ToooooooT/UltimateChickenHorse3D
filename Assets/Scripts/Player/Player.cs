@@ -57,6 +57,8 @@ public class Player : MonoBehaviour {
     private float castCooldown;
     private GameObject ornament;
     private const string FOLDERPATH = "SkillsItem";
+    private bool RClick;
+    private bool leftClick;
 
     private void Awake() {
         virtualCamera = transform.Find("Camera").GetComponent<CinemachineVirtualCamera>();
@@ -71,8 +73,8 @@ public class Player : MonoBehaviour {
     }
 
     private void Start() {
-        normalMoveSpeed = 5f;
-        accelerateMoveSpeed = 7f;
+        normalMoveSpeed = 15f;
+        accelerateMoveSpeed = normalMoveSpeed * 1.5f;
         moveSpeedJumpWallratio = 10f;
         rotateSpeed = 10f;
         velocity = normalMoveSpeed;
@@ -100,7 +102,11 @@ public class Player : MonoBehaviour {
             HandleFacement(); 
             UseSkill();
         }
+        RClick = false;
+        leftClick = false;
     }
+    //RClick
+    //leftClick
     private void UseSkill()
     {
         skillCooldown -= Time.deltaTime;
@@ -153,10 +159,38 @@ public class Player : MonoBehaviour {
     {
         if (newSkillName != "")
             skillName = newSkillName;
+        else {
+            ChangeRandomSkill();
+            return;
+        }
         skillData = new SkillReader().GetSkill(skillName);
         skillName = skillData.skillName;
         Ornament();
         ResetSkill();
+    }
+    private void ChangeRandomSkill()
+    {
+        if (skillData == null) {
+            ChooseSkill(-1);
+        }
+        else {
+            ChooseSkill(skillData.skillNum);
+        }
+    }
+    private void ChooseSkill(int skillNum)
+    {
+        string[] skillNames = new SkillReader().GetSkillNames();
+        int newSkillNum = (skillNum + 1) % skillNames.Length;
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        for (int i = 0; i < players.Length; i++) {
+            Data skillDatai = players[i].GetComponent<Player>().skillData;
+            if (skillDatai != null && skillDatai.skillNum == newSkillNum) {
+                ChooseSkill(newSkillNum);
+                return;
+            }
+        }
+        ChangeSkill(skillNames[newSkillNum]);
+        skillData.skillNum = newSkillNum;
     }
     private void ResetSkill()
     {
@@ -250,7 +284,7 @@ public class Player : MonoBehaviour {
     
     private void Shoot()
     {
-        if (!skillData.shootPushing && (Input.GetKeyDown(KeyCode.R) || skillData.shootPlayers[skillData.shootAimingPlayer] == gameObject)) {
+        if (!skillData.shootPushing && (RClick || skillData.shootPlayers[skillData.shootAimingPlayer] == gameObject)) {
             skillData.shootAimingPlayer = (skillData.shootAimingPlayer + 1) % skillData.shootPlayers.Length;
             castCooldown = skillData.castTime; 
             return;
@@ -258,7 +292,7 @@ public class Player : MonoBehaviour {
         skillData.shootPlayerCamera.transform.forward = (skillData.shootPlayers[skillData.shootAimingPlayer].transform.position - transform.position).normalized;
         skillData.shootPlayerCamera.transform.position = skillData.shootPlayers[skillData.shootAimingPlayer].transform.position - 5 * skillData.shootPlayerCamera.transform.forward;
         skillCooldown = skillData.cooldownTime;
-        if (Input.GetMouseButtonDown(0)) {
+        if (leftClick) {
             skillData.shootPlayerCamera.GetComponent<MouseControlFollowCamera>().enabled = true;
             SkillEnableMove();
             castCooldown = 0.5f;
@@ -312,7 +346,7 @@ public class Player : MonoBehaviour {
     }
     private void Hook()
     {
-        if (!skillData.hooking && (Input.GetKeyDown(KeyCode.R) || skillData.hookPlayers[skillData.hookAimingPlayer] == gameObject)) {
+        if (!skillData.hooking && (RClick || skillData.hookPlayers[skillData.hookAimingPlayer] == gameObject)) {
             skillData.hookAimingPlayer = (skillData.hookAimingPlayer + 1) % skillData.hookPlayers.Length;
             castCooldown = skillData.castTime;
             return;
@@ -320,7 +354,7 @@ public class Player : MonoBehaviour {
         skillData.hookPlayerCamera.transform.forward = (skillData.hookPlayers[skillData.hookAimingPlayer].transform.position - transform.position).normalized;
         skillData.hookPlayerCamera.transform.position = skillData.hookPlayers[skillData.hookAimingPlayer].transform.position - 5 * skillData.hookPlayerCamera.transform.forward;
         skillCooldown = skillData.cooldownTime;
-        if (Input.GetMouseButtonDown(0)) {
+        if (leftClick) {
             castCooldown = 2.5f;
             skillData.hooking = true;
         }
@@ -505,6 +539,7 @@ public class Player : MonoBehaviour {
     }
 
     public void SetDead() {
+        audioManager.PlaySE("dead1");
         if (skillData == null || !skillData.invincible)
             state = State.DEAD_ANIMATION;
     }

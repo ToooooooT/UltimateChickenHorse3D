@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 9138810991664293454}
   - component: {fileID: 5345537016773809547}
   m_Layer: 0
-  m_Name: GiantTree
+  m_Name: VastArboreal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -13,6 +13,7 @@ public class JumpToStage : MonoBehaviour
     public CanvasGroup fadeCanvasGroup;
     public TextMeshProUGUI nextStageText;
     public bool flag;
+    private bool canChangeState = true;
 
     // Start is called before the first frame update
     void Start() {
@@ -26,7 +27,8 @@ public class JumpToStage : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        if (!flag && countdown.flgNextStage == true) {
+        if (!flag && countdown.flgNextStage == true && canChangeState) {
+            canChangeState = false;
             playersInPavilion = countdown.playersInPavilion;
             playersGetSkill();
             GetNextStageId();
@@ -55,7 +57,6 @@ public class JumpToStage : MonoBehaviour
         }
 
         // TeleportPlayers();
-        countdown.ResetState();
         audioManager.Volume = 0;
         flag = true;
         transform.parent.position = new Vector3(0, -1000, 0);
@@ -71,9 +72,11 @@ public class JumpToStage : MonoBehaviour
         }
 
         audioManager.Volume = originalVolume;
+        countdown.ResetState();
         transform.parent.gameObject.SetActive(false);
         nextStageText.enabled = false;
         flag = false;
+        canChangeState = true;
     }
 
     private void GetStagesNames() {

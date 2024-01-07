@@ -17,12 +17,15 @@ public class ObjectCannon : BaseItem
     private GameObject shootingObject;
     private Vector3 scale;
     private ParticleSystem bombParicle;
+    private AudioManager audioManager;
+
 
     void Awake() {
         state = State.NONE;
         cannon = transform.Find("cannon").gameObject;
         bombParicle = transform.Find("cannon").Find("Explosion").GetComponent<ParticleSystem>();
         bombManRatio = 0.03f;
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     void Update() {
@@ -51,6 +54,7 @@ public class ObjectCannon : BaseItem
                 return;
             }
             trueSpeed = SHOOTING_SPEED;
+            audioManager.PlaySE("CannonShoot");
             if (shootingObject.CompareTag("Player")) {
                 shootingObject.GetComponent<Player>().exSpeed = trueSpeed * cannon.transform.forward;
             } else {

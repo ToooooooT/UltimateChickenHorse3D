@@ -14,6 +14,8 @@ public class Carrier : BaseItem
     private StageController stageController;
     private float countdown;
     private float countdownTime;
+    private AudioManager audioManager;
+
 
     void Awake() {
         state = State.placing;
@@ -22,6 +24,7 @@ public class Carrier : BaseItem
             airplane[i] = Resources.Load<GameObject>(FOLDERPATH + "/" + airplaneType[i]);
         }
         stageController = GameObject.Find("GameController").GetComponent<StageController>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     void Start() {
@@ -56,6 +59,7 @@ public class Carrier : BaseItem
     }
 
     private void GenerateAirplane() {
+        audioManager.PlaySE("planeShoot");
         int index = Random.Range(0, airplaneType.Length);
         GameObject newAirplane = Instantiate(airplane[index]);
         newAirplane.transform.SetPositionAndRotation(transform.position + 1.6f * transform.up + 2f * transform.forward, transform.rotation);

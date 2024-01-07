@@ -18,20 +18,24 @@ public class Bee : BaseItem
     private Vector3 origin_position;
     private Quaternion origin_rotation;
 
+    private AudioManager audioManager;
+
     void Start() {
         animator = GetComponent<Animator>(); 
         state = State.Idle;
         speed = 0f;
         rotateSpeed = 10.0f;
-        accelerate = 1.0f;
-        max_speed = 7.0f;
+        accelerate = 1.5f;
+        max_speed = 15.0f;
         player2follow = null;
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     void Update() {
         if (state == State.Move) {
             FollowPlayer();
-        }       
+            audioManager.PlaySE("bee");
+        }
     }
 
     private void OnTriggerEnter(Collider other) {

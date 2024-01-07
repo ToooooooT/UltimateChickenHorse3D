@@ -29,6 +29,8 @@ public class PlayerManager : MonoBehaviour
     private const string PLAYER_MATERIALS_FOLDER = "Materials";
     private const string PLAYER_CURSORS_FOLDER = "Cursors";
 
+    private AudioManager audioManager;
+
     private void Awake() {
         playerManager = GetComponent<PlayerInputManager>();
         stageController = GetComponent<StageController>();
@@ -53,7 +55,7 @@ public class PlayerManager : MonoBehaviour
     }
 
     void Start() {
-
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     void Update() {
@@ -65,6 +67,7 @@ public class PlayerManager : MonoBehaviour
         PlayerJoinedGame?.Invoke(playerInput);
         GameObject player = playerInput.gameObject;
         stageController.playerObjects.Add(player);
+        audioManager.PlaySE("summon1");
         // set player materials
         List<Material> materialList = new()
         {
