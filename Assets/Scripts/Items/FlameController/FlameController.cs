@@ -37,8 +37,8 @@ public class FlameController : BaseItem
     void Update() {
         if (state == State.FIRE) {
             timeCounter += Time.deltaTime;
-            audioManager.PlaySE("flamethrower");
             if (timeCounter > period) {
+                audioManager.PlaySE("flamethrower");
                 timeCounter = 0;
                 fire.SetActive(!fire.activeSelf);
                 fireCollider.enabled = fire.activeSelf;
