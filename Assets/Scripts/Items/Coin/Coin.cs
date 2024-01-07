@@ -33,7 +33,7 @@ public class Coin : BaseItem
             Rotate();
             if (transform.parent != null && 
             transform.parent.GetComponent<Player>().GetState() == Player.State.WIN) {
-                audioManager.PlaySE("getMonney");
+                audioManager.PlaySE("getMoney");
                 transform.Find("Explode").gameObject.SetActive(true);
                 transform.Find("PirateCoin").gameObject.SetActive(false);
                 lightGlow.Stop();
