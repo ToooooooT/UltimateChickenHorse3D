@@ -1,4 +1,4 @@
-# UltimateNigo
+# UltimateChickenHorse3D
 
 * keycode:\
     'C' : change code camera
