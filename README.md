@@ -7,6 +7,10 @@ release date: TBA, if you want to play it immediately, you can download the sour
 發佈日期: 即將公佈，如果手癢想玩的可以自行先下載unity來玩
 
 
+
+https://github.com/ToooooooT/UltimateChickenHorse3D/assets/104029158/4def3e5b-5c55-4e73-8072-d24891d20418
+
+
 ## keycode:
 * 'C' : change code camera
 * playing mode:
