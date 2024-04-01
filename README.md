@@ -3,13 +3,7 @@
 created by ToooooooT, StupidRaRa, and pivotmaster \
 release date: TBA, if you want to play it immediately, you can download the source code and unity to play
 
-由 ToooooooT, StupidRaRa, 和 pivotmaster三位遊戲大師製作的3A大作 \
-發佈日期: 即將公佈，如果手癢想玩的可以自行先下載unity來玩
-
-
-
 https://github.com/ToooooooT/UltimateChickenHorse3D/assets/104029158/4def3e5b-5c55-4e73-8072-d24891d20418
-
 
 ## keycode:
 * 'C' : change code camera
